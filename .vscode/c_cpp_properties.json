@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "kernel/dev/include",
+                "kernel/kernel/include",
+                "kernel/lib/include",
+                "kernel/lib/ext2/include",
+                "kernel/lib/graph/include",
+                "kernel/lib/console/include",
+		        "kernel/lib/sconf/include",
+                "kernel/hardware/arm/arch/common/include",    
+            ],
+            "defines": [
+                "KERNEL_SMP", "KCONSOLE",
+            ],
+            "compilerPath": "//usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "macos-clang-arm"
+        }
+    ],
+    "version": 4
+}
