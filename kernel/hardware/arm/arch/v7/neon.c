@@ -40,6 +40,7 @@ static inline void set_copro_access(unsigned int val)
 
 static void vfp_enable(void *unused)
 {
+    (void) unused;
     uint32_t access;
 
     access = get_copro_access();

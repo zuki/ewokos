@@ -43,7 +43,7 @@ int32_t procs_init(void) {
 	_ipc_uid = 0;
 	_proc_uuid = 0;
 	_core_proc_ready = false;
-	int32_t i;
+	uint32_t i;
 
 	uint32_t size = PAGE_DIR_SIZE + (_kernel_config.max_proc_num*sizeof(proc_vm_t));
 	uint32_t pde = (uint32_t)kmalloc(size);
@@ -61,7 +61,7 @@ int32_t procs_init(void) {
 	}
 
 	size = _kernel_config.max_task_num*sizeof(proc_t);
-	_task_table = (proc_t*)kmalloc(size);
+	_task_table = (proc_t**)kmalloc(size);
 	for (i = 0; i < _kernel_config.max_task_num; i++) {
 		_task_table[i] = NULL;
 	}
@@ -86,7 +86,7 @@ int32_t  proc_childof(proc_t* proc, proc_t* parent) {
 }
 
 inline proc_t* proc_get(int32_t pid) {
-	if(pid < 0 || pid >= _kernel_config.max_task_num)
+	if(pid < 0 || pid >= (int32_t)_kernel_config.max_task_num)
 		return NULL;
 
 	proc_t* p = _task_table[pid];
@@ -168,7 +168,7 @@ static void unmap_stack(proc_t* proc, uint32_t* stacks, uint32_t base, uint32_t 
 	flush_tlb();
 }
 
-inline uint32_t thread_stack_alloc(proc_t* proc) {
+static inline uint32_t thread_stack_alloc(proc_t* proc) {
 	uint32_t i;
 	for(i=0; i<_kernel_config.max_task_per_proc; i++) {
 		if(proc->space->thread_stacks[i].base == 0)
@@ -186,11 +186,11 @@ inline uint32_t thread_stack_alloc(proc_t* proc) {
 	if(proc->space->thread_stacks[i].stacks == NULL) 
 		proc->space->thread_stacks[i].stacks = kmalloc(THREAD_STACK_PAGES*sizeof(void*));
 	memset(proc->space->thread_stacks[i].stacks, 0, THREAD_STACK_PAGES*sizeof(void*));
-	map_stack(proc, proc->space->thread_stacks[i].stacks, base, pages);
+	map_stack(proc, (uint32_t *)proc->space->thread_stacks[i].stacks, base, pages);
 	return base;
 }
 
-inline void thread_stack_free(proc_t* proc, uint32_t base) {
+static inline void thread_stack_free(proc_t* proc, uint32_t base) {
 	uint32_t i;
 	for(i=0; i<_kernel_config.max_task_per_proc; i++) {
 		if(proc->space->thread_stacks[i].base == base)
@@ -198,7 +198,7 @@ inline void thread_stack_free(proc_t* proc, uint32_t base) {
 	}
 	if(i >= _kernel_config.max_task_per_proc) 
 		return;
-	unmap_stack(proc, proc->space->thread_stacks[i].stacks, base, THREAD_STACK_PAGES);
+	unmap_stack(proc, (uint32_t *)proc->space->thread_stacks[i].stacks, base, THREAD_STACK_PAGES);
 	proc->space->thread_stacks[i].base = 0;
 	if(proc->space->thread_stacks[i].stacks != NULL)  {
 		kfree(proc->space->thread_stacks[i].stacks);
@@ -253,7 +253,7 @@ static int32_t proc_expand_mem(proc_t *proc, int32_t page_num, uint32_t rdonly) 
 }
 
 static int32_t get_free_pde(void) {
-	for(int32_t i=0; i<_kernel_config.max_proc_num; i++) {
+	for(uint32_t i=0; i<_kernel_config.max_proc_num; i++) {
 		if(_proc_vm_mark[i] == 0) {
 			_proc_vm_mark[i] = 1;
 			return i;
@@ -429,7 +429,7 @@ static inline void proc_unready(proc_t* proc, int32_t state) {
 }
 
 static void proc_wakeup_waiting(int32_t pid) {
-	int32_t i;
+	uint32_t i;
 	for (i = 0; i < _kernel_config.max_task_num; i++) {
 		proc_t *proc = _task_table[i];
 		if (proc != NULL && proc->info.state == WAIT && proc->info.wait_for == pid) {
@@ -449,7 +449,7 @@ static void proc_terminate(context_t* ctx, proc_t* proc) {
 		semaphore_clear(proc->info.pid);
 
 		kev_push(KEV_PROC_EXIT, proc->info.pid, 0, 0);
-		int32_t i;
+		uint32_t i;
 		for (i = 0; i < _kernel_config.max_task_num; i++) {
 			proc_t *p = _task_table[i];
 			if(p != NULL) {
@@ -482,7 +482,7 @@ static inline void proc_init_user_stack(proc_t* proc) {
 		proc->thread_stack_base = thread_stack_alloc(proc);
 	}
 	else {
-		uint32_t i;
+		//uint32_t i;
 		uint32_t base =  proc_get_user_stack_base(proc);
 		uint32_t pages = proc_get_user_stack_pages(proc);
 		map_stack(proc, proc->space->user_stack, base, pages);
@@ -555,7 +555,7 @@ void proc_funeral(proc_t* proc) {
 }
 
 inline void proc_zombie_funeral(void) {
-	int32_t i;
+	uint32_t i;
 	for (i = 0; i < _kernel_config.max_task_num; i++) {
 		proc_t *p = _task_table[i];
 		if(p != NULL && p->info.state == ZOMBIE)
@@ -647,7 +647,7 @@ proc_t *proc_create(int32_t type, proc_t* parent) {
 	uint32_t i;
 
 	for (i = 0; i < _kernel_config.max_task_num; i++) {
-		int32_t at = i + _last_create_pid;
+		uint32_t at = i + _last_create_pid;
 		if(at >= _kernel_config.max_task_num)
 			at = at % _kernel_config.max_task_num;
 		if (_task_table[at] == NULL) {
@@ -712,7 +712,7 @@ int32_t proc_load_elf(proc_t *proc, const char *image, uint32_t size) {
 		return -1;
 
 	prog_header_count = ELF_PHNUM(proc_image);
-	uint32_t *debug = 0;
+	//uint32_t *debug = 0;
 	for (i = 0; i < prog_header_count; i++) {
 		uint32_t j = 0;
 		/* make enough room for this section */
@@ -861,7 +861,7 @@ static void proc_wakeup_all_state(int32_t pid_by, uint32_t event, proc_t* proc) 
 
 void proc_wakeup(int32_t pid_by, int32_t pid, uint32_t event) {
 	if(pid >= 0) {
-		if(pid >= _kernel_config.max_task_num)
+		if(pid >= (int32_t)_kernel_config.max_task_num)
 			return;
 
 		proc_t* proc = _task_table[pid];	
@@ -876,7 +876,7 @@ void proc_wakeup(int32_t pid_by, int32_t pid, uint32_t event) {
 		return;
 	} 
 
-	int32_t i = 0;	
+	uint32_t i = 0;	
 	while(1) {
 		if(i >= _kernel_config.max_task_num)
 			break;
@@ -975,9 +975,9 @@ proc_t* kfork(context_t* ctx, int32_t type) {
 }
 
 int32_t get_procs_num(void) {
-	proc_t* cproc = get_current_proc();
+	//proc_t* cproc = get_current_proc();
 	int32_t res = 0;
-	int32_t i;
+	uint32_t i;
 	for(i=0; i<_kernel_config.max_task_num; i++) {
 		if(_task_table[i] != NULL && _task_table[i]->info.state != UNUSED)  {
 			if(!_task_table[i]->is_core_idle_proc)
@@ -992,7 +992,7 @@ int32_t get_procs(int32_t num, procinfo_t* procs) {
 		return -1;
 
 	int32_t j = 0;
-	int32_t i;
+	uint32_t i;
 	for(i=0; i<_kernel_config.max_task_num && j<(num); i++) {
 		proc_t* p = _task_table[i];
 		if(p != NULL && p->info.state != UNUSED && !p->is_core_idle_proc) {
@@ -1015,7 +1015,7 @@ int32_t get_proc(int32_t pid, procinfo_t *info) {
 }
 
 static int32_t renew_sleep_counter(uint32_t usec) {
-	int i;
+	uint32_t i;
 	int32_t res = -1;
 	for(i=0; i<_kernel_config.max_task_num; i++) {
 		proc_t* proc = _task_table[i];
@@ -1049,7 +1049,7 @@ inline int32_t renew_kernel_tic(uint32_t usec) {
 
 static uint32_t _k_sec_counter = 0;
 inline void renew_kernel_sec(void) {
-	int i;
+	uint32_t i;
 	_k_sec_counter++;
 	for(i=0; i<_kernel_config.max_task_num; i++) {
 		proc_t* proc = _task_table[i];

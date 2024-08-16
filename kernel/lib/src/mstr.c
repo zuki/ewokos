@@ -1,5 +1,5 @@
 #include <mstr.h>
-#include <string.h>
+#include <kstring.h>
 
 #include <stdarg.h>
 #include <mm/kmalloc.h>
@@ -8,6 +8,7 @@
 
 #define STR_BUF 16
 #define STATIC_STR_MAX 64
+#define NULL ((void *)0)
 
 void str_reset(str_t* str) {
 	if(str->cstr == NULL) {

@@ -203,7 +203,7 @@ static share_mem_t* shm_item_by_id(int32_t id) { //get shm item by id.
 static share_mem_t* shm_item_by_addr(void* addr) { //get shm item by addr.
 	share_mem_t* i = _shm_head;
 	while(i != NULL) {
-		if(i->used && i->addr == addr) 
+		if(i->used && i->addr == (uint32_t)addr) 
 			return i;
 		i = i->next;
 	}
@@ -304,7 +304,7 @@ void* shm_proc_map(proc_t* proc, int32_t id) {
 	//check if mapped , keep it and return
 	for (i = 0; i < SHM_MAX; i++) {
 		if(proc->space->shms[i] == id)
-			return it->addr;
+			return (void *)it->addr;
 	}
 
 	//do real map
@@ -379,7 +379,8 @@ int32_t shm_set_owner(uint32_t id, int32_t pid) {
 	share_mem_t* it = shm_item_by_id(id);
 	if(it == NULL || !it->used)
 		return -1;
-	it->owner_pid = pid;	
+	it->owner_pid = pid;
+    return 0;
 }
 
 /*unmap share memory of process*/

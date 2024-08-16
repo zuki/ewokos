@@ -169,6 +169,7 @@ void trunk_free(malloc_t* m, char* p) {
 }
 
 uint32_t trunk_msize(malloc_t* m, char* p) {
+    (void)m;
 	mem_block_t* block = get_block(p);
 	if(block == NULL)
 		return 0;

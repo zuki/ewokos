@@ -14,6 +14,7 @@
 #include <kernel/kevqueue.h>
 #include <dev/timer.h>
 #include <kprintf.h>
+#include <dev/sd.h>
 #include <dev/uart.h>
 #include <stddef.h>
 #include <kernel/kconsole.h>

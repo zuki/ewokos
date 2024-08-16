@@ -39,6 +39,8 @@ enum {
 };
 
 int32_t pl011_uart_init(uint32_t baud) {
+    // baudは 115,200 固定で計算
+    (void) baud;
 	// Disable UART0.
 	put32(_sys_info.mmio.v_base+UART0_CR, 0x00000000);
 	// Setup the GPIO pin 14 && 15.

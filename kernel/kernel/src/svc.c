@@ -251,10 +251,12 @@ static int32_t sys_shm_unmap(void* p) {
 	return shm_proc_unmap(cproc, p);
 }
 
+/*
 static int32_t sys_shm_ref(int32_t id) {
 	proc_t* cproc = proc_get_proc(get_current_proc());
 	return shm_proc_ref(cproc->info.pid, id);
 }
+*/
 	
 static uint32_t sys_dma_map(uint32_t size) {
 	proc_t* cproc = proc_get_proc(get_current_proc());
@@ -288,7 +290,7 @@ static uint32_t sys_mem_map(uint32_t vaddr, uint32_t paddr, uint32_t size) {
 }
 
 static void sys_ipc_setup(context_t* ctx, uint32_t entry, uint32_t extra_data, uint32_t flags) {
-	proc_t* cproc = get_current_proc();
+	//proc_t* cproc = get_current_proc();
 	ctx->gpr[0] = proc_ipc_setup(ctx, entry, extra_data, flags);
 }
 
@@ -784,7 +786,7 @@ static inline void _svc_handler(int32_t code, int32_t arg0, int32_t arg1, int32_
 		sys_ipc_setup(ctx, arg0, arg1, arg2);
 		return;
 	case SYS_IPC_CALL:
-		sys_ipc_call(ctx, arg0, arg1, (proto_t*)arg2);
+		sys_ipc_call(ctx, arg0, arg1, arg2);
 		return;
 	case SYS_IPC_GET_RETURN_SIZE:
 		sys_ipc_get_return_size(ctx, arg0, (uint32_t)arg1);

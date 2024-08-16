@@ -7,7 +7,7 @@
 
 kernel_conf_t _kernel_config;
 
-static void load_kernel_config_file() {
+static void load_kernel_config_file(void) {
 	sconf_t* sconf = sconf_load("/etc/kernel/kernel.conf");
 	if(sconf == NULL)
 		return;

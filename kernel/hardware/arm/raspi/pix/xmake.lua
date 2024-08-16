@@ -11,7 +11,8 @@ function build()
     add_defines("KERNEL_SMP", "KCONSOLE")
 
     add_includedirs(
-        "../lib/bcm283x/include"
+        "../lib/bcm283x/include",
+        "../../arch/common/include"
     )
 
     add_files(

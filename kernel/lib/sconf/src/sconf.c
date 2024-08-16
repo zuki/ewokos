@@ -2,6 +2,7 @@
 #include <kstring.h>
 #include <ext2read.h>
 #include <stddef.h>
+#include <mm/kmalloc.h>
 
 static inline int is_space(char c) {
 	if(c == ' ' || c == '\t' || c == '\r' || c == '\n')

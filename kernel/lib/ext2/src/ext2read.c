@@ -23,7 +23,7 @@ static int32_t sd_read_sector(int32_t sector, void* buf) {
 	return 0;
 }
 
-static int32_t sd_read(uint32_t block, void* buf) {
+static int32_t sd_read(int32_t block, void* buf) {
 	int32_t n = EXT2_BLOCK_SIZE/512;
 	int32_t sector = block * n + _partition.start_sector;
 	char* p = (char*)buf;

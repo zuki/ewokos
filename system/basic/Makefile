@@ -1,6 +1,7 @@
 BUILD_DIR = ../build
 TARGET_DIR = $(BUILD_DIR)/rootfs
 ROOT_DIR = ..
+ARCH = arm
 
 all: mkdirs basic_libs builtin_apps basic_drivers
 	@echo "all done."

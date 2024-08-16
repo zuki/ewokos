@@ -111,7 +111,7 @@ static inline void irq_do_timer0(context_t* ctx) {
 }
 
 static inline void _irq_handler(uint32_t cid, context_t* ctx) {
-	uint64_t raw_irqs;
+	//uint64_t raw_irqs;
 	uint32_t irq = irq_get();
 
 	//handle irq

@@ -96,7 +96,7 @@ struct elf64_program_header {
 #define ELF_ENTRY(img) 			(ELF_CLASS(img) == ELFCLASS_32? \
 									(((struct elf_header*)img)->entry): \
 									(((struct elf64_header*)img)->entry))
-#define ELF_PHEAD(img, n)		((uint64_t)img + ELF_PHOFF(img) + (ELF_CLASS(img) == ELFCLASS_32? \
+#define ELF_PHEAD(img, n)		(img + ELF_PHOFF(img) + (ELF_CLASS(img) == ELFCLASS_32? \
 									(sizeof(struct elf_program_header) * n): \
 									(sizeof(struct elf64_program_header) * n)))
 #define ELF_PVADDR(img, n)		(ELF_CLASS(img) == ELFCLASS_32? \

@@ -1,5 +1,5 @@
 local kernel_dir = os.scriptdir().."/"
-set_defaultplat("miyoo")
+set_defaultplat("raspi2.3")
 
 toolchain("arm-none-eabi")
     -- mark as standalone toolchain
@@ -46,6 +46,7 @@ function set_toolchain(arch)
         "-Wstrict-prototypes",
         "-fno-builtin-printf",
         "-fno-builtin-strcpy",
+        "-Wno-builtin-declaration-mismatch",
         "-Wno-overlength-strings",
         "-fno-builtin-exit",
         "-fno-builtin-stdio",
@@ -81,7 +82,8 @@ end
 
 function add_arch_src(arch, v)
     add_includedirs(
-        kernel_dir.."hardware/"..arch.."/arch/common/include"
+        kernel_dir.."hardware/"..arch.."/arch/common/include",
+        kernel_dir.."lib/include"
     )
 
     add_files(
@@ -109,13 +111,14 @@ function qemu(args, kernel)
         end
     end)
 end
-set_arch("")
-if is_plat("raspi2", "raspi3", "raspi2.3") then
-    includes("hardware/arm/raspi/pi2.3/xmake.lua")
+set_arch("arm")
+add_sysincludedirs("$(env SDKROOT)/usr/include")
+if is_plat("raspi2", "raspi3", "raspi2.3") then 
+    includes("hardware/arm/raspi/pix/xmake.lua")
 elseif is_plat("raspi1") then
     includes("hardware/arm/raspi/pi1/xmake.lua")
 elseif is_plat("raspi4") then
-    includes("hardware/arm/raspi/pi4/xmake.lua")
+    includes("hardware/arm/raspi/pix/xmake.lua")
 elseif is_plat("miyoo") then
     includes("hardware/arm/miyoo/xmake.lua")
 elseif is_plat("rk3128") then
