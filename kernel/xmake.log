@@ -1,0 +1,194 @@
+xmake f -p raspi2.3
+[0mchecking for architecture ... [38;5;2;1marm64[0m
+xmake
+[0m[38;5;2;1m[  8%]:[0m cache compiling.release kernel/src/kconsole.c[0m
+[0m[38;5;2;1m[  9%]:[0m cache compiling.release kernel/src/schedule.c[0m
+[0m[38;5;2;1m[ 10%]:[0m cache compiling.release kernel/src/kernel.c[0m
+[0m[38;5;2;1m[ 10%]:[0m cache compiling.release kernel/src/irq.c[0m
+[0m[38;5;2;1m[ 11%]:[0m cache compiling.release kernel/src/system.c[0m
+[0m[38;5;2;1m[ 12%]:[0m cache compiling.release kernel/src/hw_info.c[0m
+[0m[38;5;2;1m[ 13%]:[0m cache compiling.release kernel/src/semaphore.c[0m
+[0m[38;5;2;1m[ 13%]:[0m cache compiling.release kernel/src/kevqueue.c[0m
+[0m[38;5;2;1m[ 14%]:[0m cache compiling.release kernel/src/smp/core.c[0m
+[0m[38;5;2;1m[ 15%]:[0m cache compiling.release kernel/src/mm/kmalloc.c[0m
+[0m[38;5;2;1m[ 15%]:[0m cache compiling.release kernel/src/mm/shm.c[0m
+[0m[38;5;2;1m[ 16%]:[0m cache compiling.release kernel/src/mm/dma.c[0m
+[0m[38;5;2;1m[ 17%]:[0m cache compiling.release kernel/src/mm/mmio.c[0m
+[0m[38;5;3;1mkernel/src/mm/mmio.c:2: warning: ISO C forbids an empty translation unit [-Wpedantic][0m
+[0m[38;5;2;1m[ 18%]:[0m cache compiling.release kernel/src/mm/trunkmem.c[0m
+[0m[38;5;2;1m[ 18%]:[0m cache compiling.release kernel/src/mm/kalloc.c[0m
+[0m[38;5;2;1m[ 19%]:[0m cache compiling.release kernel/src/mm/mmu.c[0m
+[0m[38;5;2;1m[ 19%]:[0m cache compiling.release kernel/src/trace.c[0m
+[0m[38;5;2;1m[ 19%]:[0m cache compiling.release kernel/src/interrupt.c[0m
+[0m[38;5;2;1m[ 19%]:[0m cache compiling.release kernel/src/kernel_config.c[0m
+[0m[38;5;2;1m[ 19%]:[0m compiling.release hardware/arm/arch/common/src/memcpy.S[0m
+[0m[38;5;2;1m[ 19%]:[0m compiling.release hardware/arm/arch/common/src/arm32_aeabi_ldivmod_a32.S[0m
+[0m[38;5;2;1m[ 20%]:[0m cache compiling.release kernel/src/proc.c[0m
+[0m[38;5;2;1m[ 21%]:[0m cache compiling.release kernel/src/signal.c[0m
+[0m[38;5;2;1m[ 21%]:[0m cache compiling.release kernel/src/ipc.c[0m
+[0m[38;5;2;1m[ 22%]:[0m cache compiling.release kernel/src/svc.c[0m
+[0m[38;5;2;1m[ 23%]:[0m cache compiling.release lib/sconf/src/sconf.c[0m
+[0m[38;5;2;1m[ 23%]:[0m cache compiling.release lib/graph/src/font.c[0m
+[0m[38;5;2;1m[ 24%]:[0m cache compiling.release lib/graph/src/pixel.c[0m
+[0m[38;5;2;1m[ 25%]:[0m cache compiling.release lib/graph/src/text.c[0m
+[0m[38;5;2;1m[ 26%]:[0m cache compiling.release lib/graph/src/font8x16.c[0m
+[0m[38;5;2;1m[ 26%]:[0m cache compiling.release lib/graph/src/graph.c[0m
+[0m[38;5;2;1m[ 27%]:[0m cache compiling.release lib/ext2/src/ext2read.c[0m
+[0m[38;5;2;1m[ 28%]:[0m cache compiling.release lib/console/src/console.c[0m
+[0m[38;5;3;1mkernel/src/svc.c: In function 'sys_get_trace':
+kernel/src/svc.c:661:1: warning: no return statement in function returning non-void [-Wreturn-type]
+  661 | }
+      | ^
+kernel/src/svc.c:657:30: warning: unused parameter 'arg0' [-Wunused-parameter]
+  657 | static int sys_get_trace(int arg0) {
+      |                          ~~~~^~~~
+kernel/src/svc.c: In function 'sys_get_trace_fps':
+kernel/src/svc.c:667:1: warning: no return statement in function returning non-void [-Wreturn-type]
+  667 | }
+      | ^[0m
+[0m[38;5;2;1m[ 28%]:[0m cache compiling.release lib/src/atoi.c[0m
+[0m[38;5;2;1m[ 29%]:[0m cache compiling.release lib/src/queue.c[0m
+[0m[38;5;2;1m[ 30%]:[0m cache compiling.release lib/src/vprintf.c[0m
+[0m[38;5;2;1m[ 31%]:[0m cache compiling.release lib/src/kprintf.c[0m
+[0m[38;5;2;1m[ 31%]:[0m cache compiling.release lib/src/proto.c[0m
+[0m[38;5;2;1m[ 32%]:[0m cache compiling.release lib/src/mstr.c[0m
+[0m[38;5;2;1m[ 33%]:[0m cache compiling.release lib/src/kstring.c[0m
+[0m[38;5;2;1m[ 34%]:[0m cache compiling.release dev/src/fb.c[0m
+[0m[38;5;2;1m[ 34%]:[0m cache compiling.release loadinit/sd/loadinit.c[0m
+[0m[38;5;2;1m[ 35%]:[0m cache compiling.release hardware/arm/arch/common/src/gic.c[0m
+[0m[38;5;2;1m[ 36%]:[0m cache compiling.release hardware/arm/arch/common/src/arm32_aeabi_ldivmod.c[0m
+[0m[38;5;2;1m[ 36%]:[0m cache compiling.release hardware/arm/arch/common/src/irq.c[0m
+[0m[38;5;2;1m[ 37%]:[0m cache compiling.release hardware/arm/arch/common/src/mmu_arch.c[0m
+[0m[38;5;2;1m[ 38%]:[0m cache compiling.release hardware/arm/arch/common/src/arm32_aeabi_divmod.c[0m
+[0m[38;5;2;1m[ 39%]:[0m cache compiling.release hardware/arm/arch/v7/mmu_pte_flags.c[0m
+[0m[38;5;2;1m[ 39%]:[0m cache compiling.release hardware/arm/arch/v7/neon.c[0m
+[0m[38;5;2;1m[ 40%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/fb.c[0m
+[0m[38;5;2;1m[ 41%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/sd.c[0m
+[0m[38;5;2;1m[ 42%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/hw_info_arch.c[0m
+[0m[38;5;3;1mhardware/arm/arch/v7/neon.c: In function '_enable_neon':
+hardware/arm/arch/v7/neon.c:56:22: warning: ISO C forbids braced-groups within expressions [-Wpedantic]
+   56 |     uint32_t fpexc = fmrx(FPEXC);
+      |                      ^[0m
+[0m[38;5;2;1m[ 42%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/core.c[0m
+[0m[38;5;2;1m[ 43%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/start.c[0m
+[0m[38;5;2;1m[ 44%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/uart.c[0m
+[0m[38;5;2;1m[ 44%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/sd.c[0m
+[0m[38;5;2;1m[ 45%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/gpio.c[0m
+[0m[38;5;2;1m[ 46%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/mini_uart.c[0m
+[0m[38;5;2;1m[ 47%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/board.c[0m
+[0m[38;5;2;1m[ 47%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/pl011_uart.c[0m
+[0m[38;5;2;1m[ 48%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/framebuffer.c[0m
+[0m[38;5;2;1m[ 49%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/mailbox.c[0m
+[0m[38;5;2;1m[ 50%]:[0m compiling.release hardware/arm/arch/common/src/arm32_aeabi_ldivmod_a32.S[0m
+[0m[38;5;2;1m[ 50%]:[0m compiling.release hardware/arm/arch/common/src/memcpy.S[0m
+[0m[38;5;2;1m[ 51%]:[0m compiling.release hardware/arm/arch/common/src/interrupt.S[0m
+[0m[38;5;2;1m[ 52%]:[0m compiling.release hardware/arm/arch/common/src/arm32_aeabi_divmod_a32.S[0m
+[0m[38;5;2;1m[ 52%]:[0m compiling.release hardware/arm/arch/v7/boot.S[0m
+[0m[38;5;2;1m[ 53%]:[0m compiling.release hardware/arm/arch/v7/system.S[0m
+[0m[38;5;2;1m[ 54%]:[0m cache compiling.release kernel/src/kconsole.c[0m
+[0m[38;5;2;1m[ 55%]:[0m cache compiling.release kernel/src/trace.c[0m
+[0m[38;5;2;1m[ 55%]:[0m cache compiling.release kernel/src/kernel_config.c[0m
+[0m[38;5;2;1m[ 56%]:[0m cache compiling.release kernel/src/interrupt.c[0m
+[0m[38;5;2;1m[ 57%]:[0m cache compiling.release kernel/src/schedule.c[0m
+[0m[38;5;2;1m[ 57%]:[0m cache compiling.release kernel/src/kernel.c[0m
+[0m[38;5;2;1m[ 58%]:[0m cache compiling.release kernel/src/irq.c[0m
+[0m[38;5;2;1m[ 59%]:[0m cache compiling.release kernel/src/system.c[0m
+[0m[38;5;2;1m[ 60%]:[0m cache compiling.release kernel/src/hw_info.c[0m
+[0m[38;5;2;1m[ 60%]:[0m cache compiling.release kernel/src/semaphore.c[0m
+[0m[38;5;2;1m[ 61%]:[0m cache compiling.release kernel/src/kevqueue.c[0m
+[0m[38;5;2;1m[ 62%]:[0m cache compiling.release kernel/src/smp/core.c[0m
+[0m[38;5;2;1m[ 63%]:[0m cache compiling.release kernel/src/mm/kmalloc.c[0m
+[0m[38;5;2;1m[ 63%]:[0m cache compiling.release kernel/src/mm/shm.c[0m
+[0m[38;5;2;1m[ 64%]:[0m cache compiling.release kernel/src/mm/dma.c[0m
+[0m[38;5;2;1m[ 65%]:[0m cache compiling.release kernel/src/mm/mmio.c[0m
+[0m[38;5;2;1m[ 65%]:[0m cache compiling.release kernel/src/mm/trunkmem.c[0m
+[0m[38;5;2;1m[ 66%]:[0m cache compiling.release kernel/src/mm/kalloc.c[0m
+[0m[38;5;3;1mkernel/src/mm/mmio.c:2: warning: ISO C forbids an empty translation unit [-Wpedantic][0m
+[0m[38;5;2;1m[ 67%]:[0m cache compiling.release kernel/src/mm/mmu.c[0m
+[0m[38;5;2;1m[ 68%]:[0m cache compiling.release kernel/src/proc.c[0m
+[0m[38;5;2;1m[ 68%]:[0m cache compiling.release kernel/src/signal.c[0m
+[0m[38;5;2;1m[ 69%]:[0m cache compiling.release kernel/src/ipc.c[0m
+[0m[38;5;2;1m[ 70%]:[0m cache compiling.release kernel/src/svc.c[0m
+[0m[38;5;2;1m[ 71%]:[0m cache compiling.release lib/sconf/src/sconf.c[0m
+[0m[38;5;2;1m[ 71%]:[0m cache compiling.release lib/graph/src/font.c[0m
+[0m[38;5;2;1m[ 72%]:[0m cache compiling.release lib/graph/src/pixel.c[0m
+[0m[38;5;3;1mkernel/src/svc.c: In function 'sys_get_trace':
+kernel/src/svc.c:661:1: warning: no return statement in function returning non-void [-Wreturn-type]
+  661 | }
+      | ^
+kernel/src/svc.c:657:30: warning: unused parameter 'arg0' [-Wunused-parameter]
+  657 | static int sys_get_trace(int arg0) {
+      |                          ~~~~^~~~
+kernel/src/svc.c: In function 'sys_get_trace_fps':
+kernel/src/svc.c:667:1: warning: no return statement in function returning non-void [-Wreturn-type]
+  667 | }
+      | ^[0m
+[0m[38;5;2;1m[ 73%]:[0m cache compiling.release lib/graph/src/text.c[0m
+[0m[38;5;2;1m[ 73%]:[0m cache compiling.release lib/graph/src/font8x16.c[0m
+[0m[38;5;2;1m[ 74%]:[0m cache compiling.release lib/graph/src/graph.c[0m
+[0m[38;5;2;1m[ 75%]:[0m cache compiling.release lib/ext2/src/ext2read.c[0m
+[0m[38;5;2;1m[ 76%]:[0m cache compiling.release lib/console/src/console.c[0m
+[0m[38;5;2;1m[ 76%]:[0m cache compiling.release lib/src/atoi.c[0m
+[0m[38;5;2;1m[ 77%]:[0m cache compiling.release lib/src/queue.c[0m
+[0m[38;5;2;1m[ 78%]:[0m cache compiling.release lib/src/vprintf.c[0m
+[0m[38;5;2;1m[ 78%]:[0m cache compiling.release lib/src/kprintf.c[0m
+[0m[38;5;2;1m[ 79%]:[0m cache compiling.release lib/src/proto.c[0m
+[0m[38;5;2;1m[ 80%]:[0m cache compiling.release lib/src/mstr.c[0m
+[0m[38;5;2;1m[ 81%]:[0m cache compiling.release lib/src/kstring.c[0m
+[0m[38;5;2;1m[ 81%]:[0m cache compiling.release dev/src/fb.c[0m
+[0m[38;5;2;1m[ 82%]:[0m cache compiling.release loadinit/sd/loadinit.c[0m
+[0m[38;5;2;1m[ 83%]:[0m cache compiling.release hardware/arm/arch/common/src/gic.c[0m
+[0m[38;5;2;1m[ 84%]:[0m cache compiling.release hardware/arm/arch/common/src/arm32_aeabi_ldivmod.c[0m
+[0m[38;5;2;1m[ 84%]:[0m cache compiling.release hardware/arm/arch/common/src/irq.c[0m
+[0m[38;5;2;1m[ 85%]:[0m cache compiling.release hardware/arm/arch/common/src/mmu_arch.c[0m
+[0m[38;5;2;1m[ 86%]:[0m cache compiling.release hardware/arm/arch/common/src/arm32_aeabi_divmod.c[0m
+[0m[38;5;2;1m[ 86%]:[0m cache compiling.release hardware/arm/arch/v7/mmu_pte_flags.c[0m
+[0m[38;5;2;1m[ 87%]:[0m cache compiling.release hardware/arm/arch/v7/neon.c[0m
+[0m[38;5;2;1m[ 88%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/fb.c[0m
+[0m[38;5;2;1m[ 89%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/sd.c[0m
+[0m[38;5;2;1m[ 89%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/hw_info_arch.c[0m
+[0m[38;5;2;1m[ 90%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/core.c[0m
+[0m[38;5;2;1m[ 91%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/start.c[0m
+[0m[38;5;3;1mhardware/arm/arch/v7/neon.c: In function '_enable_neon':
+hardware/arm/arch/v7/neon.c:56:22: warning: ISO C forbids braced-groups within expressions [-Wpedantic]
+   56 |     uint32_t fpexc = fmrx(FPEXC);
+      |                      ^[0m
+[0m[38;5;2;1m[ 92%]:[0m cache compiling.release hardware/arm/raspi/pix/bsp/uart.c[0m
+[0m[38;5;2;1m[ 92%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/sd.c[0m
+[0m[38;5;2;1m[ 93%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/gpio.c[0m
+[0m[38;5;2;1m[ 94%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/mini_uart.c[0m
+[0m[38;5;2;1m[ 94%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/board.c[0m
+[0m[38;5;2;1m[ 95%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/pl011_uart.c[0m
+[0m[38;5;2;1m[ 96%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/framebuffer.c[0m
+[0m[38;5;2;1m[ 97%]:[0m cache compiling.release hardware/arm/raspi/lib/bcm283x/src/mailbox.c[0m
+[0m[38;5;2;1m[ 97%]:[0m [38;5;5;1mlinking.release kernel[0m
+[0m[38;5;2;1m[ 97%]:[0m compiling.release hardware/arm/arch/common/src/interrupt.S[0m
+[0m[38;5;2;1m[ 97%]:[0m compiling.release hardware/arm/arch/common/src/arm32_aeabi_divmod_a32.S[0m
+[0m[38;5;2;1m[ 97%]:[0m compiling.release hardware/arm/arch/v7/boot.S[0m
+[0m[38;5;2;1m[ 97%]:[0m compiling.release hardware/arm/arch/v7/system.S[0m
+[0m[1;38;5;1;1merror: [0m/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/interrupt.c.o: in function `interrupt_setup':
+interrupt.c:(.text+0x294): undefined reference to `irq_enable'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/kernel.c.o: in function `_kernel_entry_c':
+kernel.c:(.text+0xd2c): undefined reference to `timer_set_interval'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/irq.c.o: in function `ipi_enable_all':
+irq.c:(.text+0x28): undefined reference to `ipi_enable'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/irq.c.o: in function `ipi_send_all':
+irq.c:(.text+0xb4): undefined reference to `ipi_send'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/irq.c.o: in function `irq_do_timer0':
+irq.c:(.text+0x168): undefined reference to `timer_read_sys_usec'
+/opt/homebrew/bin/arm-none-eabi-ld: irq.c:(.text+0x2a0): undefined reference to `timer_clear_interrupt'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/irq.c.o: in function `_irq_handler':
+irq.c:(.text+0x40c): undefined reference to `irq_get'
+/opt/homebrew/bin/arm-none-eabi-ld: irq.c:(.text+0x464): undefined reference to `ipi_clear'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/irq.c.o: in function `irq_init':
+irq.c:(.text+0x97c): undefined reference to `irq_arch_init'
+/opt/homebrew/bin/arm-none-eabi-ld: irq.c:(.text+0x9e8): undefined reference to `timer_read_sys_usec'
+/opt/homebrew/bin/arm-none-eabi-ld: irq.c:(.text+0xa28): undefined reference to `irq_enable'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/system.c.o: in function `_delay_usec':
+system.c:(.text+0x54): undefined reference to `timer_read_sys_usec'
+/opt/homebrew/bin/arm-none-eabi-ld: system.c:(.text+0x74): undefined reference to `timer_read_sys_usec'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/kernel/src/proc.c.o: in function `proc_switch_multi_core':
+proc.c:(.text+0xfec): undefined reference to `ipi_send'
+/opt/homebrew/bin/arm-none-eabi-ld: build/.objs/kernel/raspi2.3/arm/release/hardware/arm/raspi/pix/bsp/core.c.o: in function `cpu_core_ready':
+core.c:(.text+0x40): undefined reference to `ipi_enable'
+[0m

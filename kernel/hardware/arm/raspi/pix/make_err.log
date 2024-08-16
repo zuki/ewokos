@@ -1,0 +1,7 @@
+../../../../../kernel/hardware/arm/arch/v7/neon.c: In function '_enable_neon':
+../../../../../kernel/hardware/arm/arch/v7/neon.c:7:21: warning: ISO C forbids braced-groups within expressions [-Wpedantic]
+    7 | #define fmrx(_vfp_) ({          \
+      |                     ^
+../../../../../kernel/hardware/arm/arch/v7/neon.c:56:22: note: in expansion of macro 'fmrx'
+   56 |     uint32_t fpexc = fmrx(FPEXC);
+      |                      ^~~~
