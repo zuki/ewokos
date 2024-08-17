@@ -50,7 +50,6 @@ CFLAGS += $(OPTM) \
 	-I$(SRC_DIR)/dev/include \
 	-I$(ARCH_DIR)/$(ARCH) \
 	-I$(ARCH_DIR)/common/include \
-	-I$(SDKROOT)/usr/include \
 	-marm $(ARCH_CFLAGS) \
 	-Wstrict-prototypes \
 	-pedantic -Wall -Wextra -msoft-float -fPIC -mapcs-frame \
@@ -68,7 +67,7 @@ CFLAGS += $(OPTM) \
 	-fno-builtin-strncmp \
 	-Wno-builtin-declaration-mismatch \
 	-std=c99
-
+#-I$(SDKROOT)/usr/include
 
 ARCH_OBJS += \
 	$(ARCH_DIR)/$(ARCH)/boot.o \

@@ -112,7 +112,7 @@ function qemu(args, kernel)
     end)
 end
 set_arch("arm")
-add_sysincludedirs("$(env SDKROOT)/usr/include")
+--add_sysincludedirs("$(env SDKROOT)/usr/include")
 if is_plat("raspi2", "raspi3", "raspi2.3") then 
     includes("hardware/arm/raspi/pix/xmake.lua")
 elseif is_plat("raspi1") then
