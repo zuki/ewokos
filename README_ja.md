@@ -115,8 +115,8 @@ make sd:
 ## QEMUによる実行 (raspi2)
 
 ```sh	
-cd kernel/build/raspi/pi2.3
-make run			# EwokOSを実行 (username: root, password: (none))
+cd system/hardware/arm/raspix
+make run			# EwokOSを実行 (username: root, password: root)
 make debug			# デバッグサーバモードでEwokOSを実行
 make gdb			# EwokOSをデバッグ（デバッグクライアントモード）
 ```
