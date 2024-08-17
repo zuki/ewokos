@@ -2,7 +2,9 @@
 #include <ewoksys/syscall.h>
 #include <ewoksys/core.h>
 #include <ewoksys/proc.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/shm.h>
 
 #ifdef __cplusplus

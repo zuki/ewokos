@@ -1,13 +1,17 @@
 #include <ewoksys/mstr.h>
 #include <string.h>
-#include <stdlib.h>
 
 #include <stdarg.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+typedef void (*outc_func_t)(char c, void* p);
+
+extern void v_printf(outc_func_t outc, void* p, const char* format, va_list ap);
+extern int32_t snprintf(char *target, int32_t size, const char *format, ...);
 
 /** str functions.-----------------------------*/
 

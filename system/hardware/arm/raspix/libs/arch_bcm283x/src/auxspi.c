@@ -9,6 +9,7 @@
 #include <arch/bcm283x/gpio.h>
 #include <arch/bcm283x/spi.h>
 #include <ewoksys/mmio.h>
+#include <ewoksys/klog.h>
 
 #define AUX_OFFSET  0x00215000
 #define SPI1_OFFSET 0x00215080
@@ -95,10 +96,10 @@ uint16_t bcm283x_aux_spi_CalcClockDivider(int speed_hz)
 {
     uint16_t divider;
 
-    if (speed_hz < (uint32_t) BCM2835_AUX_SPI_CLOCK_MIN) {
-	    speed_hz = (uint32_t) BCM2835_AUX_SPI_CLOCK_MIN;
-    } else if (speed_hz > (uint32_t) BCM2835_AUX_SPI_CLOCK_MAX) {
-	    speed_hz = (uint32_t) BCM2835_AUX_SPI_CLOCK_MAX;
+    if (speed_hz < BCM2835_AUX_SPI_CLOCK_MIN) {
+	    speed_hz = (int) BCM2835_AUX_SPI_CLOCK_MIN;
+    } else if (speed_hz > BCM2835_AUX_SPI_CLOCK_MAX) {
+	    speed_hz = BCM2835_AUX_SPI_CLOCK_MAX;
     }
 
     divider = (uint16_t) DIV_ROUND_UP(BCM2835_CORE_CLK_HZ, 2 * speed_hz) - 1;

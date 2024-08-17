@@ -1,0 +1,1692 @@
+arm-none-eabi-ar: creating ../../../../..//build/lib/libbsp.a
+ewoksys/src/mstr.c: In function 'str_format':
+ewoksys/src/mstr.c:271:9: warning: implicit declaration of function 'vprintf' [-Wimplicit-function-declaration]
+  271 |         vprintf(outc, str, format, ap);
+      |         ^~~~~~~
+ewoksys/src/mstr.c:6:1: note: include '<stdio.h>' or provide a declaration of 'vprintf'
+    5 | #include <stdlib.h>
+  +++ |+#include <stdio.h>
+    6 | 
+ewoksys/src/mstr.c:271:17: warning: passing argument 1 of 'vprintf' from incompatible pointer type [-Wincompatible-pointer-types]
+  271 |         vprintf(outc, str, format, ap);
+      |                 ^~~~
+      |                 |
+      |                 void (*)(char,  void *)
+ewoksys/src/mstr.c:271:17: note: expected 'const char *' but argument is of type 'void (*)(char,  void *)'
+ewoksys/src/mstr.c:271:23: note: expected '__va_list' but argument is of type 'str_t *' {aka 'struct st_str *'}
+  271 |         vprintf(outc, str, format, ap);
+      |                       ^~~
+ewoksys/src/mstr.c: In function 'str_format_new':
+ewoksys/src/mstr.c:280:17: warning: passing argument 1 of 'vprintf' from incompatible pointer type [-Wincompatible-pointer-types]
+  280 |         vprintf(outc, str, format, ap);
+      |                 ^~~~
+      |                 |
+      |                 void (*)(char,  void *)
+ewoksys/src/mstr.c:280:17: note: expected 'const char *' but argument is of type 'void (*)(char,  void *)'
+ewoksys/src/mstr.c:280:23: note: expected '__va_list' but argument is of type 'str_t *' {aka 'struct st_str *'}
+  280 |         vprintf(outc, str, format, ap);
+      |                       ^~~
+init.c: In function 'init_stdio':
+init.c:92:17: warning: implicit declaration of function 'setenv'; did you mean 'getenv'? [-Wimplicit-function-declaration]
+   92 |                 setenv("CONSOLE_ID", tty_dev);
+      |                 ^~~~~~
+      |                 getenv
+vfsd.c: In function 'node_hash_key':
+vfsd.c:61:29: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'long unsigned int' [-Wformat=]
+   61 |         snprintf(key, 31, "%x", (uint32_t)node_id);
+      |                            ~^   ~~~~~~~~~~~~~~~~~
+      |                             |   |
+      |                             |   long unsigned int
+      |                             unsigned int
+      |                            %lx
+vfsd.c: In function 'vfsd_init':
+vfsd.c:90:21: warning: comparison of integer expressions of different signedness: 'int32_t' {aka 'long int'} and 'uint32_t' {aka 'long unsigned int'} [-Wsign-compare]
+   90 |         for(i = 0; i<_max_proc_table_num; i++) {
+      |                     ^
+vfsd.c: In function 'vfs_get_file':
+vfsd.c:100:27: warning: comparison of integer expressions of different signedness: 'int32_t' {aka 'long int'} and 'uint32_t' {aka 'long unsigned int'} [-Wsign-compare]
+  100 |         if(pid < 0 || pid >= _max_proc_table_num || fd < 0 || fd >= MAX_OPEN_FILE_PER_PROC)
+      |                           ^~
+vfsd.c: In function 'vfs_dup2':
+vfsd.c:559:24: warning: returning 'void *' from a function with return type 'int32_t' {aka 'long int'} makes integer from pointer without a cast [-Wint-conversion]
+  559 |                 return NULL;
+      |                        ^~~~
+vfsd.c:562:25: warning: returning 'vfs_node_t *' {aka 'struct vfs_node *'} from a function with return type 'int32_t' {aka 'long int'} makes integer from pointer without a cast [-Wint-conversion]
+  562 |                 return f->node;
+      |                        ~^~~~~~
+vfsd.c:566:24: warning: returning 'void *' from a function with return type 'int32_t' {aka 'long int'} makes integer from pointer without a cast [-Wint-conversion]
+  566 |                 return NULL;
+      |                        ^~~~
+vfsd.c:571:24: warning: returning 'void *' from a function with return type 'int32_t' {aka 'long int'} makes integer from pointer without a cast [-Wint-conversion]
+  571 |                 return NULL;
+      |                        ^~~~
+vfsd.c:577:17: warning: returning 'vfs_node_t *' {aka 'struct vfs_node *'} from a function with return type 'int32_t' {aka 'long int'} makes integer from pointer without a cast [-Wint-conversion]
+  577 |         return f->node;
+      |                ~^~~~~~
+vfsd.c: In function 'do_vfs_dup':
+vfsd.c:747:45: warning: passing argument 3 of 'vfs_dup' from incompatible pointer type [-Wincompatible-pointer-types]
+  747 |         vfs_node_t* node = vfs_dup(pid, fd, &fdto);
+      |                                             ^~~~~
+      |                                             |
+      |                                             int *
+vfsd.c:533:64: note: expected 'int32_t *' {aka 'long int *'} but argument is of type 'int *'
+  533 | static vfs_node_t* vfs_dup(int32_t pid, int32_t from, int32_t *ret) {
+      |                                                       ~~~~~~~~~^~~
+vfsd.c: In function 'do_vfs_dup2':
+vfsd.c:758:28: warning: initialization of 'vfs_node_t *' {aka 'struct vfs_node *'} from 'int32_t' {aka 'long int'} makes pointer from integer without a cast [-Wint-conversion]
+  758 |         vfs_node_t* node = vfs_dup2(pid, fd, fdto);
+      |                            ^~~~~~~~
+vfsd.c: In function 'do_vfs_proc_exit':
+vfsd.c:1038:29: warning: comparison of integer expressions of different signedness: 'int' and 'uint32_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 1038 |         if(cpid < 0 || cpid >= _max_proc_table_num)
+      |                             ^~
+In function 'gen_fsinfo',
+    inlined from 'do_vfs_open' at vfsd.c:732:16:
+vfsd.c:582:9: warning: 'memcpy' offset [0, 111] is out of the bounds [0, 0] [-Warray-bounds=]
+  582 |         memcpy(&ret, &node->fsinfo, sizeof(fsinfo_t));
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sessiond.c: In function 'read_user_info':
+sessiond.c:81:17: warning: implicit declaration of function 'dprintf'; did you mean 'sprintf'? [-Wimplicit-function-declaration]
+   81 |                 dprintf(3, "Error, open password file failed!\n");
+      |                 ^~~~~~~
+      |                 sprintf
+sessiond.c: In function 'main':
+sessiond.c:206:17: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+  206 |                 klog("reg sessiond ipc_serv error!\n");
+      |                 ^~~~
+telnetd.c:10: warning: "EXIT_FAILURE" redefined
+   10 | #define EXIT_FAILURE -1
+      | 
+In file included from telnetd.c:2:
+/Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/stdlib.h:60: note: this is the location of the previous definition
+   60 | #define EXIT_FAILURE 1
+      | 
+telnetd.c: In function 'main':
+telnetd.c:53:43: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'struct in_addr' [-Wformat=]
+   53 |             printf("Connection request:%08x :%d %d\n", clnt_addr.sin_addr, ntohs(clnt_addr.sin_port), clnt_sock);
+      |                                        ~~~^            ~~~~~~~~~~~~~~~~~~
+      |                                           |                     |
+      |                                           unsigned int          struct in_addr
+telnetd.c:61:25: warning: implicit declaration of function 'setenv'; did you mean 'getenv'? [-Wimplicit-function-declaration]
+   61 |                         setenv("CONSOLE_ID", "telnet");
+      |                         ^~~~~~
+      |                         getenv
+telnetd.c:62:17: warning: implicit declaration of function 'proc_exec' [-Wimplicit-function-declaration]
+   62 |                 proc_exec("/bin/session");
+      |                 ^~~~~~~~~
+telnetd.c:23:9: warning: unused variable 'option' [-Wunused-variable]
+   23 |     int option;
+      |         ^~~~~~
+telnetd.c:22:31: warning: unused variable 'opt_size' [-Wunused-variable]
+   22 |     socklen_t clnt_addr_size, opt_size;
+      |                               ^~~~~~~~
+httpd.c:10: warning: "EXIT_FAILURE" redefined
+   10 | #define EXIT_FAILURE -1
+      | 
+In file included from httpd.c:2:
+/Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/stdlib.h:60: note: this is the location of the previous definition
+   60 | #define EXIT_FAILURE 1
+      | 
+httpd.c: In function 'sgets':
+httpd.c:20:12: warning: 'return' with a value, in function returning void [-Wreturn-type]
+   20 |     return recv(sock, buf, size, 0);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~
+httpd.c:19:6: note: declared here
+   19 | void sgets(char* buf, int size, int sock){
+      |      ^~~~~
+httpd.c: In function 'send_error_msg':
+httpd.c:45:47: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+   45 |     sprintf(content_length, "Content-length:%lu\r\n", strlen(content));
+      |                                             ~~^       ~~~~~~~~~~~~~~~
+      |                                               |       |
+      |                                               |       size_t {aka unsigned int}
+      |                                               long unsigned int
+      |                                             %u
+httpd.c: In function 'send_data_html':
+httpd.c:78:47: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+   78 |     sprintf(content_length, "Content-Length:%ld\r\n", strlen(content));
+      |                                             ~~^       ~~~~~~~~~~~~~~~
+      |                                               |       |
+      |                                               |       size_t {aka unsigned int}
+      |                                               long int
+      |                                             %d
+httpd.c:76:11: warning: unused variable 'response_file_fp' [-Wunused-variable]
+   76 |     FILE *response_file_fp;
+      |           ^~~~~~~~~~~~~~~~
+httpd.c: In function 'test_handler':
+httpd.c:125:5: warning: implicit declaration of function 'proc_usleep' [-Wimplicit-function-declaration]
+  125 |     proc_usleep(1000);
+      |     ^~~~~~~~~~~
+httpd.c:126:10: warning: passing argument 1 of 'test' makes integer from pointer without a cast [-Wint-conversion]
+  126 |     test(arg);
+      |          ^~~
+      |          |
+      |          void *
+httpd.c:119:15: note: expected 'int' but argument is of type 'void *'
+  119 | void test(int i){
+      |           ~~~~^
+httpd.c: In function 'main':
+httpd.c:178:43: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'struct in_addr' [-Wformat=]
+  178 |             printf("Connection request:%08x :%d %d\n", clnt_addr.sin_addr, ntohs(clnt_addr.sin_port), clnt_sock);
+      |                                        ~~~^            ~~~~~~~~~~~~~~~~~~
+      |                                           |                     |
+      |                                           unsigned int          struct in_addr
+httpd.c:135:9: warning: unused variable 'option' [-Wunused-variable]
+  135 |     int option;
+      |         ^~~~~~
+httpd.c:134:31: warning: unused variable 'opt_size' [-Wunused-variable]
+  134 |     socklen_t clnt_addr_size, opt_size;
+      |                               ^~~~~~~~
+httpd.c: In function 'test_handler':
+httpd.c:128:1: warning: control reaches end of non-void function [-Wreturn-type]
+  128 | }
+      | ^
+httpd.c: In function 'send_error_msg':
+httpd.c:45:5: warning: 'content' may be used uninitialized [-Wmaybe-uninitialized]
+   45 |     sprintf(content_length, "Content-length:%lu\r\n", strlen(content));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+httpd.c:30:11: note: 'content' was declared here
+   30 |     char *content;
+      |           ^~~~~~~
+httpd.c:47:5: warning: 'protocol_and_status' may be used uninitialized [-Wmaybe-uninitialized]
+   47 |     strcat(txbuf,  protocol_and_status);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+httpd.c:25:11: note: 'protocol_and_status' was declared here
+   25 |     char *protocol_and_status;
+      |           ^~~~~~~~~~~~~~~~~~~
+cp.c: In function 'main':
+cp.c:61:9: warning: implicit declaration of function 'fchmod'; did you mean 'chmod'? [-Wimplicit-function-declaration]
+   61 |         fchmod(fd_to, st.st_mode);
+      |         ^~~~~~
+      |         chmod
+test.c: In function 'main':
+test.c:13:16: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   13 |   pids = (int*)malloc(sys_info.cores * fps * 4);
+      |                ^~~~~~
+test.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <ewoksys/sys.h>
+  +++ |+#include <stdlib.h>
+    4 | #include <sysinfo.h>
+test.c:18:32: warning: comparison of integer expressions of different signedness: 'uint32_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+   18 |     for(uint32_t trace=0; trace<traces; trace++) {
+      |                                ^
+test.c:20:19: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   20 |         printf("%8d - %d:%d ", trace, core, pids[core*fps+trace]);
+      |                 ~~^            ~~~~~
+      |                   |            |
+      |                   int          uint32_t {aka long unsigned int}
+      |                 %8ld
+test.c:20:24: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   20 |         printf("%8d - %d:%d ", trace, core, pids[core*fps+trace]);
+      |                       ~^              ~~~~
+      |                        |              |
+      |                        int            uint32_t {aka long unsigned int}
+      |                       %ld
+test.c:24:5: warning: implicit declaration of function 'usleep' [-Wimplicit-function-declaration]
+   24 |     usleep(500000);
+      |     ^~~~~~
+tsaver.c: In function 'saver':
+tsaver.c:64:20: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   64 |   x = random_to(80-strlen(s[0]));
+      |                    ^~~~~~
+tsaver.c:7:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    6 | #include <ewoksys/basic_math.h>
+  +++ |+#include <string.h>
+    7 | 
+tsaver.c: In function 'main':
+tsaver.c:93:5: warning: implicit declaration of function 'usleep'; did you mean 'sleep'? [-Wimplicit-function-declaration]
+   93 |     usleep(100000);
+      |     ^~~~~~
+      |     sleep
+ps.c: In function 'get_state':
+ps.c:28:49: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+   28 |                         snprintf(ret, 13, "blk[%d]", proc->block_by);
+      |                                                ~^    ~~~~~~~~~~~~~~
+      |                                                 |        |
+      |                                                 int      int32_t {aka long int}
+      |                                                %ld
+ps.c:31:41: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+   31 |                 snprintf(ret, 13, "wat[%d]", proc->wait_for);
+      |                                        ~^    ~~~~~~~~~~~~~~
+      |                                         |        |
+      |                                         int      int32_t {aka long int}
+      |                                        %ld
+ps.c: In function 'get_owner':
+ps.c:47:52: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+   47 |                 snprintf(name, SESSION_USER_MAX, "%d", proc->uid);
+      |                                                   ~^   ~~~~~~~~~
+      |                                                    |       |
+      |                                                    int     int32_t {aka long int}
+      |                                                   %ld
+ps.c: In function 'get_core_loading':
+ps.c:69:36: warning: format '%d' expects argument of type 'int', but argument 4 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   69 |                 snprintf(ret, 7, "%d:%d%%", proc->core, proc->run_usec/10000);
+      |                                   ~^        ~~~~~~~~~~
+      |                                    |            |
+      |                                    int          uint32_t {aka long unsigned int}
+      |                                   %ld
+ps.c:69:39: warning: format '%d' expects argument of type 'int', but argument 5 has type 'long unsigned int' [-Wformat=]
+   69 |                 snprintf(ret, 7, "%d:%d%%", proc->core, proc->run_usec/10000);
+      |                                      ~^                 ~~~~~~~~~~~~~~~~~~~~
+      |                                       |                               |
+      |                                       int                             long unsigned int
+      |                                      %ld
+ps.c:71:36: warning: format '%d' expects argument of type 'int', but argument 4 has type 'long unsigned int' [-Wformat=]
+   71 |                 snprintf(ret, 7, "%d%%", proc->run_usec/10000);
+      |                                   ~^     ~~~~~~~~~~~~~~~~~~~~
+      |                                    |                   |
+      |                                    int                 long unsigned int
+      |                                   %ld
+ps.c: In function 'main':
+ps.c:146:49: warning: format '%d' expects argument of type 'int', but argument 3 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  146 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %02d:%02d:%02d %-6d  %-5d  %s",
+      |                                              ~~~^
+      |                                                 |
+      |                                                 int
+      |                                              %-4ld
+  147 |                                         get_owner(proc),
+  148 |                                         proc->pid,
+      |                                         ~~~~~~~~~
+      |                                             |
+      |                                             int32_t {aka long int}
+ps.c:146:54: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  146 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %02d:%02d:%02d %-6d  %-5d  %s",
+      |                                                   ~~~^
+      |                                                      |
+      |                                                      int
+      |                                                   %-4ld
+......
+  149 |                                         proc->father_pid,
+      |                                         ~~~~~~~~~~~~~~~~
+      |                                             |
+      |                                             int32_t {aka long int}
+ps.c:146:70: warning: format '%d' expects argument of type 'int', but argument 7 has type 'long unsigned int' [-Wformat=]
+  146 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %02d:%02d:%02d %-6d  %-5d  %s",
+      |                                                                   ~~~^
+      |                                                                      |
+      |                                                                      int
+      |                                                                   %02ld
+......
+  152 |                                         sec / (3600),
+      |                                         ~~~~~~~~~~~~                  
+      |                                             |
+      |                                             long unsigned int
+ps.c:146:75: warning: format '%d' expects argument of type 'int', but argument 8 has type 'long unsigned int' [-Wformat=]
+  146 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %02d:%02d:%02d %-6d  %-5d  %s",
+      |                                                                        ~~~^
+      |                                                                           |
+      |                                                                           int
+      |                                                                        %02ld
+......
+  153 |                                         sec / 60,
+      |                                         ~~~~~~~~                           
+      |                                             |
+      |                                             long unsigned int
+ps.c:146:80: warning: format '%d' expects argument of type 'int', but argument 9 has type 'long unsigned int' [-Wformat=]
+  146 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %02d:%02d:%02d %-6d  %-5d  %s",
+      |                                                                             ~~~^
+      |                                                                                |
+      |                                                                                int
+      |                                                                             %02ld
+......
+  154 |                                         sec % 60,
+      |                                         ~~~~~~~~                                
+      |                                             |
+      |                                             long unsigned int
+ps.c:146:85: warning: format '%d' expects argument of type 'int', but argument 10 has type 'long unsigned int' [-Wformat=]
+  146 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %02d:%02d:%02d %-6d  %-5d  %s",
+      |                                                                                  ~~~^
+      |                                                                                     |
+      |                                                                                     int
+      |                                                                                  %-6ld
+......
+  155 |                                         proc->heap_size / 1024,
+      |                                         ~~~~~~~~~~~~~~~~~~~~~~                       
+      |                                                         |
+      |                                                         long unsigned int
+ps.c:146:91: warning: format '%d' expects argument of type 'int', but argument 11 has type 'long unsigned int' [-Wformat=]
+  146 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %02d:%02d:%02d %-6d  %-5d  %s",
+      |                                                                                        ~~~^
+      |                                                                                           |
+      |                                                                                           int
+      |                                                                                        %-5ld
+......
+  156 |                                         proc->shm_size / 1024,
+      |                                         ~~~~~~~~~~~~~~~~~~~~~                              
+      |                                                        |
+      |                                                        long unsigned int
+ps.c:160:49: warning: format '%d' expects argument of type 'int', but argument 3 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  160 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %s",
+      |                                              ~~~^
+      |                                                 |
+      |                                                 int
+      |                                              %-4ld
+  161 |                                         get_owner(proc),
+  162 |                                         proc->pid,
+      |                                         ~~~~~~~~~
+      |                                             |
+      |                                             int32_t {aka long int}
+ps.c:160:54: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  160 |                                 printf("%-8s %-4d %-4d  %-5s %-9s %s",
+      |                                                   ~~~^
+      |                                                      |
+      |                                                      int
+      |                                                   %-4ld
+......
+  163 |                                         proc->father_pid,
+      |                                         ~~~~~~~~~~~~~~~~
+      |                                             |
+      |                                             int32_t {aka long int}
+ps.c:171:49: warning: format '%d' expects argument of type 'int', but argument 2 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  171 |                                 printf(" [THRD:%d]\n", proc->father_pid);
+      |                                                ~^      ~~~~~~~~~~~~~~~~
+      |                                                 |          |
+      |                                                 int        int32_t {aka long int}
+      |                                                %ld
+ps.c:176:55: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  176 |         printf("\n\033[1mtask_num: %d, memory: total %d MB, free %d MB, shm %d MB\n", num, t_mem, fr_mem, shm_mem);
+      |                                                      ~^                                    ~~~~~
+      |                                                       |                                    |
+      |                                                       int                                  uint32_t {aka long unsigned int}
+      |                                                      %ld
+ps.c:176:67: warning: format '%d' expects argument of type 'int', but argument 4 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  176 |         printf("\n\033[1mtask_num: %d, memory: total %d MB, free %d MB, shm %d MB\n", num, t_mem, fr_mem, shm_mem);
+      |                                                                  ~^                               ~~~~~~
+      |                                                                   |                               |
+      |                                                                   int                             uint32_t {aka long unsigned int}
+      |                                                                  %ld
+ps.c:176:78: warning: format '%d' expects argument of type 'int', but argument 5 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  176 |         printf("\n\033[1mtask_num: %d, memory: total %d MB, free %d MB, shm %d MB\n", num, t_mem, fr_mem, shm_mem);
+      |                                                                             ~^                            ~~~~~~~
+      |                                                                              |                            |
+      |                                                                              int                          uint32_t {aka long unsigned int}
+      |                                                                             %ld
+ps.c: In function 'get_state':
+ps.c:28:48: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size 9 [-Wformat-truncation=]
+   28 |                         snprintf(ret, 13, "blk[%d]", proc->block_by);
+      |                                                ^~
+In function 'get_state',
+    inlined from 'get_state' at ps.c:22:20:
+ps.c:28:43: note: directive argument in the range [0, 2147483647]
+   28 |                         snprintf(ret, 13, "blk[%d]", proc->block_by);
+      |                                           ^~~~~~~~~
+ps.c:28:25: note: 'snprintf' output between 7 and 16 bytes into a destination of size 13
+   28 |                         snprintf(ret, 13, "blk[%d]", proc->block_by);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ps.c: In function 'get_core_loading.isra':
+ps.c:71:39: warning: 'snprintf' output may be truncated before the last format character [-Wformat-truncation=]
+   71 |                 snprintf(ret, 7, "%d%%", proc->run_usec/10000);
+      |                                       ^
+In function 'get_core_loading',
+    inlined from 'get_core_loading.isra' at ps.c:66:20:
+ps.c:71:17: note: 'snprintf' output between 3 and 8 bytes into a destination of size 7
+   71 |                 snprintf(ret, 7, "%d%%", proc->run_usec/10000);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ps.c: In function 'get_core_loading.isra':
+ps.c:69:38: warning: '%d' directive output may be truncated writing between 1 and 6 bytes into a region of size between 0 and 5 [-Wformat-truncation=]
+   69 |                 snprintf(ret, 7, "%d:%d%%", proc->core, proc->run_usec/10000);
+      |                                      ^~
+ps.c:69:34: note: directive argument in the range [0, 429496]
+   69 |                 snprintf(ret, 7, "%d:%d%%", proc->core, proc->run_usec/10000);
+      |                                  ^~~~~~~~~
+ps.c:69:17: note: 'snprintf' output between 5 and 20 bytes into a destination of size 7
+   69 |                 snprintf(ret, 7, "%d:%d%%", proc->core, proc->run_usec/10000);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+devcmd.c: In function 'cmd_gets':
+devcmd.c:24:33: warning: implicit declaration of function 'putch'; did you mean 'putc'? [-Wimplicit-function-declaration]
+   24 |                                 putch(CONSOLE_LEFT);
+      |                                 ^~~~~
+      |                                 putc
+devcmd.c: In function 'devcmd':
+devcmd.c:68:20: warning: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+   68 |                 if(strcmp(cmd->cstr, "exit") == 0)
+      |                    ^~~~~~
+devcmd.c:7:1: note: include '<string.h>' or provide a declaration of 'strcmp'
+    6 | #include <ewoksys/proc.h>
+  +++ |+#include <string.h>
+    7 | 
+devcmd.c:77:25: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   77 |                         free(ret);
+      |                         ^~~~
+devcmd.c:7:1: note: include '<stdlib.h>' or provide a declaration of 'free'
+    6 | #include <ewoksys/proc.h>
+  +++ |+#include <stdlib.h>
+    7 | 
+svcinfo.c: In function 'main':
+svcinfo.c:150:33: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  150 |                 printf("%-4d %-8d %2d%%  %s\n", i,
+      |                              ~~~^
+      |                                 |
+      |                                 int
+      |                              %-8ld
+  151 |                                 sys_state.svc_counter[i],
+      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                      |
+      |                                                      uint32_t {aka long unsigned int}
+svcinfo.c:150:37: warning: format '%d' expects argument of type 'int', but argument 4 has type 'long unsigned int' [-Wformat=]
+  150 |                 printf("%-4d %-8d %2d%%  %s\n", i,
+      |                                   ~~^
+      |                                     |
+      |                                     int
+      |                                   %2ld
+  151 |                                 sys_state.svc_counter[i],
+  152 |                                 sys_state.svc_counter[i]*100/sys_state.svc_total,
+      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                             |
+      |                                                             long unsigned int
+svcinfo.c:155:28: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  155 |         printf("\ntotal:  %d\n", sys_state.svc_total);
+      |                           ~^     ~~~~~~~~~~~~~~~~~~~
+      |                            |              |
+      |                            int            uint32_t {aka long unsigned int}
+      |                           %ld
+shell.c: In function 'main':
+shell.c:217:9: warning: implicit declaration of function 'setenv'; did you mean 'getenv'? [-Wimplicit-function-declaration]
+  217 |         setenv("PATH", "/sbin:/bin:/bin/x");
+      |         ^~~~~~
+      |         getenv
+gets.c: In function 'cmd_gets':
+gets.c:76:33: warning: implicit declaration of function 'putch'; did you mean 'putc'? [-Wimplicit-function-declaration]
+   76 |                                 putch(CONSOLE_LEFT);
+      |                                 ^~~~~
+      |                                 putc
+cmd.c: In function 'export_set':
+cmd.c:109:9: warning: implicit declaration of function 'setenv'; did you mean 'getenv'? [-Wimplicit-function-declaration]
+  109 |         setenv(name, (v+1));
+      |         ^~~~~~
+      |         getenv
+ls.c: In function 'main':
+ls.c:83:46: warning: format '%d' expects argument of type 'int', but argument 3 has type 'int32_t' {aka 'long int'} [-Wformat=]
+   83 |                         sprintf(info.user, "%d", st.st_uid);
+      |                                             ~^   ~~~~~~~~~
+      |                                              |     |
+      |                                              int   int32_t {aka long int}
+      |                                             %ld
+ls.c:85:47: warning: format '%d' expects argument of type 'int', but argument 3 has type 'int32_t' {aka 'long int'} [-Wformat=]
+   85 |                         sprintf(infog.user, "%d", st.st_gid);
+      |                                              ~^   ~~~~~~~~~
+      |                                               |     |
+      |                                               int   int32_t {aka long int}
+      |                                              %ld
+ls.c:87:44: warning: format '%d' expects argument of type 'int', but argument 5 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   87 |                 printf("%-10s  %-8s %-8s %8d  %s\n", show_mode, info.user, infog.user, it->d_reclen, show_name);
+      |                                          ~~^                                           ~~~~~~~~~~~~
+      |                                            |                                             |
+      |                                            int                                           uint32_t {aka long unsigned int}
+      |                                          %8ld
+login.c: In function 'input':
+login.c:69:25: warning: implicit declaration of function 'proc_usleep' [-Wimplicit-function-declaration]
+   69 |                         proc_usleep(30000);
+      |                         ^~~~~~~~~~~
+login.c:77:41: warning: implicit declaration of function 'putch'; did you mean 'putc'? [-Wimplicit-function-declaration]
+   77 |                                         putch(CONSOLE_LEFT);
+      |                                         ^~~~~
+      |                                         putc
+login.c:59:17: warning: unused variable 'old_c' [-Wunused-variable]
+   59 |         char c, old_c;
+      |                 ^~~~~
+login.c: In function 'main':
+login.c:132:25: warning: implicit declaration of function 'dprintf'; did you mean 'sprintf'? [-Wimplicit-function-declaration]
+  132 |                         dprintf(3, "Error, setgid failed!\n");
+      |                         ^~~~~~~
+      |                         sprintf
+login.c:143:9: warning: implicit declaration of function 'setenv'; did you mean 'getenv'? [-Wimplicit-function-declaration]
+  143 |         setenv("HOME", info->home);
+      |         ^~~~~~
+      |         getenv
+login.c:144:9: warning: implicit declaration of function 'proc_exec' [-Wimplicit-function-declaration]
+  144 |         proc_exec(info->cmd);
+      |         ^~~~~~~~~
+session.c: In function 'main':
+session.c:56:17: warning: implicit declaration of function 'setenv'; did you mean 'getenv'? [-Wimplicit-function-declaration]
+   56 |                 setenv("CONSOLE_ID", _tty);
+      |                 ^~~~~~
+      |                 getenv
+session.c:68:36: warning: implicit declaration of function 'proc_exec' [-Wimplicit-function-declaration]
+   68 |                                 if(proc_exec(argv[i]) < 0) {
+      |                                    ^~~~~~~~~
+mount.c: In function 'main':
+mount.c:32:34: warning: format '%d' expects argument of type 'int', but argument 3 has type 'int32_t' {aka 'long int'} [-Wformat=]
+   32 |                 printf("%-24s %-6d %s\n",
+      |                               ~~~^
+      |                                  |
+      |                                  int
+      |                               %-6ld
+   33 |                                 mnt.org_name,
+   34 |                                 mnt.pid,
+      |                                 ~~~~~~~
+      |                                    |
+      |                                    int32_t {aka long int}
+mkdir.c: In function 'main':
+mkdir.c:15:12: warning: implicit declaration of function 'mkdir' [-Wimplicit-function-declaration]
+   15 |         if(mkdir(fname, 0751) != 0) {
+      |            ^~~~~
+mkdir.c:8:18: warning: unused variable 'info' [-Wunused-variable]
+    8 |         fsinfo_t info;
+      |                  ^~~~
+mkfifo.c: In function 'main':
+mkfifo.c:14:12: warning: implicit declaration of function 'mkfifo' [-Wimplicit-function-declaration]
+   14 |         if(mkfifo(fname, 0664) != 0) {
+      |            ^~~~~~
+mkfifo.c:7:18: warning: unused variable 'info' [-Wunused-variable]
+    7 |         fsinfo_t info;
+      |                  ^~~~
+xmodem.c: In function '_inbyte':
+xmodem.c:54:17: warning: implicit declaration of function 'proc_usleep' [-Wimplicit-function-declaration]
+   54 |                 proc_usleep(5000);
+      |                 ^~~~~~~~~~~
+setux.c: In function 'main':
+setux.c:11:21: warning: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+   11 |         core_set_ux(atoi(argv[1]));
+      |                     ^~~~
+vi.c: In function 'zalloc':
+vi.c:69:16: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   69 |     char* cp = malloc(bytes);
+      |                ^~~~~~
+vi.c:23:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+   22 | #include "vi.h"
+  +++ |+#include <stdlib.h>
+   23 | 
+vi.c: In function 'place_cursor':
+vi.c:323:13: warning: comparison of integer expressions of different signedness: 'int' and 'uint32_t' {aka 'long unsigned int'} [-Wsign-compare]
+  323 |     if (row >= rows)
+      |             ^~
+vi.c:327:13: warning: comparison of integer expressions of different signedness: 'int' and 'uint32_t' {aka 'long unsigned int'} [-Wsign-compare]
+  327 |     if (col >= columns)
+      |             ^~
+vi.c: In function 'end_screen':
+vi.c:403:23: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  403 |     for (cnt = 0; cnt < rows - 2; cnt++)
+      |                       ^
+vi.c: In function 'new_screen':
+vi.c:470:9: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+  470 |         free(screen);
+      |         ^~~~
+vi.c:470:9: note: include '<stdlib.h>' or provide a declaration of 'free'
+vi.c: In function 'sync_cursor':
+vi.c:501:17: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  501 |         if (cnt > (rows - 1) / 2) {
+      |                 ^
+vi.c:503:31: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  503 |             for (cnt = 0; cnt < (rows - 1) / 2; cnt++) {
+      |                               ^
+vi.c:514:21: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  514 |             if (cnt > (rows - 1) / 2)
+      |                     ^
+vi.c:527:21: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  527 |     for (ro = 0; ro < rows - 1; ro++) { // drive "ro" to correct row
+      |                     ^
+vi.c:562:12: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  562 |     if (co >= columns + offset) {
+      |            ^~
+vi.c: In function 'format_line':
+vi.c:585:15: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  585 |     while (co < columns + tabstop) {
+      |               ^
+vi.c:628:12: warning: comparison of integer expressions of different signedness: 'int' and 'uint32_t' {aka 'long unsigned int'} [-Wsign-compare]
+  628 |     if (co < columns)
+      |            ^
+vi.c: In function 'refresh':
+vi.c:647:21: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  647 |     for (li = 0; li < rows - 1; li++) {
+      |                     ^
+vi.c:697:16: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  697 |         if (ce > columns - 1)
+      |                ^
+vi.c: In function 'read_key':
+vi.c:804:23: warning: pointer targets in passing argument 1 of 'safe_poll' differ in signedness [-Wpointer-sign]
+  804 |         n = safe_poll(buffer);
+      |                       ^~~~~~
+      |                       |
+      |                       char *
+vi.c:723:31: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+  723 | static int safe_poll(uint8_t* buffer) {
+      |                      ~~~~~~~~~^~~~~~
+vi.c:838:38: warning: pointer targets in passing argument 1 of 'safe_poll' differ in signedness [-Wpointer-sign]
+  838 |                 if (safe_poll(buffer + n) <= 0) {
+      |                               ~~~~~~~^~~
+      |                                      |
+      |                                      char *
+vi.c:723:31: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+  723 | static int safe_poll(uint8_t* buffer) {
+      |                      ~~~~~~~~~^~~~~~
+vi.c:877:1: warning: label 'got_all' defined but not used [-Wunused-label]
+  877 | got_all:
+      | ^~~~~~~
+vi.c:786:12: warning: unused variable 'c' [-Wunused-variable]
+  786 |     int n, c;
+      |            ^
+vi.c: In function 'get_one_char':
+vi.c:925:17: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+  925 |     if (lmc_len >= ARRAY_SIZE(last_modifying_cmd) - 2) {
+      |                 ^~
+vi.c: In function 'show_status_line':
+vi.c:1071:70: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+ 1071 |             if (((int)strlen(status_buffer) - (have_status_msg - 1)) > (columns - 1)) {
+      |                                                                      ^
+vi.c: In function 'flash':
+vi.c:1097:5: warning: implicit declaration of function 'proc_usleep' [-Wimplicit-function-declaration]
+ 1097 |     proc_usleep(ms);
+      |     ^~~~~~~~~~~
+vi.c: In function 'text_yank':
+vi.c:1181:17: warning: implicit declaration of function 'strndup'; did you mean 'strncmp'? [-Wimplicit-function-declaration]
+ 1181 |     reg[dest] = strndup(p, cnt + 1);
+      |                 ^~~~~~~
+      |                 strncmp
+vi.c:1181:15: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 1181 |     reg[dest] = strndup(p, cnt + 1);
+      |               ^
+vi.c: In function 'text_hole_make':
+vi.c:1248:20: warning: implicit declaration of function 'realloc' [-Wimplicit-function-declaration]
+ 1248 |         new_text = realloc(text, text_size);
+      |                    ^~~~~~~
+vi.c:1248:20: note: include '<stdlib.h>' or provide a declaration of 'realloc'
+vi.c:1256:27: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+ 1256 |             for (i = 0; i < ARRAY_SIZE(mark); i++)
+      |                           ^
+In file included from vi.c:10:
+vi.c: In function 'dot_skip_over_ws':
+vi.c:1565:20: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 1565 |     while (isspace(*dot) && *dot != '\n' && dot < end - 1)
+      |                    ^~~~
+vi.c: In function 'file_insert':
+vi.c:1694:11: warning: implicit declaration of function 'read'; did you mean 'fread'? [-Wimplicit-function-declaration]
+ 1694 |     cnt = read(fd, p, size);
+      |           ^~~~
+      |           fread
+vi.c:1706:5: warning: implicit declaration of function 'close'; did you mean 'fclose'? [-Wimplicit-function-declaration]
+ 1706 |     close(fd);
+      |     ^~~~~
+      |     fclose
+vi.c:1705:1: warning: label 'fi' defined but not used [-Wunused-label]
+ 1705 | fi:
+      | ^~
+vi.c: In function 'init_filename':
+vi.c:1886:28: warning: implicit declaration of function 'strdup'; did you mean 'strcmp'? [-Wimplicit-function-declaration]
+ 1886 |         current_filename = strdup(fn);
+      |                            ^~~~~~
+      |                            strcmp
+vi.c:1886:26: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 1886 |         current_filename = strdup(fn);
+      |                          ^
+vi.c: In function 'update_filename':
+vi.c:1895:26: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 1895 |         current_filename = strdup(fn);
+      |                          ^
+vi.c: In function 'file_write':
+vi.c:1941:15: warning: implicit declaration of function 'write'; did you mean 'fwrite'? [-Wimplicit-function-declaration]
+ 1941 |     charcnt = write(fd, first, cnt);
+      |               ^~~~~
+      |               fwrite
+vi.c: In function 'mycmp':
+vi.c:1954:16: warning: implicit declaration of function 'strncasecmp'; did you mean 'strncmp'? [-Wimplicit-function-declaration]
+ 1954 |         return strncasecmp(s1, s2, len);
+      |                ^~~~~~~~~~~
+      |                strncmp
+vi.c: In function 'get_one_address':
+vi.c:2038:37: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 2038 |                 last_search_pattern = strndup(p, q - p);
+      |                                     ^
+vi.c:2061:28: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 2061 |         } else if (isdigit(*p)) {
+      |                            ^~
+vi.c:2063:28: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 2063 |             while (isdigit(*p))
+      |                            ^~
+vi.c: In function 'setops':
+vi.c:2158:13: warning: implicit declaration of function 'strtoul'; did you mean 'strtok'? [-Wimplicit-function-declaration]
+ 2158 |         t = strtoul(eq + 1, NULL, 10);
+      |             ^~~~~~~
+      |             strtok
+vi.c: In function 'colon':
+vi.c:2247:21: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 2247 |     while (!isspace(*buf1) && *buf1 != '\0') {
+      |                     ^~~~~
+vi.c:2514:33: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 2514 |             last_search_pattern = strdup(F - 1);
+      |                                 ^
+vi.c: In function 'find_range':
+vi.c:2769:62: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 2769 |         if (dot > p && (!at_eof(dot) || (c == 'w' && ispunct(*dot))))
+      |                                                              ^~~~
+vi.c:2773:35: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 2773 |         while (dot > p && isspace(*dot)) {
+      |                                   ^~~~
+vi.c: In function 'do_cmd':
+vi.c:3153:33: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ 3153 |             last_search_pattern = strdup(q);
+      |                                 ^
+vi.c:3276:40: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3276 |             if (c == 'W' || isspace(dot[dir])) {
+      |                                     ~~~^~~~~
+vi.c:3319:20: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+ 3319 |         if (cmdcnt > (rows - 1)) {
+      |                    ^
+vi.c:3354:20: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+ 3354 |         if (cmdcnt > (rows - 1)) {
+      |                    ^
+vi.c:3365:27: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+ 3365 |         for (cnt = 0; cnt < (rows - 1) / 2; cnt++)
+      |                           ^
+vi.c:3450:25: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3450 |             if (isspace(*dot)) {
+      |                         ^~~~
+vi.c:3453:25: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3453 |             if (isalnum(*dot) || *dot == '_') {
+      |                         ^~~~
+vi.c:3455:32: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3455 |             } else if (ispunct(*dot)) {
+      |                                ^~~~
+vi.c:3544:25: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3544 |             if (isalnum(*dot) || *dot == '_') { // we are on ALNUM
+      |                         ^~~~
+vi.c:3546:32: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3546 |             } else if (ispunct(*dot)) { // we are on PUNCT
+      |                                ^~~~
+vi.c:3551:25: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3551 |             if (isspace(*dot)) {
+      |                         ^~~~
+vi.c:3571:25: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3571 |             if (isalpha(*dot)) {
+      |                         ^~~~
+vi.c:3573:32: warning: array subscript has type 'char' [-Wchar-subscripts]
+ 3573 |                 *dot = islower(*dot) ? toupper(*dot) : tolower(*dot);
+      |                                ^~~~
+vi.c: In function 'undo_push':
+vi.c:1355:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+ 1355 |             undo_queue_state = UNDO_DEL;
+      |                              ^
+vi.c:1356:9: note: here
+ 1356 |         case UNDO_DEL:
+      |         ^~~~
+vi.c: In function 'do_cmd':
+vi.c:3262:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+ 3262 |         dot_end(); // go to e-o-l
+      |         ^~~~~~~~~
+vi.c:3264:5: note: here
+ 3264 |     case 'a':      // a- append after current char
+      |     ^~~~
+vi.c:3330:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+ 3330 |         dot_skip_over_ws();
+      |         ^~~~~~~~~~~~~~~~~~
+vi.c:3332:5: note: here
+ 3332 |     case 'i':            // i- insert before current char
+      |     ^~~~
+vi.c: At top level:
+vi.c:245:13: warning: 'last_input_char' defined but not used [-Wunused-variable]
+  245 | static char last_input_char UDATA;    // last char read from user
+      |             ^~~~~~~~~~~~~~~
+vi.c:83:43: warning: 'error_msg_and_die' defined but not used [-Wunused-function]
+   83 | static __attribute__((__noreturn__)) void error_msg_and_die(const char* s, ...) {
+      |                                           ^~~~~~~~~~~~~~~~~
+vi.c:81:20: warning: 'msg_memory_exhausted' defined but not used [-Wunused-variable]
+   81 | static const char* msg_memory_exhausted = "out of memory";
+      |                    ^~~~~~~~~~~~~~~~~~~~
+vi.c: In function 'text_hole_make':
+vi.c:1249:26: warning: pointer used after 'realloc' [-Wuse-after-free]
+ 1249 |         bias = (new_text - text);
+      |                ~~~~~~~~~~^~~~~~~
+vi.c:1248:20: note: call to 'realloc' here
+ 1248 |         new_text = realloc(text, text_size);
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+vi.c: In function 'xvsnprintf.constprop':
+vi.c:93:14: warning: 'vsnprintf' output truncated before the last format character [-Wformat-truncation=]
+   93 | static char* xvsnprintf(const char* format, ...) {
+      |              ^~~~~~~~~~
+vi.c:97:13: note: 'vsnprintf' output 2 or more bytes into a destination of size 1
+   97 |     int n = vsnprintf(&c, sizeof c, format, va);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+vi.c: In function 'main':
+vi.c:3707:14: warning: argument 'argc' might be clobbered by 'longjmp' or 'vfork' [-Wclobbered]
+ 3707 | int main(int argc, char** argv) {
+      |          ~~~~^~~~
+timerd.c: In function 'timer_cmd':
+timerd.c:160:56: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  160 |                                 snprintf(item, 31, "%-4d  %4d sec\n", intr->pid, intr->timer_usec/1000000);
+      |                                                     ~~~^              ~~~~~~~~~
+      |                                                        |                  |
+      |                                                        int                int32_t {aka long int}
+      |                                                     %-4ld
+timerd.c:160:61: warning: format '%d' expects argument of type 'int', but argument 5 has type 'long unsigned int' [-Wformat=]
+  160 |                                 snprintf(item, 31, "%-4d  %4d sec\n", intr->pid, intr->timer_usec/1000000);
+      |                                                           ~~^                    ~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                             |                                    |
+      |                                                             int                                  long unsigned int
+      |                                                           %4ld
+timerd.c:162:56: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  162 |                                 snprintf(item, 31, "%-4d  %4d msec\n", intr->pid, intr->timer_usec/1000);
+      |                                                     ~~~^               ~~~~~~~~~
+      |                                                        |                   |
+      |                                                        int                 int32_t {aka long int}
+      |                                                     %-4ld
+timerd.c:162:61: warning: format '%d' expects argument of type 'int', but argument 5 has type 'long unsigned int' [-Wformat=]
+  162 |                                 snprintf(item, 31, "%-4d  %4d msec\n", intr->pid, intr->timer_usec/1000);
+      |                                                           ~~^                     ~~~~~~~~~~~~~~~~~~~~~
+      |                                                             |                                     |
+      |                                                             int                                   long unsigned int
+      |                                                           %4ld
+timerd.c:164:56: warning: format '%d' expects argument of type 'int', but argument 4 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  164 |                                 snprintf(item, 31, "%-4d  %4d usec\n", intr->pid, intr->timer_usec);
+      |                                                     ~~~^               ~~~~~~~~~
+      |                                                        |                   |
+      |                                                        int                 int32_t {aka long int}
+      |                                                     %-4ld
+timerd.c:164:61: warning: format '%d' expects argument of type 'int', but argument 5 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  164 |                                 snprintf(item, 31, "%-4d  %4d usec\n", intr->pid, intr->timer_usec);
+      |                                                           ~~^                     ~~~~~~~~~~~~~~~~
+      |                                                             |                         |
+      |                                                             int                       uint32_t {aka long unsigned int}
+      |                                                           %4ld
+netd.c: In function 'network_open':
+netd.c:35:20: warning: assignment to 'uint32_t' {aka 'long unsigned int'} from 'net_task_t *' {aka 'struct net_task *'} makes integer from pointer without a cast [-Wint-conversion]
+   35 |         info->data = task;
+      |                    ^
+netd.c: In function 'network_write':
+netd.c:56:50: warning: passing argument 3 of 'task_write' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   56 |         int ret = task_write(task, from_pid, buf + offset, size, p);
+      |                                              ~~~~^~~~~~~~
+In file included from netd.c:18:
+task.h:38:56: note: expected 'char *' but argument is of type 'const void *'
+   38 | int  task_write(net_task_t* task, int from_pid,  char* buf,  int size, void *p);
+      |                                                  ~~~~~~^~~
+netd.c: In function 'setup':
+netd.c:110:11: warning: implicit declaration of function 'ether_tap_init' [-Wimplicit-function-declaration]
+  110 |     dev = ether_tap_init(ETHER_TAP_NAME, NULL);
+      |           ^~~~~~~~~~~~~~
+netd.c:110:9: warning: assignment to 'struct net_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  110 |     dev = ether_tap_init(ETHER_TAP_NAME, NULL);
+      |         ^
+netd.c:127:12: warning: implicit declaration of function 'dhcp_run' [-Wimplicit-function-declaration]
+  127 |         if(dhcp_run(dev) == -1){
+      |            ^~~~~~~~
+netd.c: In function 'gettimeofday_plat':
+netd.c:140:9: warning: implicit declaration of function 'kernel_tic' [-Wimplicit-function-declaration]
+  140 |         kernel_tic(NULL, &usec);
+      |         ^~~~~~~~~~
+netd.c: In function 'main':
+netd.c:195:17: warning: unused variable 'mac' [-Wunused-variable]
+  195 |         uint8_t mac[6];
+      |                 ^~~
+In file included from intr.c:8:
+intr.c: In function 'intr_request_irq':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+intr.c:32:17: note: in expansion of macro 'errorf'
+   32 |                 errorf("conflicts with already registered IRQs");
+      |                 ^~~~~~
+intr.c: In function 'intr_loop':
+intr.c:93:31: warning: implicit declaration of function 'tap_select' [-Wimplicit-function-declaration]
+   93 |                     int cnt = tap_select(entry->dev);
+      |                               ^~~~~~~~~~
+intr.c:100:9: warning: implicit declaration of function 'start_task' [-Wimplicit-function-declaration]
+  100 |         start_task();
+      |         ^~~~~~~~~~
+intr.c:101:9: warning: implicit declaration of function 'usleep'; did you mean 'sleep'? [-Wimplicit-function-declaration]
+  101 |         usleep(1000);
+      |         ^~~~~~
+      |         sleep
+intr.c:103:12: warning: 'return' with a value, in function returning void [-Wreturn-type]
+  103 |     return 0;
+      |            ^
+intr.c:80:6: note: declared here
+   80 | void intr_loop(void) {
+      |      ^~~~~~~~~
+intr.c: In function 'debug_thread':
+intr.c:109:13: warning: unused variable 'ret' [-Wunused-variable]
+  109 |         int ret = sleep(1);
+      |             ^~~
+In file included from sched.c:6:
+sched.c: In function 'sched_sleep':
+sched.c:35:22: warning: pointer targets in passing argument 1 of 'pthread_mutex_unlock' differ in signedness [-Wpointer-sign]
+   35 |         mutex_unlock(mutex);
+      |                      ^~~~~
+      |                      |
+      |                      mutex_t * {aka long unsigned int *}
+platform.h:59:46: note: in definition of macro 'mutex_unlock'
+   59 | #define mutex_unlock(x) pthread_mutex_unlock(x)
+      |                                              ^
+In file included from sched.c:1:
+../../../build/include/pthread.h:32:43: note: expected 'pthread_mutex_t *' {aka 'long int *'} but argument is of type 'mutex_t *' {aka 'long unsigned int *'}
+   32 | int pthread_mutex_unlock(pthread_mutex_t* mutex);
+      |                          ~~~~~~~~~~~~~~~~~^~~~~
+sched.c:41:17: warning: implicit declaration of function 'proc_usleep' [-Wimplicit-function-declaration]
+   41 |                 proc_usleep(10000);
+      |                 ^~~~~~~~~~~
+sched.c:43:20: warning: pointer targets in passing argument 1 of 'pthread_mutex_lock' differ in signedness [-Wpointer-sign]
+   43 |         mutex_lock(mutex);
+      |                    ^~~~~
+      |                    |
+      |                    mutex_t * {aka long unsigned int *}
+platform.h:58:44: note: in definition of macro 'mutex_lock'
+   58 | #define mutex_lock(x)   pthread_mutex_lock(x)
+      |                                            ^
+../../../build/include/pthread.h:30:41: note: expected 'pthread_mutex_t *' {aka 'long int *'} but argument is of type 'mutex_t *' {aka 'long unsigned int *'}
+   30 | int pthread_mutex_lock(pthread_mutex_t* mutex);
+      |                        ~~~~~~~~~~~~~~~~~^~~~~
+In file included from tap.c:13:
+platform.h:16: warning: "timercmp" redefined
+   16 | # define timercmp(a, b, CMP)                                                  \
+      | 
+In file included from /Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/sys/_default_fcntl.h:224,
+                 from /Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/sys/fcntl.h:4,
+                 from /Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/fcntl.h:1,
+                 from tap.c:7:
+/Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/sys/time.h:375: note: this is the location of the previous definition
+  375 | #define timercmp(tvp, uvp, cmp)                                 \
+      | 
+platform.h:21: warning: "timersub" redefined
+   21 | #define timersub(s,t,a) (void) ( (a)->tv_sec = (s)->tv_sec - (t)->tv_sec, \
+      | 
+/Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/sys/time.h:388: note: this is the location of the previous definition
+  388 | #define timersub(tvp, uvp, vvp)                                         \
+      | 
+platform.h:25: warning: "timerclear" redefined
+   25 | #define timerclear(t) ((t)->tv_sec = (t)->tv_usec = 0)
+      | 
+/Applications/ArmGNUToolchain/13.3.rel1/arm-none-eabi/arm-none-eabi/include/sys/time.h:373: note: this is the location of the previous definition
+  373 | #define timerclear(tvp)         ((tvp)->tv_sec = (tvp)->tv_usec = 0)
+      | 
+tap.c: In function 'ether_tap_addr':
+tap.c:42:23: warning: implicit declaration of function 'dev_cntl' [-Wimplicit-function-declaration]
+   42 |                 ret = dev_cntl (tap->name, 0, NULL, &out);
+      |                       ^~~~~~~~
+tap.c: In function 'ether_tap_open':
+tap.c:60:9: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   60 |         klog("open: %s, dev=%s", strerror(errno), dev->name);
+      |         ^~~~
+tap.c:72:5: warning: implicit declaration of function 'pthread_mutex_init' [-Wimplicit-function-declaration]
+   72 |     pthread_mutex_init(&tap->lock, NULL);
+      |     ^~~~~~~~~~~~~~~~~~
+tap.c: In function 'ether_tap_write':
+platform.h:58:25: warning: implicit declaration of function 'pthread_mutex_lock' [-Wimplicit-function-declaration]
+   58 | #define mutex_lock(x)   pthread_mutex_lock(x)
+      |                         ^~~~~~~~~~~~~~~~~~
+tap.c:88:5: note: in expansion of macro 'mutex_lock'
+   88 |     mutex_lock(&tap->lock);
+      |     ^~~~~~~~~~
+platform.h:59:25: warning: implicit declaration of function 'pthread_mutex_unlock' [-Wimplicit-function-declaration]
+   59 | #define mutex_unlock(x) pthread_mutex_unlock(x)
+      |                         ^~~~~~~~~~~~~~~~~~~~
+tap.c:90:5: note: in expansion of macro 'mutex_unlock'
+   90 |     mutex_unlock(&tap->lock);
+      |     ^~~~~~~~~~~~
+tap.c: In function 'tap_select':
+tap.c:121:27: warning: implicit declaration of function 'dev_get_pid' [-Wimplicit-function-declaration]
+  121 |                 dev_pid = dev_get_pid(tap->name);
+      |                           ^~~~~~~~~~~
+tap.c:128:8: warning: implicit declaration of function 'dev_cntl_by_pid' [-Wimplicit-function-declaration]
+  128 |     if(dev_cntl_by_pid(dev_pid, 1, NULL, &out) == 0){
+      |        ^~~~~~~~~~~~~~~
+tap.c: In function 'ether_tap_init':
+tap.c:184:5: warning: implicit declaration of function 'intr_request_irq' [-Wimplicit-function-declaration]
+  184 |     intr_request_irq(tap->irq, ether_tap_isr, NET_IRQ_SHARED, dev->name, dev);
+      |     ^~~~~~~~~~~~~~~~
+task.c: In function 'do_network_fcntl':
+task.c:163:32: warning: implicit declaration of function 'sock_open' [-Wimplicit-function-declaration]
+  163 |                         sock = sock_open(domain, type, protocol);
+      |                                ^~~~~~~~~
+task.c:169:31: warning: implicit declaration of function 'sock_bind' [-Wimplicit-function-declaration]
+  169 |                         ret = sock_bind(sock, paddr, addrlen);
+      |                               ^~~~~~~~~
+task.c:175:31: warning: implicit declaration of function 'sock_sendto' [-Wimplicit-function-declaration]
+  175 |                         ret = sock_sendto(sock, data, size, paddr, addrlen);
+      |                               ^~~~~~~~~~~
+task.c:180:19: warning: implicit declaration of function 'sock_recvfrom'; did you mean 'recvfrom'? [-Wimplicit-function-declaration]
+  180 |             ret = sock_recvfrom(sock, task->iobuf, size, &addr, &addrlen);
+      |                   ^~~~~~~~~~~~~
+      |                   recvfrom
+task.c:190:35: warning: implicit declaration of function 'sock_send' [-Wimplicit-function-declaration]
+  190 |                             ret = sock_send(sock, data, size);
+      |                                   ^~~~~~~~~
+task.c:196:19: warning: implicit declaration of function 'sock_recv' [-Wimplicit-function-declaration]
+  196 |             ret = sock_recv(sock, task->iobuf, size);
+      |                   ^~~~~~~~~
+task.c:204:31: warning: implicit declaration of function 'sock_listen' [-Wimplicit-function-declaration]
+  204 |                         ret = sock_listen(sock, size);
+      |                               ^~~~~~~~~~~
+task.c:208:31: warning: implicit declaration of function 'sock_accept' [-Wimplicit-function-declaration]
+  208 |                         ret = sock_accept(sock, &addr, &addrlen);
+      |                               ^~~~~~~~~~~
+task.c:215:31: warning: implicit declaration of function 'sock_close' [-Wimplicit-function-declaration]
+  215 |                         ret = sock_close(sock);
+      |                               ^~~~~~~~~~
+task.c:225:31: warning: implicit declaration of function 'sock_connect' [-Wimplicit-function-declaration]
+  225 |                         ret = sock_connect(sock, paddr, addrlen);
+      |                               ^~~~~~~~~~~~
+task.c: In function 'task_thread':
+task.c:264:1: warning: no return statement in function returning non-void [-Wreturn-type]
+  264 | }
+      | ^
+In file included from stack/loopback.c:4:
+stack/loopback.c: In function 'loopback_init':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+stack/loopback.c:43:9: note: in expansion of macro 'errorf'
+   43 |         errorf("net_device_alloc() failure");
+      |         ^~~~~~
+In file included from stack/icmp.c:5:
+stack/icmp.c: In function 'icmp_input':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+stack/icmp.c:93:9: note: in expansion of macro 'errorf'
+   93 |         errorf("too short");
+      |         ^~~~~~
+stack/icmp.c:90:10: warning: unused variable 'addr3' [-Wunused-variable]
+   90 |     char addr3[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/icmp.c:89:10: warning: unused variable 'addr2' [-Wunused-variable]
+   89 |     char addr2[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/icmp.c:88:10: warning: unused variable 'addr1' [-Wunused-variable]
+   88 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/icmp.c: In function 'icmp_output':
+stack/icmp.c:130:20: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+  130 |     uint8_t *buf = malloc(ICMP_BUFSIZ);
+      |                    ^~~~~~
+stack/icmp.c:9:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    8 | #include "../platform.h"
+  +++ |+#include <stdlib.h>
+    9 | 
+stack/icmp.c:150:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+  150 |     free(buf);
+      |     ^~~~
+stack/icmp.c:150:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+stack/icmp.c:128:10: warning: unused variable 'addr2' [-Wunused-variable]
+  128 |     char addr2[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/icmp.c:127:10: warning: unused variable 'addr1' [-Wunused-variable]
+  127 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/icmp.c: At top level:
+stack/icmp.c:28:1: warning: 'icmp_type_ntoa' defined but not used [-Wunused-function]
+   28 | icmp_type_ntoa(uint8_t type) {
+      | ^~~~~~~~~~~~~~
+In file included from stack/net.c:11:
+stack/net.c: In function 'net_device_alloc':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+stack/net.c:55:9: note: in expansion of macro 'errorf'
+   55 |         errorf("memory_alloc() failure");
+      |         ^~~~~~
+stack/net.c: In function 'net_protocol_handler':
+stack/net.c:237:18: warning: variable 'num' set but not used [-Wunused-but-set-variable]
+  237 |     unsigned int num;
+      |                  ^~~
+In file included from stack/net.c:9:
+stack/net.c: In function 'net_timer_register':
+stack/../platform.h:33:22: warning: implicit declaration of function 'gettimeofday_plat'; did you mean 'gettimeofday'? [-Wimplicit-function-declaration]
+   33 | #define gettimeofday gettimeofday_plat
+      |                      ^~~~~~~~~~~~~~~~~
+stack/net.c:268:5: note: in expansion of macro 'gettimeofday'
+  268 |     gettimeofday(&timer->last, NULL);
+      |     ^~~~~~~~~~~~
+stack/net.c: In function 'net_thread':
+stack/net.c:340:5: warning: implicit declaration of function 'intr_loop' [-Wimplicit-function-declaration]
+  340 |     intr_loop();
+      |     ^~~~~~~~~
+stack/net.c: In function 'net_init':
+stack/net.c:364:9: warning: implicit declaration of function 'intr_init'; did you mean 'icmp_init'? [-Wimplicit-function-declaration]
+  364 |     if (intr_init() == -1) {
+      |         ^~~~~~~~~
+      |         icmp_init
+stack/net.c:368:9: warning: implicit declaration of function 'dhcp_init'; did you mean 'tcp_init'? [-Wimplicit-function-declaration]
+  368 |     if (dhcp_init() == -1) {
+      |         ^~~~~~~~~
+      |         tcp_init
+stack/net.c: In function 'net_interrupt':
+stack/net.c:299:1: warning: control reaches end of non-void function [-Wreturn-type]
+  299 | }
+      | ^
+stack/net.c: In function 'net_thread':
+stack/net.c:341:1: warning: control reaches end of non-void function [-Wreturn-type]
+  341 | }
+      | ^
+stack/ether.c:45:1: warning: 'ether_type_ntoa' defined but not used [-Wunused-function]
+   45 | ether_type_ntoa(uint16_t type)
+      | ^~~~~~~~~~~~~~~
+In file included from stack/arp.c:6:
+stack/arp.c: In function 'arp_cache_select':
+stack/../platform.h:33:22: warning: implicit declaration of function 'gettimeofday_plat'; did you mean 'gettimeofday'? [-Wimplicit-function-declaration]
+   33 | #define gettimeofday gettimeofday_plat
+      |                      ^~~~~~~~~~~~~~~~~
+stack/arp.c:123:13: note: in expansion of macro 'gettimeofday'
+  123 |             gettimeofday(&entry->timestamp, NULL);
+      |             ^~~~~~~~~~~~
+stack/arp.c: In function 'arp_cache_update':
+stack/arp.c:135:10: warning: unused variable 'addr2' [-Wunused-variable]
+  135 |     char addr2[ETHER_ADDR_STR_LEN];
+      |          ^~~~~
+stack/arp.c:134:10: warning: unused variable 'addr1' [-Wunused-variable]
+  134 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+In file included from stack/arp.c:8:
+stack/arp.c: In function 'arp_cache_insert':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+stack/arp.c:158:9: note: in expansion of macro 'errorf'
+  158 |         errorf("arp_cache_alloc() failure");
+      |         ^~~~~~
+stack/arp.c:154:10: warning: unused variable 'addr2' [-Wunused-variable]
+  154 |     char addr2[ETHER_ADDR_STR_LEN];
+      |          ^~~~~
+stack/arp.c:153:10: warning: unused variable 'addr1' [-Wunused-variable]
+  153 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/arp.c: In function 'arp_cache_delete':
+stack/arp.c:173:10: warning: unused variable 'addr2' [-Wunused-variable]
+  173 |     char addr2[ETHER_ADDR_STR_LEN];
+      |          ^~~~~
+stack/arp.c:172:10: warning: unused variable 'addr1' [-Wunused-variable]
+  172 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/arp.c: In function 'arp_input':
+stack/../platform.h:58:25: warning: implicit declaration of function 'pthread_mutex_lock' [-Wimplicit-function-declaration]
+   58 | #define mutex_lock(x)   pthread_mutex_lock(x)
+      |                         ^~~~~~~~~~~~~~~~~~
+stack/arp.c:245:5: note: in expansion of macro 'mutex_lock'
+  245 |     mutex_lock(&mutex);
+      |     ^~~~~~~~~~
+stack/../platform.h:59:25: warning: implicit declaration of function 'pthread_mutex_unlock' [-Wimplicit-function-declaration]
+   59 | #define mutex_unlock(x) pthread_mutex_unlock(x)
+      |                         ^~~~~~~~~~~~~~~~~~~~
+stack/arp.c:250:5: note: in expansion of macro 'mutex_unlock'
+  250 |     mutex_unlock(&mutex);
+      |     ^~~~~~~~~~~~
+stack/arp.c: In function 'arp_resolve':
+stack/arp.c:269:10: warning: unused variable 'addr2' [-Wunused-variable]
+  269 |     char addr2[ETHER_ADDR_STR_LEN];
+      |          ^~~~~
+stack/arp.c:268:10: warning: unused variable 'addr1' [-Wunused-variable]
+  268 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/arp.c: At top level:
+stack/arp.c:57:1: warning: 'arp_opcode_ntoa' defined but not used [-Wunused-function]
+   57 | arp_opcode_ntoa(uint16_t opcode)
+      | ^~~~~~~~~~~~~~~
+In file included from stack/ip.c:8:
+stack/ip.c: In function 'ip_route_add':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+stack/ip.c:161:9: note: in expansion of macro 'errorf'
+  161 |         errorf("memory_alloc() failure");
+      |         ^~~~~~
+stack/ip.c:158:10: warning: unused variable 'addr4' [-Wunused-variable]
+  158 |     char addr4[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/ip.c:157:10: warning: unused variable 'addr3' [-Wunused-variable]
+  157 |     char addr3[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/ip.c:156:10: warning: unused variable 'addr2' [-Wunused-variable]
+  156 |     char addr2[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/ip.c:155:10: warning: unused variable 'addr1' [-Wunused-variable]
+  155 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/ip.c: In function 'ip_iface_update':
+stack/ip.c:258:16: warning: 'return' with a value, in function returning void [-Wreturn-type]
+  258 |         return -1;
+      |                ^
+stack/ip.c:249:6: note: declared here
+  249 | void ip_iface_update(struct ip_iface *iface, uint32_t ipaddr, uint32_t netmask, uint32_t gateway){
+      |      ^~~~~~~~~~~~~~~
+stack/ip.c: In function 'ip_iface_register':
+stack/ip.c:268:10: warning: unused variable 'addr3' [-Wunused-variable]
+  268 |     char addr3[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/ip.c:267:10: warning: unused variable 'addr2' [-Wunused-variable]
+  267 |     char addr2[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/ip.c:266:10: warning: unused variable 'addr1' [-Wunused-variable]
+  266 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/ip.c: In function 'ip_input':
+stack/ip.c:321:10: warning: unused variable 'addr' [-Wunused-variable]
+  321 |     char addr[IP_ADDR_STR_LEN];
+      |          ^~~~
+stack/ip.c: In function 'ip_output_core':
+stack/ip.c:401:10: warning: unused variable 'addr' [-Wunused-variable]
+  401 |     char addr[IP_ADDR_STR_LEN];
+      |          ^~~~
+stack/udp.c: In function 'udp_pcb_alloc':
+stack/udp.c:87:13: warning: implicit declaration of function 'sched_ctx_init' [-Wimplicit-function-declaration]
+   87 |             sched_ctx_init(&pcb->ctx);
+      |             ^~~~~~~~~~~~~~
+stack/udp.c: In function 'udp_pcb_release':
+stack/udp.c:100:9: warning: implicit declaration of function 'sched_ctx_destroy' [-Wimplicit-function-declaration]
+  100 |     if (sched_ctx_destroy(&pcb->ctx) == -1) {
+      |         ^~~~~~~~~~~~~~~~~
+stack/udp.c:101:9: warning: implicit declaration of function 'sched_wakeup' [-Wimplicit-function-declaration]
+  101 |         sched_wakeup(&pcb->ctx);
+      |         ^~~~~~~~~~~~
+In file included from stack/udp.c:10:
+stack/udp.c: In function 'udp_input':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+stack/udp.c:160:9: note: in expansion of macro 'errorf'
+  160 |         errorf("too short");
+      |         ^~~~~~
+In file included from stack/udp.c:8:
+stack/../platform.h:58:25: warning: implicit declaration of function 'pthread_mutex_lock' [-Wimplicit-function-declaration]
+   58 | #define mutex_lock(x)   pthread_mutex_lock(x)
+      |                         ^~~~~~~~~~~~~~~~~~
+stack/udp.c:183:5: note: in expansion of macro 'mutex_lock'
+  183 |     mutex_lock(&mutex);
+      |     ^~~~~~~~~~
+stack/../platform.h:59:25: warning: implicit declaration of function 'pthread_mutex_unlock' [-Wimplicit-function-declaration]
+   59 | #define mutex_unlock(x) pthread_mutex_unlock(x)
+      |                         ^~~~~~~~~~~~~~~~~~~~
+stack/udp.c:187:9: note: in expansion of macro 'mutex_unlock'
+  187 |         mutex_unlock(&mutex);
+      |         ^~~~~~~~~~~~
+stack/udp.c:156:10: warning: unused variable 'addr2' [-Wunused-variable]
+  156 |     char addr2[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/udp.c:155:10: warning: unused variable 'addr1' [-Wunused-variable]
+  155 |     char addr1[IP_ADDR_STR_LEN];
+      |          ^~~~~
+stack/udp.c: In function 'udp_output':
+stack/udp.c:216:10: warning: unused variable 'ep2' [-Wunused-variable]
+  216 |     char ep2[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/udp.c:215:10: warning: unused variable 'ep1' [-Wunused-variable]
+  215 |     char ep1[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/udp.c: In function 'event_handler':
+stack/udp.c:260:13: warning: implicit declaration of function 'sched_interrupt'; did you mean 'net_interrupt'? [-Wimplicit-function-declaration]
+  260 |             sched_interrupt(&pcb->ctx);
+      |             ^~~~~~~~~~~~~~~
+      |             net_interrupt
+stack/udp.c: In function 'udp_recvfrom':
+stack/udp.c:404:13: warning: implicit declaration of function 'sched_sleep' [-Wimplicit-function-declaration]
+  404 |         if (sched_sleep(&pcb->ctx, &mutex, NULL) == -1) {
+      |             ^~~~~~~~~~~
+stack/tcp.c: In function 'tcp_pcb_alloc':
+stack/tcp.c:173:13: warning: implicit declaration of function 'sched_ctx_init' [-Wimplicit-function-declaration]
+  173 |             sched_ctx_init(&pcb->ctx);
+      |             ^~~~~~~~~~~~~~
+stack/tcp.c: In function 'tcp_pcb_release':
+stack/tcp.c:188:9: warning: implicit declaration of function 'sched_ctx_destroy' [-Wimplicit-function-declaration]
+  188 |     if (sched_ctx_destroy(&pcb->ctx) == -1) {
+      |         ^~~~~~~~~~~~~~~~~
+stack/tcp.c:189:9: warning: implicit declaration of function 'sched_wakeup' [-Wimplicit-function-declaration]
+  189 |         sched_wakeup(&pcb->ctx);
+      |         ^~~~~~~~~~~~
+stack/tcp.c:186:10: warning: unused variable 'ep2' [-Wunused-variable]
+  186 |     char ep2[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/tcp.c:185:10: warning: unused variable 'ep1' [-Wunused-variable]
+  185 |     char ep1[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+In file included from stack/tcp.c:10:
+stack/tcp.c: In function 'tcp_retransmit_queue_add':
+stack/util.h:46:29: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   46 |                             klog("[%c] %s: (%s:%d) :\n", level, func, file, line); \
+      |                             ^~~~
+stack/util.h:51:21: note: in expansion of macro 'lprintf'
+   51 | #define errorf(...) lprintf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
+      |                     ^~~~~~~
+stack/tcp.c:262:9: note: in expansion of macro 'errorf'
+  262 |         errorf("memory_alloc() failure");
+      |         ^~~~~~
+In file included from stack/tcp.c:8:
+stack/../platform.h:33:22: warning: implicit declaration of function 'gettimeofday_plat'; did you mean 'gettimeofday'? [-Wimplicit-function-declaration]
+   33 | #define gettimeofday gettimeofday_plat
+      |                      ^~~~~~~~~~~~~~~~~
+stack/tcp.c:270:5: note: in expansion of macro 'gettimeofday'
+  270 |     gettimeofday(&entry->first, NULL);
+      |     ^~~~~~~~~~~~
+stack/tcp.c: In function 'tcp_output_segment':
+stack/tcp.c:337:10: warning: unused variable 'ep2' [-Wunused-variable]
+  337 |     char ep2[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/tcp.c:336:10: warning: unused variable 'ep1' [-Wunused-variable]
+  336 |     char ep1[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/tcp.c: In function 'tcp_segment_arrives':
+stack/tcp.c:446:24: warning: implicit declaration of function 'random'; did you mean 'rand'? [-Wimplicit-function-declaration]
+  446 |             pcb->iss = random();
+      |                        ^~~~~~
+      |                        rand
+stack/tcp.c: In function 'tcp_input':
+stack/../platform.h:58:25: warning: implicit declaration of function 'pthread_mutex_lock' [-Wimplicit-function-declaration]
+   58 | #define mutex_lock(x)   pthread_mutex_lock(x)
+      |                         ^~~~~~~~~~~~~~~~~~
+stack/tcp.c:830:5: note: in expansion of macro 'mutex_lock'
+  830 |     mutex_lock(&mutex);
+      |     ^~~~~~~~~~
+stack/../platform.h:59:25: warning: implicit declaration of function 'pthread_mutex_unlock' [-Wimplicit-function-declaration]
+   59 | #define mutex_unlock(x) pthread_mutex_unlock(x)
+      |                         ^~~~~~~~~~~~~~~~~~~~
+stack/tcp.c:834:5: note: in expansion of macro 'mutex_unlock'
+  834 |     mutex_unlock(&mutex);
+      |     ^~~~~~~~~~~~
+stack/tcp.c: In function 'tcp_timer':
+stack/tcp.c:844:10: warning: unused variable 'ep2' [-Wunused-variable]
+  844 |     char ep2[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/tcp.c:843:10: warning: unused variable 'ep1' [-Wunused-variable]
+  843 |     char ep1[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/tcp.c: In function 'event_handler':
+stack/tcp.c:873:13: warning: implicit declaration of function 'sched_interrupt'; did you mean 'net_interrupt'? [-Wimplicit-function-declaration]
+  873 |             sched_interrupt(&pcb->ctx);
+      |             ^~~~~~~~~~~~~~~
+      |             net_interrupt
+stack/tcp.c: In function 'tcp_open_rfc793':
+stack/tcp.c:945:13: warning: implicit declaration of function 'sched_sleep' [-Wimplicit-function-declaration]
+  945 |         if (sched_sleep(&pcb->ctx, &mutex, NULL) == -1) {
+      |             ^~~~~~~~~~~
+stack/tcp.c:905:10: warning: unused variable 'ep2' [-Wunused-variable]
+  905 |     char ep2[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/tcp.c:904:10: warning: unused variable 'ep1' [-Wunused-variable]
+  904 |     char ep1[IP_ENDPOINT_STR_LEN];
+      |          ^~~
+stack/tcp.c: In function 'tcp_connect':
+stack/tcp.c:1023:10: warning: unused variable 'addr' [-Wunused-variable]
+ 1023 |     char addr[IP_ADDR_STR_LEN];
+      |          ^~~~
+stack/tcp.c: At top level:
+stack/tcp.c:124:1: warning: 'tcp_flg_ntoa' defined but not used [-Wunused-function]
+  124 | tcp_flg_ntoa(uint8_t flg)
+      | ^~~~~~~~~~~~
+stack/util.c: In function 'hexdump':
+stack/util.c:56:20: warning: implicit declaration of function 'isascii' [-Wimplicit-function-declaration]
+   56 |                 if(isascii(src[offset + index]) && isprint(src[offset + index])) {
+      |                    ^~~~~~~
+stack/sock.c: In function 'sock_alloc':
+stack/sock.c:60:5: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   60 |     klog("no free socket\n");
+      |     ^~~~
+stack/dhcp.c: In function 'dhcp_input':
+stack/dhcp.c:296:5: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+  296 |     klog("DHCP: %s\n", buf);
+      |     ^~~~
+stack/dhcp.c:326:5: warning: implicit declaration of function 'ip_iface_update' [-Wimplicit-function-declaration]
+  326 |     ip_iface_update(net_device_get_iface(dev, NET_IFACE_FAMILY_IP), dhc->ip, dhc->netmask, dhc->gateway);
+      |     ^~~~~~~~~~~~~~~
+stated.c: In function 'sys_state_read':
+stated.c:34:36: warning: format '%d' expects argument of type 'int', but argument 4 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   34 |                         "run_sec: %d\nfree_mem: %d\nshared_mem: %d\n",
+      |                                   ~^
+      |                                    |
+      |                                    int
+      |                                   %ld
+   35 |                         state.kernel_sec, state.mem.free, state.mem.shared);
+      |                         ~~~~~~~~~~~~~~~~
+      |                              |
+      |                              uint32_t {aka long unsigned int}
+stated.c:34:50: warning: format '%d' expects argument of type 'int', but argument 5 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   34 |                         "run_sec: %d\nfree_mem: %d\nshared_mem: %d\n",
+      |                                                 ~^
+      |                                                  |
+      |                                                  int
+      |                                                 %ld
+   35 |                         state.kernel_sec, state.mem.free, state.mem.shared);
+      |                                           ~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint32_t {aka long unsigned int}
+stated.c:34:66: warning: format '%d' expects argument of type 'int', but argument 6 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   34 |                         "run_sec: %d\nfree_mem: %d\nshared_mem: %d\n",
+      |                                                                 ~^
+      |                                                                  |
+      |                                                                  int
+      |                                                                 %ld
+   35 |                         state.kernel_sec, state.mem.free, state.mem.shared);
+      |                                                           ~~~~~~~~~~~~~~~~
+      |                                                                    |
+      |                                                                    uint32_t {aka long unsigned int}
+sysinfod.c: In function 'sysinfo_read':
+sysinfod.c:36:25: warning: format '%d' expects argument of type 'int', but argument 5 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   36 |                         "machine: %s\n"
+      |                         ^~~~~~~~~~~~~~~
+......
+   45 |                         sysinfo.cores,
+      |                         ~~~~~~~~~~~~~
+      |                                |
+      |                                uint32_t {aka long unsigned int}
+sysinfod.c:37:34: note: format string is defined here
+   37 |                         "cores: %d\n"
+      |                                 ~^
+      |                                  |
+      |                                  int
+      |                                 %ld
+sysinfod.c:36:25: warning: format '%d' expects argument of type 'int', but argument 6 has type 'long unsigned int' [-Wformat=]
+   36 |                         "machine: %s\n"
+      |                         ^~~~~~~~~~~~~~~
+......
+   46 |                         sysinfo.phy_mem_size/1024/1024,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                  |
+      |                                                  long unsigned int
+sysinfod.c:38:41: note: format string is defined here
+   38 |                         "phy_mem_size: %d MB\n"
+      |                                        ~^
+      |                                         |
+      |                                         int
+      |                                        %ld
+sysinfod.c:36:25: warning: format '%d' expects argument of type 'int', but argument 7 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   36 |                         "machine: %s\n"
+      |                         ^~~~~~~~~~~~~~~
+......
+   47 |                         sysinfo.max_proc_num,
+      |                         ~~~~~~~~~~~~~~~~~~~~
+      |                                |
+      |                                uint32_t {aka long unsigned int}
+sysinfod.c:39:41: note: format string is defined here
+   39 |                         "max proc num: %d\n"
+      |                                        ~^
+      |                                         |
+      |                                         int
+      |                                        %ld
+sysinfod.c:36:25: warning: format '%d' expects argument of type 'int', but argument 8 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   36 |                         "machine: %s\n"
+      |                         ^~~~~~~~~~~~~~~
+......
+   48 |                         sysinfo.max_task_num,
+      |                         ~~~~~~~~~~~~~~~~~~~~
+      |                                |
+      |                                uint32_t {aka long unsigned int}
+sysinfod.c:40:43: note: format string is defined here
+   40 |                         "max task total: %d\n"
+      |                                          ~^
+      |                                           |
+      |                                           int
+      |                                          %ld
+sysinfod.c:36:25: warning: format '%d' expects argument of type 'int', but argument 9 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   36 |                         "machine: %s\n"
+      |                         ^~~~~~~~~~~~~~~
+......
+   49 |                         sysinfo.max_task_per_proc,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                |
+      |                                uint32_t {aka long unsigned int}
+sysinfod.c:41:46: note: format string is defined here
+   41 |                         "max task per proc: %d\n"
+      |                                             ~^
+      |                                              |
+      |                                              int
+      |                                             %ld
+sysinfod.c:36:25: warning: format '%x' expects argument of type 'unsigned int', but argument 11 has type 'mmio_info_t' [-Wformat=]
+   36 |                         "machine: %s\n"
+      |                         ^~~~~~~~~~~~~~~
+......
+   51 |                         sysinfo.mmio);
+      |                         ~~~~~~~~~~~~
+      |                                |
+      |                                mmio_info_t
+sysinfod.c:43:40: note: format string is defined here
+   43 |                         "mmio_base: 0x%x\n",
+      |                                       ~^
+      |                                        |
+      |                                        unsigned int
+soundd.c: In function 'audio_init':
+soundd.c:65:9: warning: implicit declaration of function 'proc_usleep' [-Wimplicit-function-declaration]
+   65 |         proc_usleep(2000);
+      |         ^~~~~~~~~~~
+soundd.c: In function 'playaudio_dma':
+soundd.c:95:9: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   95 |         klog("sound: set data %d\n", size);
+      |         ^~~~
+usbd.c: In function 'PlatformAllocateDMA':
+usbd.c:19:18: warning: initialization of 'void *' from 'uint32_t' {aka 'long unsigned int'} makes pointer from integer without a cast [-Wint-conversion]
+   19 |     void* ret =  dma_map(4096);
+      |                  ^~~~~~~
+usbd.c:20:30: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'void *' [-Wformat=]
+   20 |     printf("DMA: address: %08x\n", ret);
+      |                           ~~~^     ~~~
+      |                              |     |
+      |                              |     void *
+      |                              unsigned int
+      |                           %08p
+usbd.c: In function 'usb_host_init':
+usbd.c:31:3: warning: implicit declaration of function 'proc_usleep' [-Wimplicit-function-declaration]
+   31 |   proc_usleep(100000);
+      |   ^~~~~~~~~~~
+usbd.c: In function 'usb_step':
+usbd.c:52:9: warning: implicit declaration of function 'TouchPersent'; did you mean 'TouchGetEvent'? [-Wimplicit-function-declaration]
+   52 |     if(!TouchPersent()){
+      |         ^~~~~~~~~~~~
+      |         TouchGetEvent
+usbd.c:69:9: warning: implicit declaration of function 'proc_wakeup' [-Wimplicit-function-declaration]
+   69 |         proc_wakeup(RW_BLOCK_EVT);
+      |         ^~~~~~~~~~~
+arm-none-eabi-ld: warning: lib/libcsud.a(touch.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(platform.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(usbd.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(configuration.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(hub.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(hid.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(uconsole.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(designware20.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(roothub.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+arm-none-eabi-ld: warning: lib/libcsud.a(broadcom2835.c.o) uses 2-byte wchar_t yet the output is to use 4-byte wchar_t; use of wchar_t values across objects may fail
+hid_keybd.c:60:50: warning: multi-character character constant [-Wmultichar]
+   60 |         '#','$','%','^','&','*','(',')',    '\r','\0x1b','\b','\t','\x20', '_', '+', '{',
+      |                                                  ^~~~~~~
+hid_keybd.c:60:50: warning: unsigned conversion from 'int' to 'char' changes value from '7876962' to '98' [-Woverflow]
+hid_keybd.c: In function 'loop':
+hid_keybd.c:100:9: warning: implicit declaration of function 'usleep'; did you mean 'sleep'? [-Wimplicit-function-declaration]
+  100 |         usleep(20000);
+      |         ^~~~~~
+      |         sleep
+hid_keybd.c: At top level:
+hid_keybd.c:27:16: warning: '_held' defined but not used [-Wunused-variable]
+   27 | static uint8_t _held[128] = {0};
+      |                ^~~~~
+hid_moused.c: In function 'loop':
+hid_moused.c:69:17: warning: implicit declaration of function 'proc_wakeup' [-Wimplicit-function-declaration]
+   69 |                 proc_wakeup(RW_BLOCK_EVT);
+      |                 ^~~~~~~~~~~
+hid_moused.c:71:9: warning: implicit declaration of function 'usleep'; did you mean 'sleep'? [-Wimplicit-function-declaration]
+   71 |         usleep(10000);
+      |         ^~~~~~
+      |         sleep
+hid_joystickd.c: In function 'loop':
+hid_joystickd.c:48:9: warning: implicit declaration of function 'ipc_disable' [-Wimplicit-function-declaration]
+   48 |         ipc_disable();
+      |         ^~~~~~~~~~~
+hid_joystickd.c:50:9: warning: implicit declaration of function 'ipc_enable' [-Wimplicit-function-declaration]
+   50 |         ipc_enable();
+      |         ^~~~~~~~~~
+hid_joystickd.c:77:17: warning: implicit declaration of function 'proc_wakeup' [-Wimplicit-function-declaration]
+   77 |                 proc_wakeup(RW_BLOCK_EVT);
+      |                 ^~~~~~~~~~~
+hid_joystickd.c:79:9: warning: implicit declaration of function 'usleep'; did you mean 'sleep'? [-Wimplicit-function-declaration]
+   79 |         usleep(10000);
+      |         ^~~~~~
+      |         sleep
+sc16is750.c: In function 'wiringPiSPIDataRW':
+sc16is750.c:27:13: warning: unused variable 'i' [-Wunused-variable]
+   27 |         int i;
+      |             ^
+sc16is750.c: In function 'wiringPiI2CWriteReg8':
+sc16is750.c:33:9: warning: implicit declaration of function 'klog' [-Wimplicit-function-declaration]
+   33 |         klog("not support\n");
+      |         ^~~~
+sc16is750.c: In function 'SC16IS750_SetBaudrate':
+sc16is750.c:185:41: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  185 |                 printf("This baudrate (%d) is not support\n",baudrate);
+      |                                        ~^                    ~~~~~~~~
+      |                                         |                    |
+      |                                         int                  uint32_t {aka long unsigned int}
+      |                                        %ld
+sc16is750.c:212:43: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  212 |                 printf("Warning:baudrate=%d actual_baudrate=%d\n", baudrate, actual_baudrate);
+      |                                          ~^                        ~~~~~~~~
+      |                                           |                        |
+      |                                           int                      uint32_t {aka long unsigned int}
+      |                                          %ld
+sc16is750.c:212:62: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  212 |                 printf("Warning:baudrate=%d actual_baudrate=%d\n", baudrate, actual_baudrate);
+      |                                                             ~^               ~~~~~~~~~~~~~~~
+      |                                                              |               |
+      |                                                              int             uint32_t {aka long unsigned int}
+      |                                                             %ld
+sc16is750.c: In function 'SC16IS750_readwithtimeout':
+sc16is750.c:600:22: warning: implicit declaration of function 'kernel_tic_ms' [-Wimplicit-function-declaration]
+  600 |         time_stamp = kernel_tic_ms(0);
+      |                      ^~~~~~~~~~~~~
+sc16is750.c: In function 'SC16IS750_ReadRegister':
+sc16is750.c:140:16: warning: 'result' may be used uninitialized [-Wmaybe-uninitialized]
+  140 |         return result;
+      |                ^~~~~~
+sc16is750.c:122:17: note: 'result' was declared here
+  122 |         uint8_t result;
+      |                 ^~~~~~
+utils/log.c: In function 'brcm_log':
+utils/log.c:28:19: warning: implicit declaration of function 'kernel_tic_ms' [-Wimplicit-function-declaration]
+   28 |     uint64_t ts = kernel_tic_ms(0);
+      |                   ^~~~~~~~~~~~~
+utils/log.c:29:35: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint64_t' {aka 'long long unsigned int'} [-Wformat=]
+   29 |     int len = sprintf(temp_buf, "%d:", ts);
+      |                                  ~^    ~~
+      |                                   |    |
+      |                                   int  uint64_t {aka long long unsigned int}
+      |                                  %lld
+brcm/brcm.c: In function 'brcmf_rx_event':
+brcm/brcm.c:1577:65: warning: taking address of packed member of 'struct brcmf_event' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1577 |     struct brcmf_event_msg *emsg_be = (struct brcmf_event_msg *)&(event->msg);
+      |                                                                 ^~~~~~~~~~~~~
+brcm/brcm.c: In function 'brcmf_sdiod_probe':
+brcm/brcm.c:2176:13: warning: variable 'val' set but not used [-Wunused-but-set-variable]
+ 2176 |     uint8_t val = sdio_readb(0, 0x13, &ret);
+      |             ^~~
+brcm/command.c: In function 'brcmf_c_preinit_dcmds':
+brcm/command.c:553:9: warning: implicit declaration of function 'strlcpy'; did you mean 'strncpy'? [-Wimplicit-function-declaration]
+  553 |         strlcpy(ri.chipname, "UNKNOWN", sizeof(ri.chipname));
+      |         ^~~~~~~
+      |         strncpy
+brcm/command.c:600:5: warning: implicit declaration of function 'strsep'; did you mean 'strstr'? [-Wimplicit-function-declaration]
+  600 |     strsep(&ptr, "\n");
+      |     ^~~~~~
+      |     strstr

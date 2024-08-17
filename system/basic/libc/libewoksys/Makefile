@@ -5,7 +5,8 @@ TARGET_DIR = $(BUILD_DIR)
 
 LDFLAGS = -L$(TARGET_DIR)/lib
 
-CFLAGS += -Iewoksys/include -Iinclude -I $(TARGET_DIR)/include
+CFLAGS += -Iewoksys/include -Iinclude -I $(TARGET_DIR)/include 
+#-I$(SDKROOT)/usr/include
 
 LIB_EWOKSYS_OBJS =  \
 	ewoksys/src/syscall_${ARCH}.o \

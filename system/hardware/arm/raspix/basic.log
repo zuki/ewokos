@@ -1,0 +1,249 @@
+cp -r ../../../../kernel/kernel/include/proto_t.h ../../../../kernel/kernel/include/syscalls.h ../../../../kernel/kernel/include/signals.h ../../../../kernel/kernel/include/interrupt.h ../../../../kernel/kernel/include/sysinfo.h ../../../../kernel/kernel/include/kevent.h ../../../../kernel/kernel/include/procinfo.h ../../../../kernel/hardware/arm/arch/common/include/arch_context.h ../../../build/include/
+rm -f ../../../build/lib/libbsp.a
+mkdir -p ../../../build/rootfs/drivers/raspix
+cd libs;make
+cd arch_bcm283x;make
+make[2]: `../../../../../build/lib/libarch_bcm283x.a' is up to date.
+cd bsp;make
+arm-none-eabi-ar rT ../../../../..//build/lib/libbsp.a src/bsp_sd.o src/bsp_graph.o src/bsp_fb.o  ../../../../..//build/lib/libarch_bcm283x.a
+cp -r include/* ../../../../..//build/include
+all done.
+cd ../../../basic;make
+cd libc;make
+cd softfloat;make
+cp source/include/* ../../../build/include
+cd libewoksys;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -Iewoksys/include -Iinclude -I ../../../build/include    -c -o ewoksys/src/mstr.o ewoksys/src/mstr.c
+arm-none-eabi-ar rT ../../../build/lib/libewoksys.a ewoksys/src/syscall_arm.o ewoksys/src/mstr.o ewoksys/src/utf8unicode.o ewoksys/src/klog.o ewoksys/src/core.o ewoksys/src/cmain.o ewoksys/src/charbuf.o ewoksys/src/vfs.o ewoksys/src/ipc.o ewoksys/src/signal.o ewoksys/src/interrupt.o ewoksys/src/vdevice.o ewoksys/src/devcmd.o ewoksys/src/proto.o ewoksys/src/semaphore.o ewoksys/src/thread.o ewoksys/src/basic_math.o ewoksys/src/kernel_tic.o ewoksys/src/trunkmem.o ewoksys/src/proc.o ewoksys/src/wait.o ewoksys/src/md5.o ewoksys/src/buffer.o ewoksys/src/mmio.o ewoksys/src/dma.o ewoksys/src/session.o ewoksys/src/hashmap.o ewoksys/src/timer.o ewoksys/src/sys.o src/unistd/getuid.o src/unistd/usleep.o src/unistd/sleep.o src/unistd/getcwd.o src/unistd/getgid.o src/unistd/setgid.o src/unistd/setuid.o src/unistd/chdir.o src/unistd/dup2.o src/unistd/dup.o src/unistd/pipe.o src/unistd/chown.o src/sys/shm/shmget.o src/sys/shm/shmat.o src/sys/shm/shmdt.o src/signal/kill.o src/signal/signal.o src/sys/stat/mkdir.o src/sys/stat/mkfifo.o src/fcntl/fchmod.o src/fcntl/chmod.o src/fcntl/fcntl.o src/stdio/putch.o src/dirent/readdir.o src/dirent/closedir.o src/dirent/opendir.o src/pthread/pthread_create.o src/pthread/pthread_mutex_destroy.o src/pthread/pthread_mutex_init.o src/pthread/pthread_mutex_lock.o src/pthread/pthread_mutex_unlock.o src/pthread/pthread_self.o src/stdlib/exit.o
+cp -r ewoksys/include/* include/* ../../../build/include
+cd libgloss;make
+make[3]: `../../../build/lib/libgloss.a' is up to date.
+all done.
+cd libs;make
+cd sconf; make
+make[3]: `../../../build/lib/libsconf.a' is up to date.
+cd ext2;make
+make[3]: `../../../build/lib/libext2.a' is up to date.
+cd elf;make
+make[3]: `../../../build/lib/libelf.a' is up to date.
+cd sd;make
+make[3]: `../../../build/lib/libsd.a' is up to date.
+cd socket;make
+make[3]: `../../../build/lib/libsocket.a' is up to date.
+cd tinyjson;make
+make[3]: `../../../build/lib/libtinyjson.a' is up to date.
+all done.
+cd sys;make
+cd core;make
+arm-none-eabi-ld -Ttext=100 core.o  -o ../../../build/rootfs//sbin/core -L../../../build/lib  -lewoksys -lc -lgloss 
+cd init;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o init.o init.c
+arm-none-eabi-ld -Ttext=100 init.o  -o ../../../build/rootfs//sbin/init -L../../../build/lib -lbsp -lsd -lext2  -lewoksys -lc -lgloss 
+cd rootfs;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o sdfsd.o sdfsd.c
+arm-none-eabi-ld -Ttext=100 sdfsd.o  -o ../../../build/rootfs//sbin/sdfsd -L../../../build/lib -lbsp -lsd -lext2  -lewoksys -lc -lgloss 
+cd vfsd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o vfsd.o vfsd.c
+arm-none-eabi-ld -Ttext=100 vfsd.o  -o ../../../build/rootfs//sbin/vfsd -L../../../build/lib  -lewoksys -lc -lgloss 
+cd sbin;make
+cd sessiond;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o sessiond.o sessiond.c
+arm-none-eabi-ld -Ttext=100 sessiond.o  -o ../../../build/rootfs//sbin/sessiond -L../../../build/lib -lbsp -lsd -lext2  -lewoksys -lc -lgloss 
+cd telnetd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o telnetd.o telnetd.c
+arm-none-eabi-ld -Ttext=100 telnetd.o -o ../../../build/rootfs/sbin/telnetd -L../../../build/lib    -lsocket  -lewoksys -lc -lgloss
+cd httpd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o httpd.o httpd.c
+arm-none-eabi-ld -Ttext=100 httpd.o -o ../../../build/rootfs/sbin/httpd -L../../../build/lib    -lsocket  -lewoksys -lc -lgloss
+cd bin;make
+cd cp;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o cp.o cp.c
+arm-none-eabi-ld -Ttext=100 cp.o -o ../../../build/rootfs/bin/cp -L../../../build/lib -lewoksys -lc -lgloss
+cd ipcserv;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o ipcserv.o ipcserv.c
+arm-none-eabi-ld -Ttext=100 ipcserv.o -o ../../../build/rootfs/bin/ipcserv -L../../../build/lib -lewoksys -lc -lgloss
+cd test;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o test.o test.c
+arm-none-eabi-ld -Ttext=100 test.o -o ../../../build/rootfs/bin/test -L../../../build/lib -lewoksys -lc -lgloss 
+cd tsaver;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o tsaver.o tsaver.c
+arm-none-eabi-ld -Ttext=100 tsaver.o -o ../../../build/rootfs/bin/tsaver -L../../../build/lib -lewoksys -lc -lgloss 
+cd clear;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2   -c -o clear.o clear.c
+arm-none-eabi-ld -Ttext=100 clear.o -o ../../../build/rootfs/bin/clear -L../../../build/lib -lewoksys -lc -lgloss 
+cd echo;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o echo.o echo.c
+arm-none-eabi-ld -Ttext=100 echo.o -o ../../../build/rootfs/bin/echo -L../../../build/lib -lewoksys -lc -lgloss
+cd sleep;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o sleep.o sleep.c
+arm-none-eabi-ld -Ttext=100 sleep.o -o ../../../build/rootfs/bin/sleep -L../../../build/lib -lewoksys -lc -lgloss
+cd ps;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o ps.o ps.c
+arm-none-eabi-ld -Ttext=100 ps.o -o ../../../build/rootfs/bin/ps -L../../../build/lib -lewoksys -lc -lgloss
+cd devcmd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o devcmd.o devcmd.c
+arm-none-eabi-ld -Ttext=100 devcmd.o -o ../../../build/rootfs/bin/devcmd -L../../../build/lib -lewoksys -lc -lgloss
+cd svcinfo;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o svcinfo.o svcinfo.c
+arm-none-eabi-ld -Ttext=100 svcinfo.o -o ../../../build/rootfs/bin/svcinfo -L../../../build/lib -lewoksys -lc -lgloss
+cd cat;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o cat.o cat.c
+arm-none-eabi-ld -Ttext=100 cat.o -o ../../../build/rootfs/bin/cat -L../../../build/lib -lewoksys -lc -lgloss
+cd shell;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include -I./   -c -o shell.o shell.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include -I./   -c -o gets.o gets.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include -I./   -c -o cmd.o cmd.c
+arm-none-eabi-ld -Ttext=100 shell.o gets.o cmd.o -o ../../../build/rootfs/bin/shell -L../../../build/lib -lewoksys -lc -lgloss
+cd ls;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o ls.o ls.c
+arm-none-eabi-ld -Ttext=100 ls.o -o ../../../build/rootfs/bin/ls -L../../../build/lib -lewoksys -lc -lgloss
+cd login;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o login.o login.c
+arm-none-eabi-ld -Ttext=100 login.o -o ../../../build/rootfs/bin/login -L../../../build/lib -lewoksys -lc -lgloss
+cd md5;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o md5.o md5.c
+arm-none-eabi-ld -Ttext=100 md5.o -o ../../../build/rootfs/bin/md5 -L../../../build/lib -lewoksys -lc -lgloss
+cd session;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o session.o session.c
+arm-none-eabi-ld -Ttext=100 session.o -o ../../../build/rootfs/bin/session -L../../../build/lib -lewoksys -lc -lgloss
+cd mount;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o mount.o mount.c
+arm-none-eabi-ld -Ttext=100 mount.o -o ../../../build/rootfs/bin/mount -L../../../build/lib -lewoksys -lc -lgloss
+cd uname;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o uname.o uname.c
+arm-none-eabi-ld -Ttext=100 uname.o -o ../../../build/rootfs/bin/uname -L../../../build/lib -lewoksys -lc -lgloss
+cd pwd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o pwd.o pwd.c
+arm-none-eabi-ld -Ttext=100 pwd.o -o ../../../build/rootfs/bin/pwd -L../../../build/lib -lewoksys -lc -lgloss
+cd dump;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o dump.o dump.c
+arm-none-eabi-ld -Ttext=100 dump.o -o ../../../build/rootfs/bin/dump -L../../../build/lib -lewoksys -lc -lgloss
+cd kill;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o kill.o kill.c
+arm-none-eabi-ld -Ttext=100 kill.o -o ../../../build/rootfs/bin/kill -L../../../build/lib -lewoksys -lc -lgloss
+cd rm;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o rm.o rm.c
+arm-none-eabi-ld -Ttext=100 rm.o -o ../../../build/rootfs/bin/rm -L../../../build/lib -lewoksys -lc -lgloss
+cd chmod;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o chmod.o chmod.c
+arm-none-eabi-ld -Ttext=100 chmod.o -o ../../../build/rootfs/bin/chmod -L../../../build/lib -lewoksys -lc -lgloss
+cd chown;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o chown.o chown.c
+arm-none-eabi-ld -Ttext=100 chown.o -o ../../../build/rootfs/bin/chown -L../../../build/lib -lewoksys -lc -lgloss
+cd whoami;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o whoami.o whoami.c
+arm-none-eabi-ld -Ttext=100 whoami.o -o ../../../build/rootfs/bin/whoami -L../../../build/lib -lewoksys -lc -lgloss
+cd mkdir;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o mkdir.o mkdir.c
+arm-none-eabi-ld -Ttext=100 mkdir.o -o ../../../build/rootfs/bin/mkdir -L../../../build/lib -lewoksys -lc -lgloss
+cd mkfifo;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o mkfifo.o mkfifo.c
+arm-none-eabi-ld -Ttext=100 mkfifo.o -o ../../../build/rootfs/bin/mkfifo -L../../../build/lib -lewoksys -lc -lgloss
+cd grep;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o grep.o grep.c
+arm-none-eabi-ld -Ttext=100 grep.o -o ../../../build/rootfs/bin/grep -L../../../build/lib -lewoksys -lc -lgloss
+cd rx;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o xmodem.o xmodem.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o crc16.o crc16.c
+arm-none-eabi-ld -Ttext=100 xmodem.o crc16.o -o ../../../build/rootfs/bin/rx -L../../../build/lib -lewoksys -lc -lgloss
+cd elfinfo;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o elfinfo.o elfinfo.c
+arm-none-eabi-ld -Ttext=100 elfinfo.o -o ../../../build/rootfs/bin/elfinfo -L../../../build/lib -lelf -lewoksys -lc -lgloss
+cd setux;make 
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o setux.o setux.c
+arm-none-eabi-ld -Ttext=100 setux.o -o ../../../build/rootfs/bin/setux -L../../../build/lib -lewoksys -lc -lgloss
+cd vi;make 
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o vi.o vi.c
+arm-none-eabi-ld -Ttext=100 vi.o -o ../../../build/rootfs/bin/vi -L../../../build/lib -lewoksys -lc -lgloss
+cd json;make 
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o json.o json.c
+arm-none-eabi-ld -Ttext=100 json.o -o ../../../build/rootfs/bin/json -L../../../build/lib -ltinyjson -lewoksys -lc -lgloss
+all done.
+cd drivers;make
+cd nulld;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o nulld.o nulld.c
+arm-none-eabi-ld -Ttext=100 nulld.o -o ../../../build/rootfs/drivers/nulld -L../../../build/lib -lewoksys -lc -lgloss
+cd ramfsd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o ramfsd.o ramfsd.c
+arm-none-eabi-ld -Ttext=100 ramfsd.o -o ../../../build/rootfs/drivers/ramfsd -L../../../build/lib -lewoksys -lc -lgloss
+cd timerd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o timerd.o timerd.c
+arm-none-eabi-ld -Ttext=100 timerd.o -o ../../../build/rootfs/drivers/timerd -L../../../build/lib -lewoksys -lc -lgloss
+cd netd;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o netd.o netd.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o intr.o intr.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o sched.o sched.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o tap.o tap.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o task.o task.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/loopback.o stack/loopback.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/icmp.o stack/icmp.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/net.o stack/net.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/ether.o stack/ether.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/arp.o stack/arp.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/ip.o stack/ip.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/udp.o stack/udp.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/tcp.o stack/tcp.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/util.o stack/util.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/sock.o stack/sock.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../build/include   -c -o stack/dhcp.o stack/dhcp.c
+arm-none-eabi-ld -Ttext=100 netd.o intr.o sched.o tap.o task.o stack/loopback.o stack/icmp.o stack/net.o stack/ether.o stack/arp.o stack/ip.o stack/udp.o stack/tcp.o stack/util.o stack/sock.o stack/dhcp.o  -o ../../../build/rootfs/drivers/netd -L../../../build/lib -lewoksys -lc -lgloss
+cd proc/state;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../build/include   -c -o stated.o stated.c
+arm-none-eabi-ld -Ttext=100 stated.o -o ../../../../build/rootfs/drivers/proc/stated -L../../../../build/lib -lewoksys -lc -lgloss
+cd proc/sysinfo;make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../build/include   -c -o sysinfod.o sysinfod.c
+arm-none-eabi-ld -Ttext=100 sysinfod.o -o ../../../../build/rootfs/drivers/proc/sysinfod -L../../../../build/lib -lewoksys -lc -lgloss
+all done.
+all done.
+cd drivers;make basic_sys
+cd uartd; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o uartd.o uartd.c
+arm-none-eabi-ld -Ttext=100 uartd.o -o ../../../../../build/rootfs/drivers/raspix/uartd -L../../../../../build/lib -larch_bcm283x -lewoksys -lc -lgloss
+cd gpio_actledd; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o actledd.o actledd.c
+arm-none-eabi-ld -Ttext=100 actledd.o -o ../../../../../build/rootfs/drivers/raspix/gpio_actledd -L../../../../../build/lib -larch_bcm283x -lewoksys -lc -lgloss
+cd mbox_actledd; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o actledd.o actledd.c
+arm-none-eabi-ld -Ttext=100 actledd.o -o ../../../../../build/rootfs/drivers/raspix/mbox_actledd -L../../../../../build/lib -larch_bcm283x -lewoksys -lc -lgloss
+cd soundd; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o soundd.o soundd.c
+arm-none-eabi-ld -Ttext=100 soundd.o -o ../../../../../build/rootfs/drivers/raspix/soundd -L../../../../../build/lib -larch_bcm283x -lewoksys -lc -lgloss
+cd usbd; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include -Iinclude   -c -o usbd.o usbd.c
+arm-none-eabi-ld -Ttext=100 usbd.o -o ../../../../../build/rootfs/drivers/raspix/usbd -L../../../../../build/lib -Llib  -larch_bcm283x -lewoksys -lc -lgloss -lcsud -lewoksys -lc -lgloss
+cd hid_keybd; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o hid_keybd.o hid_keybd.c
+arm-none-eabi-ld -Ttext=100 hid_keybd.o -o ../../../../../build/rootfs/drivers/raspix/hid_keybd -L../../../../../build/lib -lewoksys -lc -lgloss
+cd hid_moused; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o hid_moused.o hid_moused.c
+arm-none-eabi-ld -Ttext=100 hid_moused.o -o ../../../../../build/rootfs/drivers/raspix/hid_moused -L../../../../../build/lib -lewoksys -lc -lgloss
+cd hid_joystickd; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o hid_joystickd.o hid_joystickd.c
+arm-none-eabi-ld -Ttext=100 hid_joystickd.o -o ../../../../../build/rootfs/drivers/raspix/hid_joystickd -L../../../../../build/lib -lewoksys -lc -lgloss
+cd spi2uart; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o uartd.o uartd.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I ../../../../../build/include   -c -o sc16is750.o sc16is750.c
+arm-none-eabi-ld -Ttext=100 uartd.o sc16is750.o -o ../../../../../build/rootfs/drivers/raspix/spi2uartd -L../../../../../build/lib -larch_bcm283x -lewoksys -lc -lgloss
+cd wlan; make
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o sdio/sdhci.o sdio/sdhci.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o sdio/mmc.o sdio/mmc.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o sdio/sdio.o sdio/sdio.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o utils/qbuf.o utils/qbuf.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o utils/utils.o utils/utils.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o utils/log.o utils/log.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o utils/skb.o utils/skb.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o utils/config.o utils/config.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o utils/pbkdf2.o utils/pbkdf2.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o brcm/brcm.o brcm/brcm.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o brcm/chip.o brcm/chip.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o brcm/firmware.o brcm/firmware.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o brcm/command.o brcm/command.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o brcm/console.o brcm/console.c
+arm-none-eabi-gcc -marm -mfloat-abi=softfp -Wall -Wextra -fPIC -mapcs-frame -Wno-unused-parameter -Wno-builtin-declaration-mismatch -std=c99 -O2 -I. -I ../../../../../build/include   -c -o main.o main.c
+arm-none-eabi-ld -Ttext=100 sdio/sdhci.o sdio/mmc.o sdio/sdio.o utils/qbuf.o utils/utils.o utils/log.o utils/skb.o utils/config.o utils/pbkdf2.o brcm/brcm.o brcm/chip.o brcm/firmware.o brcm/command.o brcm/console.o main.o -o ../../../../../build/rootfs/drivers/raspix/wland -L../../../../../build/lib -ltinyjson -larch_bcm283x -lewoksys -lc -lgloss 
+mkdir -p  ../../../../../build/rootfs/etc/wlan/
+cp -r network.json ../../../../../build/rootfs/etc/wlan/
+all done.
+rm -fr ../../../build/raspix
+mkdir -p ../../../build/raspix
+mv ../../../build/rootfs/* ../../../build/raspix

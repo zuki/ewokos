@@ -7,6 +7,9 @@
 #include <ewoksys/kernel_tic.h>
 #include <ewoksys/klog.h>
 #include <arch/bcm283x/mmc.h>
+#include <ewoksys/proc.h>
+
+#define usleep  proc_usleep
 
 typedef uint32_t lbaint_t;
 struct mmc _mmc;

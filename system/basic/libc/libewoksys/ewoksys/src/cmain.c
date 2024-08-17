@@ -8,6 +8,7 @@
 #include <ewoksys/proc.h>
 #include <ewoksys/vfs.h>
 #include <ewoksys/core.h>
+#include <ewoksys/ipc.h>
 #include <procinfo.h>
 #include <unistd.h>
 
@@ -15,6 +16,8 @@
 extern "C" {
 #endif
 
+extern void _libc_init(void);
+extern void _libc_exit(void);
 
 static char _cmd[PROC_INFO_MAX_CMD_LEN];
 static int _off_cmd;
@@ -97,7 +100,7 @@ static void loadenv(void) {
 		for(int i=0; i<n; i++) {
 			const char* name = proto_read_str(&out);
 			const char* value = proto_read_str(&out);
-			setenv(name, value);
+			setenv(name, value, 1);
 		}
 	}
 	PF->clear(&out);

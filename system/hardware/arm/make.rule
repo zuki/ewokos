@@ -8,12 +8,14 @@ CFLAGS = -marm \
 	-mfloat-abi=softfp \
         -Wall -Wextra -fPIC -mapcs-frame \
         -Wno-unused-parameter \
+        -Wno-builtin-declaration-mismatch \
         -std=c99
 
 CXXFLAGS = -marm \
 	-mfloat-abi=softfp \
         -Wall -Wextra -fPIC -mapcs-frame \
         -Wno-unused-parameter \
+        -Wno-builtin-declaration-mismatch \
         -pedantic \
 	-fno-rtti \
         -fno-exceptions \

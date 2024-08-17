@@ -4,7 +4,7 @@
 #include <string.h>
 #include <ewoksys/syscall.h>
 #include <ewoksys/mmio.h>
-
+#include <ewoksys/kernel_tic.h>
 
 #define SD_OK                0
 #define SD_TIMEOUT          -1
