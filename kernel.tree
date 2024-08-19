@@ -1,0 +1,200 @@
+kernel
+├── build
+│   └── raspi2.3
+│       └── arm
+│           └── release
+├── dev
+│   ├── include
+│   │   └── dev
+│   │       ├── fb.h
+│   │       ├── fbinfo.h
+│   │       ├── sd.h
+│   │       ├── timer.h
+│   │       └── uart.h
+│   └── src
+│       └── fb.c
+├── hardware
+│   └── arm
+│       ├── arch
+│       │   ├── README.md
+│       │   ├── common
+│       │   │   ├── include
+│       │   │   │   ├── arch.h
+│       │   │   │   ├── arch_context.h
+│       │   │   │   ├── gic.h
+│       │   │   │   └── mm
+│       │   │   │       ├── mmu_arch.h
+│       │   │   │       └── mmudef.h
+│       │   │   └── src
+│       │   │       ├── arm32_aeabi_divmod.c
+│       │   │       ├── arm32_aeabi_divmod_a32.S
+│       │   │       ├── arm32_aeabi_ldivmod.c
+│       │   │       ├── arm32_aeabi_ldivmod_a32.S
+│       │   │       ├── gic.c
+│       │   │       ├── interrupt.S
+│       │   │       ├── irq.c
+│       │   │       ├── memcpy.S
+│       │   │       └── mmu_arch.c
+│       │   └── v7
+│       │       ├── boot.S
+│       │       ├── mmu_pte_flags.c
+│       │       ├── neon.c
+│       │       └── system.S
+│       ├── make.rule
+│       └── raspi
+│           ├── lib
+│           │   └── bcm283x
+│           │       ├── include
+│           │       │   └── bcm283x
+│           │       │       ├── board.h
+│           │       │       ├── framebuffer.h
+│           │       │       ├── gpio.h
+│           │       │       ├── mailbox.h
+│           │       │       ├── mini_uart.h
+│           │       │       ├── pl011_uart.h
+│           │       │       └── sd.h
+│           │       └── src
+│           │           ├── board.c
+│           │           ├── framebuffer.c
+│           │           ├── gpio.c
+│           │           ├── mailbox.c
+│           │           ├── mini_uart.c
+│           │           ├── pl011_uart.c
+│           │           └── sd.c
+│           └── pix
+│               ├── Makefile
+│               ├── README.md
+│               ├── bsp
+│               │   ├── core.c
+│               │   ├── fb.c
+│               │   ├── hw_arch.h
+│               │   ├── hw_info_arch.c
+│               │   ├── pi2.3
+│               │   │   ├── ipi.c
+│               │   │   ├── irq.c
+│               │   │   └── timer.c
+│               │   ├── sd.c
+│               │   ├── start.c
+│               │   ├── timer_arch.h
+│               │   └── uart.c
+│               ├── config.mk
+│               ├── make.bsp
+│               ├── make.bsp.clockwork
+│               ├── make.bsp.pi4
+│               ├── mkos.lds.S
+│               ├── mkos.lds.qemu.S
+│               └── xmake.lua
+├── kernel
+│   ├── include
+│   │   ├── interrupt.h
+│   │   ├── kernel
+│   │   │   ├── context.h
+│   │   │   ├── core.h
+│   │   │   ├── elf.h
+│   │   │   ├── hw_info.h
+│   │   │   ├── interrupt.h
+│   │   │   ├── ipc.h
+│   │   │   ├── irq.h
+│   │   │   ├── kconsole.h
+│   │   │   ├── kernel.h
+│   │   │   ├── kevqueue.h
+│   │   │   ├── proc.h
+│   │   │   ├── schedule.h
+│   │   │   ├── semaphore.h
+│   │   │   ├── signal.h
+│   │   │   ├── smp
+│   │   │   │   └── ipi.h
+│   │   │   ├── svc.h
+│   │   │   ├── system.h
+│   │   │   └── trace.h
+│   │   ├── kevent.h
+│   │   ├── mm
+│   │   │   ├── dma.h
+│   │   │   ├── kalloc.h
+│   │   │   ├── kmalloc.h
+│   │   │   ├── mmu.h
+│   │   │   ├── shm.h
+│   │   │   └── trunkmem.h
+│   │   ├── procinfo.h
+│   │   ├── proto_t.h
+│   │   ├── signals.h
+│   │   ├── syscalls.h
+│   │   └── sysinfo.h
+│   └── src
+│       ├── hw_info.c
+│       ├── interrupt.c
+│       ├── ipc.c
+│       ├── irq.c
+│       ├── kconsole.c
+│       ├── kernel.c
+│       ├── kernel_config.c
+│       ├── kevqueue.c
+│       ├── mm
+│       │   ├── dma.c
+│       │   ├── kalloc.c
+│       │   ├── kmalloc.c
+│       │   ├── mmio.c
+│       │   ├── mmu.c
+│       │   ├── shm.c
+│       │   └── trunkmem.c
+│       ├── proc.c
+│       ├── schedule.c
+│       ├── semaphore.c
+│       ├── signal.c
+│       ├── smp
+│       │   └── core.c
+│       ├── svc.c
+│       ├── system.c
+│       └── trace.c
+├── lib
+│   ├── console
+│   │   ├── Makefile
+│   │   ├── include
+│   │   │   └── console
+│   │   │       └── console.h
+│   │   └── src
+│   │       └── console.c
+│   ├── ext2
+│   │   ├── include
+│   │   │   ├── ext2head.h
+│   │   │   ├── ext2read.h
+│   │   │   └── partition.h
+│   │   └── src
+│   │       └── ext2read.c
+│   ├── graph
+│   │   ├── include
+│   │   │   └── graph
+│   │   │       ├── font.h
+│   │   │       └── graph.h
+│   │   └── src
+│   │       ├── font.c
+│   │       ├── font8x16.c
+│   │       ├── graph.c
+│   │       ├── pixel.c
+│   │       └── text.c
+│   ├── include
+│   │   ├── atoi.h
+│   │   ├── kprintf.h
+│   │   ├── kstring.h
+│   │   ├── mstr.h
+│   │   ├── proto.h
+│   │   ├── queue.h
+│   │   └── vprintf.h
+│   ├── sconf
+│   │   ├── include
+│   │   │   └── sconf.h
+│   │   └── src
+│   │       └── sconf.c
+│   └── src
+│       ├── atoi.c
+│       ├── kprintf.c
+│       ├── kstring.c
+│       ├── mstr.c
+│       ├── proto.c
+│       ├── queue.c
+│       └── vprintf.c
+├── loadinit
+│   └── sd
+│       └── loadinit.c
+├── makefile
+└── xmake.lua
