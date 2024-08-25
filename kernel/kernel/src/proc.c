@@ -20,6 +20,7 @@
 
 static proc_t **_task_table;//[_kernel_config.max_task_num];
 
+// VMMプロセスページディレクトリエントリテーブル構造体
 typedef struct {
 	page_dir_entry_t pde[PAGE_DIR_NUM];
 } proc_vm_t;
@@ -37,14 +38,14 @@ bool _core_proc_ready = false;
 int32_t _core_proc_pid = -1;
 uint32_t _ipc_uid = 0;
 
-/* proc_init initializes the process sub-system. */
+/* proc_init はプロセスサブシステムを初期化する */
 int32_t procs_init(void) {
 	_use_core_id = 0;
 	_ipc_uid = 0;
 	_proc_uuid = 0;
 	_core_proc_ready = false;
 	uint32_t i;
-
+    // max_proc_num = 64
 	uint32_t size = PAGE_DIR_SIZE + (_kernel_config.max_proc_num*sizeof(proc_vm_t));
 	uint32_t pde = (uint32_t)kmalloc(size);
 	if(pde == 0) {
@@ -308,21 +309,26 @@ void proc_switch_multi_core(context_t* ctx, proc_t* to, uint32_t core) {
 	}
 }
 
+// タスクスイッチ
 void proc_switch(context_t* ctx, proc_t* to, bool quick){
 	proc_t* cproc = get_current_proc();
 	if(to == NULL)
 		return;
 
+    // コンテキストをカレントプロセスのコンテキストに保存
 	if(cproc != NULL && cproc->info.state != UNUSED)
 		memcpy(&cproc->ctx, ctx, sizeof(context_t));
 
+    // 次のプロセスがカレントプロセスと異なる場合はTLBに次のタスクのVMを設定
 	if(cproc != to) {
 		page_dir_entry_t *vm = to->space->vm;
 		set_translation_table_base((uint32_t)V2P(vm));
 	}
 
+    // 次のタスクがプロセス（スレッドでない）の場合、保留された処理を実行する
 	if(to->info.type == TASK_TYPE_PROC) {
-		if (to->space->interrupt.state == INTR_STATE_START) {																				// have irq request to handle
+        // 保留された割り込みがあれば処理する
+		if (to->space->interrupt.state == INTR_STATE_START) {
 			to->space->interrupt.state = INTR_STATE_WORKING; // clear irq request mask
 			memcpy(&to->space->interrupt.saved_state.ctx, &to->ctx, sizeof(context_t)); // save "to" context to irq ctx, will restore after irq done.
 			to->ctx.gpr[0] = to->space->interrupt.interrupt;
@@ -332,7 +338,8 @@ void proc_switch(context_t* ctx, proc_t* to, bool quick){
 				to->space->interrupt.stack = thread_stack_alloc(to);
 			to->ctx.sp = ALIGN_DOWN(to->space->interrupt.stack + THREAD_STACK_PAGES * PAGE_SIZE, 8);
 		}
-		else if (to->space->signal.do_switch) {																			 // have signal request to handle
+        // 保留されたシグナルがあれば処理する
+		else if (to->space->signal.do_switch) {
 			memcpy(&to->space->signal.saved_state.ctx, &to->ctx, sizeof(context_t)); // save "to" context to ipc ctx, will restore after ipc done.
 			to->ctx.gpr[0] = to->space->signal.sig_no;
 			to->ctx.pc = to->ctx.lr = to->space->signal.entry;
@@ -341,7 +348,8 @@ void proc_switch(context_t* ctx, proc_t* to, bool quick){
 			to->ctx.sp = ALIGN_DOWN(to->space->signal.stack + THREAD_STACK_PAGES * PAGE_SIZE, 8);
 			to->space->signal.do_switch = false; // clear ipc request mask
 		}
-		else if (to->space->ipc_server.do_switch) { // have ipc request to handle
+        // 保留されたIPCタスクがあれば処理する
+		else if (to->space->ipc_server.do_switch) {
 			ipc_task_t *ipc = proc_ipc_get_task(to);
 			memcpy(&to->space->ipc_server.saved_state.ctx, &to->ctx, sizeof(context_t)); // save "to" context to ipc ctx, will restore after ipc done.
 			to->ctx.gpr[0] = ipc->uid;
@@ -354,10 +362,11 @@ void proc_switch(context_t* ctx, proc_t* to, bool quick){
 		}
 	}
 
+    // カレントプロセスをreadyキューに移す
 	if(cproc != to && cproc != NULL &&
 			cproc->info.state != UNUSED &&
 			cproc != _cpu_cores[cproc->info.core].halt_proc) {
-			//halt proc can't be pushed into ready queue, can't be scheduled.
+			// haltプロ背セスはreadyキューに入れられないのでスケジュールできない
 		if(cproc->info.state == RUNNING) {
 			cproc->info.state = READY;
 			if(quick)
@@ -367,10 +376,13 @@ void proc_switch(context_t* ctx, proc_t* to, bool quick){
 		}	
 	}
 
+    // toプロセスを実行状態にする
 	to->info.state = RUNNING;
 	to->info.block_by = -1;
+    // カレントコアのカレントプロセスをtoにする
 	if(cproc != to)
 		set_current_proc(to);
+    // コンテキストをtoのコンテキストにする
 	memcpy(ctx, &to->ctx, sizeof(context_t));
 }
 
@@ -708,8 +720,10 @@ int32_t proc_load_elf(proc_t *proc, const char *image, uint32_t size) {
 	proc_free_heap(proc);
 
 	/*read elf format from saved proc image*/
-	if (ELF_TYPE(proc_image) != ELFTYPE_EXECUTABLE)
+	if (ELF_TYPE(proc_image) != ELFTYPE_EXECUTABLE) {
+        printf("  not ELFTYPE_EXECUTABLE");
 		return -1;
+    }
 
 	prog_header_count = ELF_PHNUM(proc_image);
 	//uint32_t *debug = 0;
@@ -735,6 +749,7 @@ int32_t proc_load_elf(proc_t *proc, const char *image, uint32_t size) {
 		while (proc->space->heap_size < (vaddr + memsz)) {
 			if(proc_expand_mem(proc, 1, rdonly) != 0){ 
 				kfree(proc_image);
+                printf("  not proc_expaand_mem");
 				return -1;
 			}
 		}
@@ -1068,6 +1083,7 @@ inline void renew_kernel_sec(void) {
 		_k_sec_counter = 0;
 }
 
+// procがスレッドの場合、親プロセスを返す。procがプロセスの場合はprocを返す
 proc_t* proc_get_proc(proc_t* proc) {
 	while(proc != NULL) {
 		if(proc->info.type == TASK_TYPE_PROC)
@@ -1085,6 +1101,7 @@ int32_t get_proc_pid(int32_t pid) {
 }
 
 proc_t* kfork_core_halt(uint32_t core) {
+    // pid = 0: NULL proc
 	proc_t* cproc = _task_table[0];
 	proc_t* child = kfork_raw(NULL, TASK_TYPE_PROC, cproc);
 	child->info.core = core;

@@ -9,10 +9,12 @@ struct st_proc;
 
 #define IPC_CTX_MAX 8
 
+// シグナル状態
 enum {
 	SIG_STATE_IDLE = 0,
 	SIG_STATE_BUSY
 };
+
 
 typedef struct {
 	uint32_t  uid;

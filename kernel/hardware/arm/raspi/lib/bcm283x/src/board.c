@@ -27,6 +27,7 @@ static uint32_t bcm283x_board_revision(void) {
 	return data[5];
 }
 
+// メールボックスを使ってボードリビジョンを取得する
 uint32_t bcm283x_board(void) {
 	uint32_t revision = bcm283x_board_revision();
 

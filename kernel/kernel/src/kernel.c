@@ -248,7 +248,7 @@ void _kernel_entry_c(void) {
 #endif
 
 	printf("kernel: set timer              ... ");
-	timer_set_interval(0, _kernel_config.timer_freq); 
+	timer_set_interval(0, _kernel_config.timer_freq);   // timer_freq = 8192
 	printf("[ok]\n");
 	printf("kernel: start init process     ...\n"
 		   "---------------------------------------------------\n");

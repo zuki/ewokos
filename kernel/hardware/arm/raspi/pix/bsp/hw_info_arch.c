@@ -21,6 +21,7 @@ uint32_t _pi4 = 0;
 #define FB_SIZE 64*MB
 #define DMA_SIZE 256*KB
 
+// アーキテクチャに合わせたシステム情報の初期化
 void sys_info_init_arch(void) {
 	memset(&_sys_info, 0, sizeof(sys_info_t));
 	uint32_t pix_revision = bcm283x_board();
@@ -89,6 +90,7 @@ void sys_info_init_arch(void) {
 		strcpy(_sys_info.machine, "raspberry-pi2b");
 		_sys_info.phy_mem_size = 1u*GB;
 		_sys_info.mmio.phy_base = 0x3f000000;
+        // raspi2bはUART_PL011を使用
 		_uart_type = UART_PL011;
 	}
 	else if(pix_revision == PI_3A) {
@@ -105,6 +107,7 @@ void sys_info_init_arch(void) {
 		strcpy(_sys_info.machine, "raspberry-pi3b");
 		_sys_info.phy_mem_size = 1u*GB;
 		_sys_info.mmio.phy_base = 0x3f000000;
+        // raspi2bはMini_UARTを使用
 	}
 
 	if(_sys_info.phy_mem_size > (uint32_t)MAX_MEM_SIZE)
@@ -130,6 +133,7 @@ void sys_info_init_arch(void) {
 #endif
 }
 
+// ローカルペリフェラル 0x4000_0000 のページマップ
 void arch_vm(page_dir_entry_t* vm) {
 	uint32_t vbase = _sys_info.mmio.v_base + _core_base_offset;
 	uint32_t pbase = _sys_info.mmio.phy_base + _core_base_offset;
@@ -148,17 +152,19 @@ void arch_vm(page_dir_entry_t* vm) {
 #endif
 }
 
-
+// 各コアの起動
 #ifdef KERNEL_SMP
 extern char __entry[];
 void start_core(uint32_t core_id) {
     if(core_id >= _sys_info.cores)
         return;
 
+    // Core N Mailbox 3を使用してentryのアドレスを渡す(armstub7.Sを参照)
     uint32_t core_start_addr = (core_id * 0x10 + 0x8c) + 
        _sys_info.mmio.phy_base + 
        _core_base_offset;
 
+    // __entry: kernel/hardware/arm/v7/boot.S
     put32(core_start_addr, __entry);
     __asm__("sev");
 }

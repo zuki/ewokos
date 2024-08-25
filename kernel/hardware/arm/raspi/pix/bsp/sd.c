@@ -5,6 +5,7 @@
 #include <bcm283x/mailbox.h>
 #include <kernel/hw_info.h>
 
+// SDカードの処理
 
 int32_t sd_init(void) {
 	if(_pi4){

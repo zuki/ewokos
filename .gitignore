@@ -16,3 +16,8 @@ system/tmp
 system/make.rule
 build
 .xmake
+system/hardware/arm/make_image.inc
+system/hardware/arm/raspix/boot
+system/hardware/arm/raspix/boot.org
+ewokos.img
+system/hardware/arm/raspix/sd

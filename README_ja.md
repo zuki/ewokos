@@ -17,7 +17,7 @@
 	- IPC
 	- 仮想ファイルシステムサービス（全ては１つのファイル）
 	- initrd用の非常にシンプルなramdisk
-	- フラフィック用のフレームバッファデバイスサービス
+	- グラフィック用のフレームバッファデバイスサービス
 	- UARTデバイスサービス
 	- SDカード対応
 
@@ -38,6 +38,9 @@ if(req.arg & ACMD41_ENQUIRY_MASK) { //modified by Misa.Z
 	sd->state = sd_ready_state;
 }
 ```
+
+- これは不要
+- `brew install qemu`
 	
 ### risc-vのツールチェイン
 
@@ -48,8 +51,9 @@ https://github.com/riscv-software-src/homebrew-riscv
 ### Homebrewによるツールのインストール
 
 ```sh
-brew tap PX4/homebrew-px4
-brew install gcc-arm-none-eabi-49
+brew tap PX4/homebrew-px4               # これは使わない
+brew install gcc-arm-none-eabi-49       # これは使わない 
+brew install --cask gcc-arm-embedded    # 代わりにこれを使う
 brew install e2tools
 （インストール後にPATH環境変数を適切に設定する）
 # USB/TTLドライバのダウンロード https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
@@ -58,6 +62,9 @@ brew install e2tools
 ### ext2イメージの作成とマウント
 
 #### macFUSEのインストール　[macFUSE校正機サイト](https://osxfuse.github.io/)
+
+- 以下のビルドは行わない
+- `brew install --cask macfuse`
 
 ##### ビルドツールのインストール
 
@@ -100,16 +107,15 @@ install minicom (linux/mac)
 ## EwokOS カーネルイメージのビルド
 	
 ```sh
-cd kernel/build/{arch}; make
+cd kernel/hardware/arm/raspi/pix; make
 ```
 
-## EwokOS rootfs (system/root.ext2) とsdファイルシステムの作成
+## EwokOS rootfs (system/root.ext2) の作成
 	
 ```sh
-cd system/basic ; make  # basic system
-cd system/full ; make   # xgui
-cd system/extra ; make  # xgui and extra apps	
-make sd:
+cd system/hardware/arm/raspix
+make basic  # basic system
+make full   # xgui
 ```
 	
 ## QEMUによる実行 (raspi2)
@@ -123,6 +129,9 @@ make gdb			# EwokOSをデバッグ（デバッグクライアントモード）
 
 ## xmakeビルドシステム
 
+- xmakeによるビルドはまだxmakeの設定が十分でなく、正常に動かない
+
+```sh
     "xmake":
         build kernel && system
 
@@ -150,13 +159,14 @@ make gdb			# EwokOSをデバッグ（デバッグクライアントモード）
          
       "xmake show"
          show current project infomation      
+```
 
 ## コマンド
 	
-ほとんどのコマンドは`rootfs/sbin`ディレクトリにある。たとえば、
+ほとんどのコマンドは`rootfs/bin`ディレクトリにある。たとえば、
 	ls, ps, pwd, test など
 
 ## ソースコードリーディングガイド
 
-チップ: アセンブリコードに深煎りないこと ;).
+チップ: アセンブリコードに深入りしないこと ;).
 

@@ -27,44 +27,46 @@ typedef struct {
 	void**   stacks;
 } thread_stack_t;
 
+// プロセスのみに存在する構造体
 typedef struct {
-	uint32_t           pde_index;
-	page_dir_entry_t*  vm;
+	uint32_t           pde_index;					// pdeインデックス
+	page_dir_entry_t*  vm;							// このプロセスのページディレクトリエントリ
 
-	uint32_t           malloc_base;
-	uint32_t           rw_heap_base;
-	uint32_t           heap_size;
-	int32_t            refs;
-	bool               ready_ping;
+	uint32_t           malloc_base;					// mallocのベースアドレス
+	uint32_t           rw_heap_base;				// ヒープのベースアドレス
+	uint32_t           heap_size;					// ヒープの残りサイズ
+	int32_t            refs;						// このspaceのレファレンス数
+	bool               ready_ping;					// 
 	
-	int32_t            shms[SHM_MAX];
-	proc_block_event_t block_events[BLOCK_EVT_MAX];
+	int32_t            shms[SHM_MAX];				// 旧友メモリ
+	proc_block_event_t block_events[BLOCK_EVT_MAX];	// ブロックしたイベント
 
-	ipc_server_t       ipc_server;
-	signal_t           signal;
-	proc_interrupt_t   interrupt;
+	ipc_server_t       ipc_server;					// ipcサーバ
+	signal_t           signal;						// 保留シグナル
+	proc_interrupt_t   interrupt;					// 保留割り込み
 
-	thread_stack_t     *thread_stacks;
-	uint32_t           user_stack[STACK_PAGES];
+	thread_stack_t     *thread_stacks;				// スレッドスタック
+	uint32_t           user_stack[STACK_PAGES];		// ユーザスタック
 } proc_space_t;
 
+//　プロセス/スレッドに共通の構造体
 typedef struct st_proc {
-	procinfo_t        info;
-	bool              is_core_idle_proc;
+	procinfo_t        info;						// procnof.h
+	bool              is_core_idle_proc;		// pid=0のアイドルプロセスか?
 
-	uint32_t          block_event;
-	uint32_t          ipc_buffered;
-	bool              ipc_buffer_clean;
-	ipc_res_t         ipc_res;
+	uint32_t          block_event;				// ブロックしたイベント
+	uint32_t          ipc_buffered;				// IPCデータの未処理数
+	bool              ipc_buffer_clean;			// IPCバッファはクリアか?
+	ipc_res_t         ipc_res;					// IPCデータ
 
-	int64_t           sleep_counter; //sleep usec
-	uint32_t          schd_core_lock_counter; //schd_core_lock usec
-	uint32_t          run_usec_counter; //run time usec
+	int64_t           sleep_counter; 			// スリープ残り時間（マイクロ秒）
+	uint32_t          schd_core_lock_counter; 	// schd_core_lock 残り時間（マイクロ秒）
+	uint32_t          run_usec_counter; 		// 実行残り時間（マイクロ秒）
 
-	proc_space_t*     space; //threads share the space from owner proc
-	uint32_t          thread_stack_base;
+	proc_space_t*     space; 					// スレッドは親プロセスのメモリ空間を共通する
+	uint32_t          thread_stack_base;		// スレッドスタックベースアドレス
 
-	context_t         ctx;
+	context_t         ctx;						// コンテキスト
 } proc_t;
 
 extern proc_t* get_current_core_proc(uint32_t core);

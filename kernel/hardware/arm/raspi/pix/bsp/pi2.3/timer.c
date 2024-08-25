@@ -28,26 +28,32 @@ void timer_set_interval(uint32_t id, uint32_t interval_microsecond) {
 }
 */
 
+// システムタイマーの操作
+
 void __write_cntv_tval(uint32_t);
 void __enable_cntv(void);
 
+// システムカウンタの周波数を取得する
 static inline uint32_t read_cntfrq(void) {
   uint32_t val;
   __asm__ volatile ("mrc p15, 0, %0, c14, c0, 0" : "=r"(val) );
   return val;
 }
 
+// システムインターバルを設定
 inline void write_cntv_tval(uint32_t tval) {
 	__asm__ volatile ("mcr p15, 0, %0, c14, c3, 0" :: "r"(tval));
 }
 
+// タイマーをenable
 static inline void enable_cntv(void) {
 	__asm__ volatile ("mcr p15, 0, %0, c14, c3, 1" :: "r"(1));
 }
 
+// タイマーインターバルをセット
 void timer_set_interval(uint32_t id, uint32_t times_per_sec) {
 	(void)id;
-	_timer_tval = read_cntfrq() / times_per_sec;
+	_timer_tval = read_cntfrq() / times_per_sec;    // 19.4MHz / 8192 = 2368 us
 	write_cntv_tval(_timer_tval);
 	enable_cntv();
 }
@@ -60,6 +66,7 @@ inline void timer_clear_interrupt(uint32_t id) {
 #define SYSTEM_TIMER_LOW  0x0004 // System Timer Counter Upper 32 bits
 #define SYSTEM_TIMER_HI   0x0008 // System Timer Counter Upper 32 bits
 
+// システムタイマーのカウント値（マイクロ秒）を取得
 inline uint64_t timer_read_sys_usec(void) { //read microsec
 	uint64_t r = get32(SYSTEM_TIMER_BASE + SYSTEM_TIMER_HI);
 	r <<= 32;

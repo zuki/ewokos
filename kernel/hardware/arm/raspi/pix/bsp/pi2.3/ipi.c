@@ -21,7 +21,10 @@ void ipi_enable(uint32_t core_id) {
 	if(reg == 0)
 		return;
 
+    // CoreN Mailboxes Interrupt control Register
+    // reg + 0x3f000000 + 0x1000000 = reg + 0x40000000
 	reg += _sys_info.mmio.v_base + _core_base_offset;
+    // メールボックス-0 IRQを有効化
 	put32(reg, 1);
 }
 
@@ -45,6 +48,7 @@ void ipi_send(uint32_t core_id) {
 	if(reg == 0)
 		return;
 
+    // Core N Mailbox 0 Set Register
 	reg += _sys_info.mmio.v_base + _core_base_offset;
 	put32(reg, 1);
 }
@@ -69,6 +73,7 @@ void ipi_clear(uint32_t core_id) {
 	if(reg == 0)
 		return;
 
+    // Core N Mailbox 0 Read/Clear Register
 	reg += _sys_info.mmio.v_base + _core_base_offset;
 	uint32_t v = get32(reg);
 	put32(reg, v);

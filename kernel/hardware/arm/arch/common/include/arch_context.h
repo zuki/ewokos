@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// コンテキスト構造体
 typedef struct {
   uint32_t cpsr, pc, gpr[ 13 ], sp, lr;
 } context_t;

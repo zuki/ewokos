@@ -6,6 +6,7 @@
 
 #define PROC_INFO_MAX_CMD_LEN 256
 
+// プロセスの状態
 enum {
 	UNUSED = 0,
 	CREATED,
@@ -17,12 +18,14 @@ enum {
 	ZOMBIE
 };
 
+// タスク種別
 enum {
 	TASK_TYPE_PROC = 0,
 	TASK_TYPE_THREAD,
 	TASK_TYPE_VFORK
 };
 
+// IPCの状態
 enum {
 	IPC_IDLE = 0,
 	IPC_BUSY,
@@ -37,6 +40,7 @@ enum {
 #define IPC_LAZY             0x40000000
 #define IPC_NON_RETURN_MASK  0x1fffffff
 
+// プロセス情報構造体
 typedef struct {
 	uint32_t uuid;
 	int32_t  type; 

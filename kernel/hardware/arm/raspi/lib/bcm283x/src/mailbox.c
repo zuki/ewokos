@@ -1,5 +1,6 @@
 #include <bcm283x/mailbox.h>
 
+// メールボックスによるデータ読み込み(channel: 1=FB, 8=プロパティタグ)
 void mailbox_read(uint8_t channel, mail_message_t *msg) {
 	mail_status_t stat;
 
@@ -15,6 +16,7 @@ void mailbox_read(uint8_t channel, mail_message_t *msg) {
 	} while (msg->channel != channel);
 }
 
+// メールボックスによるデータ書き込み
 void  mailbox_send(uint8_t channel, mail_message_t* msg) {
 	mail_status_t stat;
 	msg->channel = channel;

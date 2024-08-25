@@ -7,6 +7,7 @@
 
 static semaphore_t _semaphores[SEMAPHORE_MAX];
 
+// セマフォを初期化する
 void semaphore_init(void) {
 	for(int32_t i=0; i<SEMAPHORE_MAX; i++) {
 		_semaphores[i].occupied = SEM_IDLE;
@@ -15,6 +16,7 @@ void semaphore_init(void) {
 	}
 }
 
+// セマフォを割り当てる（カレントプロセス（スレッドの場合は親プロセス）がcreaterになる）
 int32_t semaphore_alloc(void) {
 	proc_t* proc = proc_get_proc(get_current_proc());
 	if(proc == NULL)
@@ -31,6 +33,7 @@ int32_t semaphore_alloc(void) {
 	return 0;
 }
 
+// プロセスpidが割り当てたセマフォを開放する
 void semaphore_clear(int32_t pid) {
 	for(int32_t i=0; i<SEMAPHORE_MAX; i++) {
 		if(_semaphores[i].creater_pid == pid) {
@@ -42,6 +45,7 @@ void semaphore_clear(int32_t pid) {
 	}
 }
 
+// sem_idのセマフォを開放する
 void semaphore_free(uint32_t sem_id) {
 	if(sem_id == 0)
 		return;
@@ -60,6 +64,7 @@ void semaphore_free(uint32_t sem_id) {
 	}	
 }
 
+// セマフォを取得する
 void semaphore_enter(context_t* ctx, uint32_t sem_id) {
 	ctx->gpr[0] = -1;
 
@@ -73,18 +78,21 @@ void semaphore_enter(context_t* ctx, uint32_t sem_id) {
 			cproc == NULL)
 		return;
 
+    // 指定のセマフォが取得されている場合はセマフォを待ってブロックされる
 	if(_semaphores[sem_id].occupied == SEM_OCCUPIED) {
 		ctx->gpr[0] = -2;
 		proc_block_on(ctx, _semaphores[sem_id].occupied_pid, (uint32_t)_semaphores + sem_id);
 		return;
 	}
 
+    // セマフォ取得成功
 	ctx->gpr[0] = 0;
 	_semaphores[sem_id].occupied = SEM_OCCUPIED;
 	_semaphores[sem_id].occupied_pid = cproc->info.pid;
 	return;
 }
 
+// セマフォを返す
 int32_t semaphore_quit(uint32_t sem_id) {
 	if(sem_id == 0)
 		return -1;
@@ -102,6 +110,7 @@ int32_t semaphore_quit(uint32_t sem_id) {
 	int pid_by = _semaphores[sem_id].occupied_pid;
 	_semaphores[sem_id].occupied = SEM_IDLE;
 	_semaphores[sem_id].occupied_pid = -1;
+    // このセマフォを他意識してるプロセスを起床させる
 	proc_wakeup(pid_by, -1, (uint32_t)_semaphores + sem_id);
 	return 0;
 }
