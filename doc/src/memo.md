@@ -331,16 +331,16 @@ mmio_base: 0x3f000000
 QEMU: Terminated
 ```
 
-![実行画面](ewokos.png)
+![実行画面](image/ewokos.png)
 
 # AArch32コプロセッサ
 
 - Arm Architecture Reference Manual for A-profile architecture
   - G7.3 Organization of registers in the (coproc==0b1111) encoding space
   - Figure G7-1 AArch32 System register groupings for (coproc==0b1111)
-    ![cp](p15_cp.png)
+    ![cp](image/p15_cp.png)
   - Table G7-3 AArch32 VMSA (coproc==0b1111) register summary
-    ![c14](p15_c14.png)
+    ![c14](image/p15_c14.png)
 
 # ソースツリー
 

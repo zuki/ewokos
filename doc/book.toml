@@ -1,0 +1,9 @@
+[book]
+authors = ["SUZUKI Keiji"]
+multilingual = false
+src = "src"
+title = "ewokos"
+
+[output.html]
+default-theme = "rust"
+additional-css = ["theme/custom.css"]
