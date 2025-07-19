@@ -54,16 +54,6 @@ typedef struct st_proc {
 	procinfo_t        info;						// procnof.h
 	bool              is_core_idle_proc;		// pid=0のアイドルプロセスか?
 
-<<<<<<< HEAD
-	uint32_t          block_event;				// ブロックしたイベント
-	uint32_t          ipc_buffered;				// IPCデータの未処理数
-	bool              ipc_buffer_clean;			// IPCバッファはクリアか?
-	ipc_res_t         ipc_res;					// IPCデータ
-
-	int64_t           sleep_counter; 			// スリープ残り時間（マイクロ秒）
-	uint32_t          schd_core_lock_counter; 	// schd_core_lock 残り時間（マイクロ秒）
-	uint32_t          run_usec_counter; 		// 実行残り時間（マイクロ秒）
-=======
 	uint32_t          priority_count;
 	uint32_t          block_event;
 	uint32_t          ipc_buffered;
@@ -72,7 +62,6 @@ typedef struct st_proc {
 
 	int64_t           sleep_counter; //sleep usec
 	uint32_t          run_usec_counter; //run time usec
->>>>>>> master
 
 	proc_space_t*     space; 					// スレッドは親プロセスのメモリ空間を共通する
 	uint32_t          thread_stack_base;		// スレッドスタックベースアドレス
