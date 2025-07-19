@@ -33,9 +33,10 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #=============================================================================
-include ../../../hardware/$(ARCH)/make.rule
+SYS_DIR=../../..
+include $(SYS_DIR)/platform/$(ARCH)/make.rule
 
-BUILD_DIR = ../../../build
+BUILD_DIR = $(SYS_DIR)/build/$(HW)
 TARGET_DIR = $(BUILD_DIR)
 
 SOURCE_DIR ?= source
@@ -46,7 +47,6 @@ SOFTFLOAT_OPTS ?= -DSOFTFLOAT_ROUND_ODD -DINLINE_LEVEL=5
 DELETE = rm -f
 CP = cp
 C_INCLUDES = -I. -I$(SOURCE_DIR)/$(SPECIALIZE_TYPE) -I$(SOURCE_DIR)/include
-#-I$(SDKROOT)/usr/include
 COMPILE_C = \
   $(CC) -c -Werror-implicit-function-declaration $(SOFTFLOAT_OPTS) \
     $(C_INCLUDES) -O2 -o $@
@@ -309,10 +309,10 @@ ifeq (${ARCH},arm)
 OBJS_S_DIV = \
      arm32_aeabi_divmod_a32$(OBJ) \
      arm32_aeabi_ldivmod_a32$(OBJ)
-    
+
 OBJS_DIV = \
      arm32_aeabi_divmod$(OBJ) \
-     arm32_aeabi_ldivmod$(OBJ) 
+     arm32_aeabi_ldivmod$(OBJ)
 endif
 
 

@@ -1,5 +1,7 @@
 #include <ewoksys/mstr.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <stdarg.h>
 #include <stdlib.h>
@@ -23,13 +25,13 @@ void str_reset(str_t* str) {
 		str->cstr = (char*)malloc(STR_BUF);
 		if(str->cstr == NULL) {
 			str->max = 0;
-			str->len = 0;	
+			str->len = 0;
 			return;
 		}
 		str->max = STR_BUF;
 	}
 	str->cstr[0] = 0;
-	str->len = 0;	
+	str->len = 0;
 }
 
 char* str_detach(str_t* str) {
@@ -48,6 +50,7 @@ char* str_ncpy(str_t* str, const char* src, uint32_t l) {
 	uint32_t len = (uint32_t)strlen(src);
 	if(len > l)
 		len = l;
+	len++;
 
 	uint32_t new_size = len;
 	if(str->max <= new_size) {
@@ -55,6 +58,7 @@ char* str_ncpy(str_t* str, const char* src, uint32_t l) {
 		str->cstr = realloc(str->cstr, new_size);
 		str->max = new_size;
 	}
+	len--;
 
 	strncpy(str->cstr, src, len);
 	str->cstr[len] = 0;
@@ -101,7 +105,7 @@ char* str_add(str_t* str, const char* src) {
 	}
 
 	uint32_t len = (uint32_t)strlen(src);
-	uint32_t new_size = str->len + len;
+	uint32_t new_size = str->len + len + 1;
 	if(str->max <= new_size) {
 		new_size = str->len + len + STR_BUF; /*STR BUF for buffer*/
 		str->cstr = realloc(str->cstr, new_size);
@@ -155,7 +159,7 @@ static char _str_result[STATIC_STR_MAX+1];
 
 const char* str_from_int(int value, int base) {
     // check that the base if valid
-    if (base < 2 || base > 36) 
+    if (base < 2 || base > 36)
 			base = 10;
 
     char* ptr = _str_result, *ptr1 = _str_result, tmp_char;
@@ -222,7 +226,7 @@ int str_to(const char* str, char c, str_t* res, uint8_t skipspace) {
 
 	if(skipspace != 0) {
 		while(1) {
-			char offc = str[i]; 
+			char offc = str[i];
 			if(offc == 0) //the end of str
 				return -1;
 			if(offc != ' ' && offc != '\t')
@@ -232,10 +236,10 @@ int str_to(const char* str, char c, str_t* res, uint8_t skipspace) {
 	}
 
 	while(1) {
-		char offc = str[i]; 
+		char offc = str[i];
 		if(offc == 0) //the end of str
 			return -1;
-		if(offc == c) 
+		if(offc == c)
 			break;
 		else if(res != NULL)
 			str_addc(res, offc);
@@ -259,6 +263,7 @@ int str_to(const char* str, char c, str_t* res, uint8_t skipspace) {
 	return i;
 }
 
+/*
 static void outc(char c, void* p) {
 	str_t* buf = (str_t*)p;
 	str_addc(buf, c);
@@ -281,6 +286,7 @@ str_t* str_format_new(const char *format, ...) {
 	va_end(ap);
 	return str;
 }
+*/
 
 #ifdef __cplusplus
 }

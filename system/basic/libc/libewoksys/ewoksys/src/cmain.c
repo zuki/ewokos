@@ -7,6 +7,8 @@
 #include <ewoksys/signal.h>
 #include <ewoksys/proc.h>
 #include <ewoksys/vfs.h>
+#include <ewoksys/ipc.h>
+#include <ewoksys/sys.h>
 #include <ewoksys/core.h>
 #include <ewoksys/ipc.h>
 #include <procinfo.h>
@@ -16,8 +18,8 @@
 extern "C" {
 #endif
 
-extern void _libc_init(void);
-extern void _libc_exit(void);
+vsyscall_info_t* _vsyscall_info = NULL;
+int _current_pid = -1;
 
 static char _cmd[PROC_INFO_MAX_CMD_LEN];
 static int _off_cmd;
@@ -78,7 +80,7 @@ static void init_cmd(void) {
 	_cmd[0] = 0;
 	_off_cmd = 0;
 	_argv0 = "";
-	syscall3(SYS_PROC_GET_CMD, getpid(), (int32_t)_cmd, PROC_INFO_MAX_CMD_LEN);
+	syscall3(SYS_PROC_GET_CMD, (ewokos_addr_t)getpid(), (ewokos_addr_t)_cmd, PROC_INFO_MAX_CMD_LEN);
 }
 
 #define ARG_MAX 16
@@ -94,7 +96,7 @@ static void loadenv(void) {
 		PF->clear(&out);
 		return;
 	}
-		
+
 	int n = proto_read_int(&out);
 	if(n > 0) {
 		for(int i=0; i<n; i++) {
@@ -106,6 +108,24 @@ static void loadenv(void) {
 	PF->clear(&out);
 }
 
+static int set_stderr(void) {
+	const char* dev = getenv("STDERR_DEV");
+	if(dev == NULL || dev[0] == 0)
+		return -1;
+
+	int fd = open(dev, O_RDWR);
+	if(fd > 0) {
+		dup2(fd, 2);
+		close(fd);
+		return 0;
+	}
+	return -1;
+}
+
+
+void _libc_init(void);
+void _libc_exit(void);
+
 void _start(void) {
 	char* argv[ARG_MAX] = {0};
 	int32_t argc = 0;
@@ -115,6 +135,13 @@ void _start(void) {
 		*p++ = 0;
 	}
 
+	_current_pid = -1;
+	_current_pid = getpid();
+
+	_vsyscall_info = (vsyscall_info_t*)syscall0(SYS_GET_VSYSCALL_INFO);
+	if(_vsyscall_info == NULL)
+		exit(-1);
+
 	_libc_init();
 	//__ewok_malloc_init();
 	proc_init();
@@ -123,7 +150,7 @@ void _start(void) {
 	init_cmd();
 
 	while(argc < ARG_MAX) {
-		char* arg = read_cmain_arg(); 
+		char* arg = read_cmain_arg();
 		if(arg == NULL || arg[0] == 0)
 			break;
 		if(argc == 0)
@@ -138,8 +165,10 @@ void _start(void) {
 	// klog("setenv: %d\n", val);
 	// // const char* paths = getenv("PATH");
 	// // klog("PATH: %s\n", paths);
+
 	loadenv();
-	
+	set_stderr();
+
 	int ret = main(argc, argv);
 	close_stdio();
 	//__ewok_malloc_close();

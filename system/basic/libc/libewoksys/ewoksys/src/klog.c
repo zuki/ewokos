@@ -1,6 +1,9 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <ewoksys/mstr.h>
 #include <ewoksys/syscall.h>
@@ -11,25 +14,33 @@ extern "C" {
 
 #define BUF_SIZE 128
 static char _buf[BUF_SIZE+1];
-static int32_t _buf_index;
+static int32_t _klog_fd = -1;
 
 void kout(const char *str) {
-	syscall2(SYS_KPRINT, (int32_t)str, (int32_t)strlen(str));
+	syscall2(SYS_KPRINT, (ewokos_addr_t)str, (ewokos_addr_t)strlen(str));
 }
 
 void klog(const char *format, ...) {
 	va_list ap;
-	_buf_index = 0;
 	va_start(ap, format);
 	vsnprintf(_buf, sizeof(_buf), format, ap);
 	va_end(ap);
-	//if(write(2, buf->cstr, buf->len) <= 0)
-		//syscall2(SYS_KPRINT, (int32_t)buf->cstr, (int32_t)buf->len);
-	//str_free(buf);
-	syscall2(SYS_KPRINT, (int32_t)_buf, strlen(_buf));
+
+	const char* klog_dev = getenv("KLOG_DEV");
+	if(klog_dev == NULL || klog_dev[0] == 0)
+		klog_dev = getenv("STDERR_DEV");
+
+	if(_klog_fd <= 0 && klog_dev != NULL) {
+		_klog_fd = open(klog_dev, O_WRONLY);
+	}
+
+	if(_klog_fd > 0) {
+		write(_klog_fd, _buf, strlen(_buf));
+	}
+	syscall2(SYS_KPRINT, (ewokos_addr_t)_buf, (ewokos_addr_t)strlen(_buf));
 }
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif
 

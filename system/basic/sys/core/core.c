@@ -10,6 +10,7 @@
 #include <ewoksys/core.h>
 #include <ewoksys/vfsc.h>
 #include <ewoksys/proc.h>
+#include <ewoksys/klog.h>
 #include <sysinfo.h>
 #include <kevent.h>
 #include <procinfo.h>
@@ -17,19 +18,25 @@
 
 typedef struct {
 	str_t* cwd;	
-	map_t* envs;
+	map_t envs;
 } proc_info_t;
 
 static proc_info_t *_proc_info_table = NULL;
 static uint32_t _max_proc_table_num = 0;
 static int _ux_index = 0;
 
+typedef struct {
+	bool occupied;	
+} ux_t;
+
+static ux_t _uxs[UX_MAX];
+
 static void core_init(void) {
 	int32_t i;
 	_ux_index = 0;
 
 	sys_info_t sysinfo;
-	syscall1(SYS_GET_SYS_INFO, (int32_t)&sysinfo);
+	syscall1(SYS_GET_SYS_INFO, (ewokos_addr_t)&sysinfo);
 	_max_proc_table_num = sysinfo.max_task_num;
 	_proc_info_table = (proc_info_t*)malloc(_max_proc_table_num*sizeof(proc_info_t));
 
@@ -37,9 +44,13 @@ static void core_init(void) {
 		_proc_info_table[i].cwd = str_new("/");
 		_proc_info_table[i].envs = hashmap_new();
 	}
+
+	for(i = 0; i<UX_MAX; i++) {
+		memset(&_uxs[i], 0, sizeof(ux_t));
+	}
 }
 
-static map_t* _ipc_servs = NULL; //pids of ipc_servers
+static map_t _ipc_servs = NULL; //pids of ipc_servers
 static int get_ipc_serv(const char* key) {
 	int32_t *v;
 	if(hashmap_get(_ipc_servs, key, (void**)&v) == MAP_MISSING) {
@@ -147,14 +158,51 @@ static void do_proc_set_cwd(int pid, proto_t* in, proto_t* out) {
 
 static void do_proc_set_ux(int pid, proto_t* in) {
 	int index = proto_read_int(in);
-	_ux_index = index;
+	if(index < 0 || index >= UX_MAX)
+		return;
+	_uxs[index].occupied = true;
+}
+
+static void do_proc_next_ux(void) {
+	int i = _ux_index + 1;
+	while(i != _ux_index) {
+		if(i >= UX_MAX)
+			i = 0;
+		if(_uxs[i].occupied) {
+			_ux_index = i;
+			return;
+		}
+		i++;
+	}
+}
+
+static void do_proc_prev_ux(void) {
+	int i = _ux_index - 1;
+	while(i != _ux_index) {
+		if(i < 0)
+			i = UX_MAX - 1;
+		if(_uxs[i].occupied) {
+			_ux_index = i;
+			return;
+		}
+		i--;
+	}
+}
+
+static void do_proc_set_active_ux(int pid, proto_t* in) {
+	int index = proto_read_int(in);
+	if(index < 0 || index >= UX_MAX)
+		return;
+
+	if(_uxs[index].occupied)
+		_ux_index = index;
 }
 
 static void do_proc_get_ux(int pid, proto_t* out) {
 	PF->addi(out, _ux_index);
 }
 
-static str_t* env_get(map_t* envs, const char* key) {
+static str_t* env_get(map_t envs, const char* key) {
 	str_t* ret = NULL;
 	if(hashmap_get(envs, key, (void**)&ret) == MAP_OK) {
 		return ret;
@@ -162,7 +210,7 @@ static str_t* env_get(map_t* envs, const char* key) {
 	return NULL;
 }
 
-static void set_env(map_t* envs, const char* key, const char* val) {
+static void set_env(map_t envs, const char* key, const char* val) {
 	str_t* v = env_get(envs, key);
 	if(v != NULL) {
 		str_cpy(v, val);
@@ -267,8 +315,17 @@ static void handle_ipc(int pid, int cmd, proto_t* in, proto_t* out, void* p) {
 	case CORE_CMD_GET_ENVS:
 		do_proc_get_envs(pid, out);
 		return;
+	case CORE_CMD_SET_ACTIVE_UX:
+		do_proc_set_active_ux(pid, in);
+		return;
 	case CORE_CMD_SET_UX:
 		do_proc_set_ux(pid, in);
+		return;
+	case CORE_CMD_NEXT_UX:
+		do_proc_next_ux();
+		return;
+	case CORE_CMD_PREV_UX:
+		do_proc_prev_ux();
 		return;
 	case CORE_CMD_GET_UX:
 		do_proc_get_ux(pid, out);
@@ -302,11 +359,16 @@ static void do_proc_created(kevent_t* kev) {
 }
 
 static void do_proc_exit(kevent_t* kev) {
+	int pid = kev->data[0];
 	proto_t data;
-	PF->init(&data)->addi(&data, kev->data[0]);
-	int pid = get_ipc_serv(IPC_SERV_VFS);
-	if(pid > 0) {
-		ipc_call_wait(pid, VFS_PROC_EXIT, &data);
+	PF->init(&data)->addi(&data, pid);
+	int vfs_pid = get_ipc_serv(IPC_SERV_VFS);
+	if(vfs_pid > 0) {
+		ipc_call_wait(vfs_pid, VFS_PROC_EXIT, &data);
+	}
+
+	if(_proc_info_table[pid].envs != NULL) {
+		hashmap_iterate(_proc_info_table[pid].envs, free_envs, NULL);	
 	}
 
 	PF->clear(&data);
@@ -335,13 +397,13 @@ int main(int argc, char** argv) {
 
 	while(1) {
 		kevent_t kev;
-		if(syscall1(SYS_GET_KEVENT, (int32_t)&kev) == 0) {
+		if(syscall1(SYS_GET_KEVENT, (ewokos_addr_t)&kev) == 0) {
 			ipc_disable();
 			handle_event(&kev);
 			ipc_enable();
 		}
 		else
-			proc_usleep(2000);
+			proc_usleep(50000);
 	}
 
 	hashmap_free(_ipc_servs);

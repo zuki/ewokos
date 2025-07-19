@@ -7,13 +7,13 @@ kernel*.elf
 kernel*.asm
 system/build
 .vscode/settings.json
-system/root.ext2
-system/root.*.ext2
+*.ext2
 system/tmp
 .vscode/configurationCache.log
 .vscode/dryrun.log
 .vscode/targets.log
-system/make.rule
+.deps
+*.a
 build
 .xmake
 system/hardware/arm/make_image.inc
@@ -22,3 +22,6 @@ system/hardware/arm/raspix/boot.org
 ewokos.img
 system/hardware/arm/raspix/sd
 doc/book
+machine/versatilepb/kernel/config.mk
+*.lo
+*.dirstamp

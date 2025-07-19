@@ -8,11 +8,6 @@
 int32_t schedule(context_t* ctx) {
     // ZOMBIEプロセスを解放
 	proc_zombie_funeral();
-	proc_t* cproc = get_current_proc();
-    // カレントプロックがコアロック中
-	if(cproc != NULL && cproc->schd_core_lock_counter > 0) {
-		return -1;
-	}
 
 	uint32_t core = get_core_id();
 	proc_t* halt_proc = NULL;
@@ -24,7 +19,7 @@ int32_t schedule(context_t* ctx) {
 		halt_proc->info.state = WAIT;
 		halt_proc->info.wait_for = 0;
 	}
-	
+
     // 次に実行すべきプロセスを取得
 	proc_t* next = proc_get_next_ready();
     // 次に実行すべきプロセスがない場合はhaltプロセスを選択
@@ -38,7 +33,7 @@ int32_t schedule(context_t* ctx) {
 		proc_switch(ctx, next, false);
 		return 0;
 	}
-	
+
     // panic: 実行すべきプロセスがない
 	printf("Panic: none proc to be scheduled!\n");
 	halt();

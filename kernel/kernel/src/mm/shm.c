@@ -11,23 +11,20 @@
 #include <kprintf.h>
 #include <stddef.h>
 
-#define SHM_MAX_SIZE                   (128*MB)
-#define SHM_BASE                       (USER_STACK_BOTTOM - SHM_MAX_SIZE)
-
 #define 	IPC_PRIVATE 0
 #define 	IPC_CREAT   00001000 /* create if key is nonexistent */
 #define 	IPC_EXCL    00002000 /* fail if key exists */
 
-static uint32_t shmem_tail = 0;
+static ewokos_addr_t shmem_tail = 0;
 static int32_t id_counter = 1;
 
 typedef struct share_mem {
 	int32_t id;
 	int32_t key;
-	uint32_t addr; //memory block base address
+	ewokos_addr_t addr; //memory block base address
 	uint32_t pages; //memory pages
 	uint32_t used; //used or free
-	int32_t flag; 
+	int32_t flag;
 	int32_t owner_pid; //process id which alloced this shm
 	int32_t refs;
 	struct share_mem* next;
@@ -84,7 +81,7 @@ static int32_t shm_map_pages(uint32_t addr, uint32_t pages) {
 		map_page(_kernel_vm,
 				addr,
 				V2P(page),
-				AP_RW_D, PTE_ATTR_WRBACK);
+				AP_RW_D, PTE_ATTR_NOCACHE);
 		addr += PAGE_SIZE;
 	}
 	flush_tlb();
@@ -97,7 +94,7 @@ static int32_t shm_alloc(int32_t key, uint32_t size, int32_t flag) {
 	uint32_t pages = (size / PAGE_SIZE);
 	if((size % PAGE_SIZE) != 0)
 		pages++;
-	
+
 	share_mem_t* i = _shm_head;
 	while(i != NULL) { //search for available memory block
 		if(!i->used && i->pages >= pages)
@@ -141,14 +138,14 @@ static int32_t shm_alloc(int32_t key, uint32_t size, int32_t flag) {
 			i->prev = _shm_tail;
 			_shm_tail = i;
 		}
-	}		
+	}
 
 	if(i->pages == 0) { // map pages expanded new block
 		if(!shm_map_pages(addr, pages)) {
 			return -1;
 		}
 		i->pages = pages;
-	}	
+	}
 
 	if(addr == shmem_tail)
 		shmem_tail += pages * PAGE_SIZE;
@@ -203,7 +200,7 @@ static share_mem_t* shm_item_by_id(int32_t id) { //get shm item by id.
 static share_mem_t* shm_item_by_addr(void* addr) { //get shm item by addr.
 	share_mem_t* i = _shm_head;
 	while(i != NULL) {
-		if(i->used && i->addr == (uint32_t)addr) 
+		if(i->used && i->addr == (uint32_t)addr)
 			return i;
 		i = i->next;
 	}
@@ -257,12 +254,12 @@ static share_mem_t* free_item(share_mem_t* it) {
 static uint32_t check_access(proc_t* proc, share_mem_t* it) {
 	if(proc->info.uid == 0)
 		return (SHM_R | SHM_W);
-	
+
 	proc_t* owner = proc_get(it->owner_pid);
 	owner = proc_get_proc(owner);
 	if(owner == NULL)
 		return SHM_N;
-	
+
 	if(owner == proc)
 		return (SHM_R | SHM_W);
 
@@ -287,7 +284,7 @@ static uint32_t check_access(proc_t* proc, share_mem_t* it) {
 		res |= SHM_W;
 	return res;
 }
-	
+
 /*map share memory to process*/
 void* shm_proc_map(proc_t* proc, int32_t id) {
 	share_mem_t* it = shm_item_by_id(id);
@@ -366,6 +363,18 @@ static int32_t shm_proc_unmap_it(proc_t* proc, share_mem_t* it, bool free_it) {
 		free_item(it);
 	}
 	return 0;
+}
+
+void*   shm_map(proc_t* proc, int32_t key, uint32_t size, int32_t flag, int32_t* id) {
+	*id = -1;
+	int32_t sid = shm_get(key, size, flag);
+	if(sid <= 0)
+		return NULL;
+	void* ret = shm_proc_map(proc, sid);
+	if(ret == NULL)
+		return NULL;
+	*id = sid;
+	return ret;
 }
 
 int32_t shm_proc_unmap_by_id(proc_t* proc, uint32_t id, bool free_it) {

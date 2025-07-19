@@ -4,6 +4,7 @@
 #include <ewoksys/fsinfo.h>
 #include <ewoksys/mstr.h>
 #include <ewoksys/proto.h>
+#include <ewoksys/proc.h>
 #include <ewoksys/vfsc.h>
 #include <ewoksys/vdevice.h>
 
@@ -19,7 +20,10 @@ typedef struct {
 
 #define RW_BLOCK_EVT	1
 
-#define VFS_BUF_SIZE (1024*8)
+#define VFS_BUF_SIZE (10240)
+
+#define VFS_BACKUP_FD0 (MAX_OPEN_FILE_PER_PROC-3)
+#define VFS_BACKUP_FD1 (MAX_OPEN_FILE_PER_PROC-2)
 
 const char* vfs_fullname(const char* fname);
 
@@ -49,7 +53,8 @@ int       vfs_umount(uint32_t node);
 
 int       vfs_create(const char* fname, fsinfo_t* ret, int type, int mode, bool vfs_node_only, bool autodir);
 void*     vfs_readfile(const char* fname, int* sz);
-int       vfs_parse_name(const char* fname, str_t* dir, str_t* name);
+const char* vfs_dir_name(const char* fname, char* ret, uint32_t len);
+const char* vfs_file_name(const char* fname, char* ret, uint32_t len);
 int       vfs_dup(int fd);
 int       vfs_dup2(int fd, int to);
 int       vfs_open_pipe(int fd[2]);

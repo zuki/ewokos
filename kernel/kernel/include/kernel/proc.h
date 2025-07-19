@@ -36,8 +36,8 @@ typedef struct {
 	uint32_t           rw_heap_base;				// ヒープのベースアドレス
 	uint32_t           heap_size;					// ヒープの残りサイズ
 	int32_t            refs;						// このspaceのレファレンス数
-	bool               ready_ping;					// 
-	
+	bool               ready_ping;					//
+
 	int32_t            shms[SHM_MAX];				// 旧友メモリ
 	proc_block_event_t block_events[BLOCK_EVT_MAX];	// ブロックしたイベント
 
@@ -54,6 +54,7 @@ typedef struct st_proc {
 	procinfo_t        info;						// procnof.h
 	bool              is_core_idle_proc;		// pid=0のアイドルプロセスか?
 
+<<<<<<< HEAD
 	uint32_t          block_event;				// ブロックしたイベント
 	uint32_t          ipc_buffered;				// IPCデータの未処理数
 	bool              ipc_buffer_clean;			// IPCバッファはクリアか?
@@ -62,6 +63,16 @@ typedef struct st_proc {
 	int64_t           sleep_counter; 			// スリープ残り時間（マイクロ秒）
 	uint32_t          schd_core_lock_counter; 	// schd_core_lock 残り時間（マイクロ秒）
 	uint32_t          run_usec_counter; 		// 実行残り時間（マイクロ秒）
+=======
+	uint32_t          priority_count;
+	uint32_t          block_event;
+	uint32_t          ipc_buffered;
+	bool              ipc_buffer_clean;
+	ipc_res_t         ipc_res;
+
+	int64_t           sleep_counter; //sleep usec
+	uint32_t          run_usec_counter; //run time usec
+>>>>>>> master
 
 	proc_space_t*     space; 					// スレッドは親プロセスのメモリ空間を共通する
 	uint32_t          thread_stack_base;		// スレッドスタックベースアドレス
@@ -118,6 +129,6 @@ extern void    proc_ready(proc_t* proc);
 extern int32_t proc_childof(proc_t* proc, proc_t* parent);
 
 extern bool    proc_have_ready_task(uint32_t core);
-extern void    proc_save_state(proc_t* proc, saved_state_t* saved_state);
-extern void    proc_restore_state(context_t* ctx, proc_t* proc, saved_state_t* saved_state);
+extern void    proc_save_state(proc_t* proc, saved_state_t* saved_state, ipc_res_t* saved_ipc_res);
+extern void    proc_restore_state(context_t* ctx, proc_t* proc, saved_state_t* saved_state, ipc_res_t* saved_ipc_res);
 #endif

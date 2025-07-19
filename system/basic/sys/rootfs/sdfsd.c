@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <bsp/bsp_sd.h>
 
+#define SD_BUFFER_SIZE (1024*1024*16) //16M buffer size
+
 static void set_fsinfo_stat(node_stat_t* stat, INODE* inode) {
 	stat->atime = inode->i_atime;
 	stat->ctime = inode->i_ctime;
@@ -65,7 +67,7 @@ static int32_t add_nodes(ext2_t* ext2, INODE *ip, fsinfo_t* dinfo) {
 
 	for (i=0; i<12; i++){
 		if (ip->i_block[i] != 0){
-			ext2->read_block(ip->i_block[i], buf, 1);
+			ext2->read_block(ip->i_block[i], buf);
 			dp = (DIR_T *)buf;
 			cp = buf;
 
@@ -237,22 +239,15 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	klog("\n    init sdc ... ");
 	if(bsp_sd_init() != 0) {
-		klog("failed!\n");
 		return -1;
 	}
-	klog("[ok]\n");
 
 	ext2_t ext2;
-	klog("    init ext2 fs ... ");
-	if(ext2_init(&ext2, sd_read, sd_write) != 0) {
+	if(ext2_init(&ext2, sd_read, sd_write, SD_BUFFER_SIZE) != 0) { //max buffer size 16MB
 		sd_quit();
-		klog("failed!\n");
 		return -1;
 	}
-	klog("[ok]\n");
-	sd_set_buffer(ext2.super.s_blocks_count*2);
 
 	vdevice_t dev;
 	memset(&dev, 0, sizeof(vdevice_t));
