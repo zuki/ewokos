@@ -35,6 +35,7 @@ typedef struct {
 	uint32_t           malloc_base;					// mallocのベースアドレス
 	uint32_t           rw_heap_base;				// ヒープのベースアドレス
 	uint32_t           heap_size;					// ヒープの残りサイズ
+	uint32_t		   heap_used;					// 使用したヒープサイズ
 	int32_t            refs;						// このspaceのレファレンス数
 	bool               ready_ping;					//
 

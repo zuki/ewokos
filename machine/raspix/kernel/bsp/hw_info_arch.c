@@ -2,6 +2,7 @@
 #include <kernel/kernel.h>
 #include <kernel/system.h>
 #include <mm/mmu.h>
+#include <mm/kalloc.h>
 #include <kstring.h>
 #include <stdbool.h>
 #include <bcm283x/board.h>

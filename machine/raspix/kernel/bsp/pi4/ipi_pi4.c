@@ -1,5 +1,6 @@
 #include <kernel/smp/ipi.h>
 #include <kernel/hw_info.h>
+#include <gic.h>
 
 void ipi_enable_pi4(uint32_t core_id) {
 	 gic_irq_enable(core_id, 0);

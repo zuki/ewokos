@@ -2,6 +2,7 @@
 #include <kernel/kernel.h>
 #include <kernel/system.h>
 #include <kernel/hw_info.h>
+#include <gic.h>
 #include "../timer_arch.h"
 
 static uint32_t irq_enable_flag = 0;
