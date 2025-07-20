@@ -12,8 +12,10 @@ extern "C" {
 
 typedef void (*outc_func_t)(char c, void* p);
 
+#if 0
 extern void v_printf(outc_func_t outc, void* p, const char* format, va_list ap);
 extern int32_t snprintf(char *target, int32_t size, const char *format, ...);
+#endif
 
 /** str functions.-----------------------------*/
 
@@ -291,4 +293,3 @@ str_t* str_format_new(const char *format, ...) {
 #ifdef __cplusplus
 }
 #endif
-

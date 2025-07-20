@@ -12,6 +12,8 @@
 #include <ewoksys/proc.h>
 #include <ewoksys/interrupt.h>
 #include <ewoksys/timer.h>
+#include <ewoksys/core.h>
+
 #include <fcntl.h>
 #include <ewoksys/keydef.h>
 
@@ -31,7 +33,7 @@ static bool _down = false;
 static int  hid;
 static char keys[3];
 
-static int keyb_read(int fd, int from_pid, fsinfo_t* node, 
+static int keyb_read(int fd, int from_pid, fsinfo_t* node,
 		void* buf, int size, int offset, void* p) {
 	(void)fd;
 	(void)from_pid;
@@ -49,17 +51,17 @@ static int keyb_read(int fd, int from_pid, fsinfo_t* node,
 	return size;
 }
 
-const char downMap[] = {  
+const char downMap[] = {
         ' ',' ',' ',' ','a','b','c','d',    'e','f','g','h','i','j','k','l',
         'm','n','o','p','q','r','s','t',    'u','v','w','x','y','z','1','2',
-        '3','4','5','6','7','8','9','0',    '\r','\x1b','\b','\t','\x20', '-', '=', '[', 
+        '3','4','5','6','7','8','9','0',    '\r','\x1b','\b','\t','\x20', '-', '=', '[',
         ']', '\\', '$', ';', '\'', '`',',','.',     '/',
     };
 
 const char upMap[] = {
         ' ',' ',' ',' ','A','B','C','D',    'E','F','G','H','I','J','K','L',
         'M','N','O','P','Q','R','S','T',    'U','V','W','X','Y','Z','!','@',
-        '#','$','%','^','&','*','(',')',    '\r','\0x1b','\b','\t','\x20', '_', '+', '{', 
+        '#','$','%','^','&','*','(',')',    '\r','\0x1b','\b','\t','\x20', '_', '+', '{',
         '}', '|', '$', ':', '\"', '~','<','>',      '?',
 };
 
@@ -68,7 +70,7 @@ static uint8_t do_ctrl(char c) {
 		core_set_active_ux(c - '0');
 		return 0;
 	}
-	else if(c == 19) { //left 
+	else if(c == 19) { //left
 		core_prev_ux();
 		return 0;
 	}
@@ -108,7 +110,7 @@ static int loop(void* p) {
 	int res = read(hid, buf, 7);
 
 	if(res == 7){
-		//klog("kb: %02x %02x %02x %02x %02x %02x %02x %02x\n", 
+		//klog("kb: %02x %02x %02x %02x %02x %02x %02x %02x\n",
 		//buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
 		keys[0] = getKeyChar(buf[0], buf[2]);
 		keys[1] = getKeyChar(buf[1], buf[3]);

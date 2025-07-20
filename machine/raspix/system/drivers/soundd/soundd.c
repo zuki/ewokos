@@ -1,6 +1,9 @@
 #include <arch/bcm283x/gpio.h>
 #include <ewoksys/vdevice.h>
 #include <ewoksys/syscall.h>
+#include <ewoksys/proc.h>
+#include <ewoksys/klog.h>
+
 #include <string.h>
 #include <unistd.h>
 #include <ewoksys/dma.h>
@@ -12,7 +15,7 @@
 
 #define BCM283x_PWMCLK_CNTL 40
 #define BCM283x_PWMCLK_DIV  41
-#define PM_PASSWORD 0x5A000000 
+#define PM_PASSWORD 0x5A000000
 
 #define BCM283x_PWM_CONTROL 0
 #define BCM283x_PWM_STATUS  1
@@ -58,7 +61,7 @@ typedef struct dma_cb {
 static dma_cb_t* _dma_cb = NULL;
 static uint32_t _dma_data_addr = 0;
 
-static void audio_init(void) {   
+static void audio_init(void) {
 	volatile unsigned* clk = (void*)CLOCK_BASE;
 	volatile unsigned* pwm = (void*)PWM_BASE;
 	bcm283x_gpio_config(18, GPIO_ALTF5); // Ensure PWM0 is mapped to GPIO 18
@@ -82,9 +85,9 @@ static void audio_init(void) {
 	*(pwm+BCM283x_PWM0_RANGE) = 0x264; // 44.1khz, Stereo, 8-bit (54Mhz / 44100 / 2)
 
 	*(pwm+BCM283x_PWM_CONTROL) =
-			BCM283x_PWM0_USEFIFO | 
+			BCM283x_PWM0_USEFIFO |
 			BCM283x_PWM0_ENABLE | 1<<6;
-	
+
 	//_dma_cb = (dma_cb_t*)dma_phy_addr(0, dma_alloc(sizeof(dma_cb_t)));
 	//_dma_data_addr = dma_phy_addr(0, (dma_alloc(DMA_BUF_SIZE))); //4k dma buffer
 	_dma_cb = (dma_cb_t*)(dma_alloc(0, sizeof(dma_cb_t)));

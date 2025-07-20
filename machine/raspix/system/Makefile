@@ -37,7 +37,7 @@ basic: basic_sys final
 gui: gui_sys final
 	@echo "all done."
 
-basic_sys: kernel_heads 
+basic_sys: kernel_heads
 	rm -f $(BUILD_DIR)/lib/libbsp.a
 	mkdir -p $(TARGET_DIR)/drivers/$(HW)
 	cd libs;make
@@ -45,7 +45,7 @@ basic_sys: kernel_heads
 	cd drivers;make basic
 	@cp -r etc/basic/* ${TARGET_DIR}/etc
 
-gui_sys: basic_sys 
+gui_sys: basic_sys
 	cd $(SYS_ROOT_DIR)/gui;make
 	cd drivers;make gui
 	@cp -r etc/gui/* ${TARGET_DIR}/etc
@@ -53,7 +53,7 @@ gui_sys: basic_sys
 x: x_sys final
 	@echo "all done."
 
-x_sys: gui_sys 
+x_sys: gui_sys
 	cd $(SYS_ROOT_DIR)/xwin;make
 	@cp -r etc/xwin/* ${TARGET_DIR}/etc
 
@@ -68,14 +68,14 @@ clean:
 	rm -fr $(MACHINE_BUILD_DIR)
 
 SD = root_$(ARCH).ext2
-sd: 
+sd:
 	@echo "\n====building ext2 format sdcard image===="
 	mkdir -p build
 #256M ext2 sd
 	dd if=/dev/zero of=${SD} bs=1k count=256k
 #make ext2 fs with: block_size=1024 inode_size=128
-	mke2fs -b 1024 -I 128 ${SD}
- 
+	/opt/homebrew/Cellar/e2fsprogs/1.47.3/sbin/mke2fs -b 1024 -I 128 ${SD}
+
 	cd $(MACHINE_BUILD_DIR); \
 	find . -type f | e2cp -ap -G0 -O0 -d ../${SD}:/
 

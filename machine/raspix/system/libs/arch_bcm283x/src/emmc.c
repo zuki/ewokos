@@ -5,6 +5,7 @@
 #include <ewoksys/syscall.h>
 #include <ewoksys/mmio.h>
 #include <ewoksys/kernel_tic.h>
+#include <ewoksys/proc.h>
 
 #define SD_OK                0
 #define SD_TIMEOUT          -1
@@ -104,7 +105,7 @@ static uint32_t  EMMC_BASE;
 #define ACMD41_CMD_CCS      0x40000000
 #define ACMD41_ARG_HC       0x51ff8000
 
-#define SECTOR_SIZE         512 
+#define SECTOR_SIZE         512
 
 volatile uint32_t sd_scr[2], sd_ocr, sd_rca, sd_hv;
 volatile int32_t sd_err;
@@ -149,13 +150,13 @@ inline void _delay_msec(uint32_t count) {
  * Wait for data or command ready
  */
 static inline int32_t sd_status(uint32_t mask) {
-	int32_t cnt = 100000; 
+	int32_t cnt = 100000;
 	while((*EMMC_STATUS & mask) != 0 && (*EMMC_INTERRUPT & INT_ERROR_MASK) == 0 && cnt-- > 0){
 		_delay_usec(1);
 	}
 
 	// if(cnt <= 0 || (*EMMC_INTERRUPT & INT_ERROR_MASK)){
-	// 	klog("%d: %08x %08x\n",cnt, *EMMC_STATUS, *EMMC_INTERRUPT);	
+	// 	klog("%d: %08x %08x\n",cnt, *EMMC_STATUS, *EMMC_INTERRUPT);
 	// }
 	return (cnt <= 0 || (*EMMC_INTERRUPT & INT_ERROR_MASK)) ? SD_ERROR : SD_OK;
 }
@@ -165,7 +166,7 @@ static inline int32_t sd_status(uint32_t mask) {
  */
 static inline int32_t sd_int(uint32_t mask, int32_t wait) {
 	uint32_t r, m = (mask | INT_ERROR_MASK);
-	int32_t cnt = 10000; 
+	int32_t cnt = 10000;
 	while((*EMMC_INTERRUPT & m) == 0 && cnt--) {
 		if(wait == 0)
 			return -1;
@@ -174,10 +175,10 @@ static inline int32_t sd_int(uint32_t mask, int32_t wait) {
 
 	r = *EMMC_INTERRUPT;
 	if(cnt<=0 || (r & INT_CMD_TIMEOUT) != 0 || (r & INT_DATA_TIMEOUT) != 0) {
-		*EMMC_INTERRUPT = r; 
+		*EMMC_INTERRUPT = r;
 		return SD_TIMEOUT;
 	}
-	else if((r & INT_ERROR_MASK) != 0) { 
+	else if((r & INT_ERROR_MASK) != 0) {
 		*EMMC_INTERRUPT = r;
 		return SD_ERROR;
 	}
@@ -202,12 +203,12 @@ static inline int32_t sd_cmd(uint32_t code, uint32_t arg) {
 		code &= ~CMD_NEED_APP;
 	}
 
-	if(sd_status(SR_CMD_INHIBIT)) { 
+	if(sd_status(SR_CMD_INHIBIT)) {
 		sd_err = SD_TIMEOUT;
 		return 0;
 	}
 
-	*EMMC_INTERRUPT = *EMMC_INTERRUPT; 
+	*EMMC_INTERRUPT = *EMMC_INTERRUPT;
 	*EMMC_ARG1 = arg;
 	*EMMC_CMDTM = code;
 	if(code == CMD_SEND_OP_COND)
@@ -222,20 +223,20 @@ static inline int32_t sd_cmd(uint32_t code, uint32_t arg) {
 
 	r = *EMMC_RESP0;
 	if(code==CMD_GO_IDLE || code==CMD_APP_CMD)
-		return 0; 
+		return 0;
 	else if(code==(CMD_APP_CMD|CMD_RSPNS_48)) {
-		return r&SR_APP_CMD; 
+		return r&SR_APP_CMD;
 	}
 	else if(code==CMD_SEND_OP_COND)
 		return r;
 	else if(code==CMD_SEND_IF_COND)
-		return r==(int32_t)arg? SD_OK : SD_ERROR; 
+		return r==(int32_t)arg? SD_OK : SD_ERROR;
 	else if(code==CMD_ALL_SEND_CID) {
 		r |= *EMMC_RESP3;
 		r |= *EMMC_RESP2;
 		r |= *EMMC_RESP1;
 		return r;
-	} 
+	}
 	else if(code == CMD_SEND_REL_ADDR) {
 		sd_err = (((r&0x1fff))|((r&0x2000)<<6)|((r&0x4000)<<8)|((r&0x8000)<<8)) & CMD_ERRORS_MASK;
 		return r & CMD_RCA_MASK;
@@ -276,22 +277,22 @@ static int32_t sd_write_sector(uint32_t sector, unsigned char *buffer) {
 		return 0;
 	}
 	uint32_t *buf = (uint32_t *)buffer;
-	
+
 	*EMMC_BLKSIZECNT = (1 << 16) | SECTOR_SIZE;
 	if((sd_scr[0] & SCR_SUPP_CCS) != 0)
 		sd_cmd(CMD_WRITE_SINGLE, sector);
 	else
 		sd_cmd(CMD_WRITE_SINGLE, sector * SECTOR_SIZE);
 
-	if(sd_err) 
+	if(sd_err)
 		return 0;
 	if((r = sd_int(INT_WRITE_RDY, 1))) {
 		sd_err = r;
 		return 0;
 	}
-	for(d=0; d<SECTOR_SIZE/4; d++) 
+	for(d=0; d<SECTOR_SIZE/4; d++)
 		*EMMC_DATA = buf[d];
-	
+
 	if((r = sd_int(INT_DATA_DONE, 1))) {
 		sd_err = r;
 		return 0;
@@ -305,7 +306,7 @@ static int32_t sd_write_sector(uint32_t sector, unsigned char *buffer) {
 static int32_t sd_clk(uint32_t f) {
 	uint32_t d, c=(41666666 / f), x , s=32, h=0;
 	int32_t cnt = 100000;
-	while((*EMMC_STATUS & (SR_CMD_INHIBIT|SR_DAT_INHIBIT)) && cnt--) 
+	while((*EMMC_STATUS & (SR_CMD_INHIBIT|SR_DAT_INHIBIT)) && cnt--)
 		_delay_msec(1);
 	if(cnt<=0) {
 		return SD_ERROR;
@@ -315,7 +316,7 @@ static int32_t sd_clk(uint32_t f) {
 	_delay_msec(10);
 	x=c-1;
 	if(!x)
-		s=0; 
+		s=0;
 	else {
 		if(!(x & 0xffff0000u)) { x <<= 16; s -= 16; }
 		if(!(x & 0xff000000u)) { x <<= 8;  s -= 8; }
@@ -325,8 +326,8 @@ static int32_t sd_clk(uint32_t f) {
 		if(s > 0) s--;
 		if(s > 7) s = 7;
 	}
-	if(sd_hv > HOST_SPEC_V2) 
-		d = c; 
+	if(sd_hv > HOST_SPEC_V2)
+		d = c;
 	else
 		d = (1<<s);
 	if(d <= 2) {
@@ -341,7 +342,7 @@ static int32_t sd_clk(uint32_t f) {
 	_delay_msec(10);
 	*EMMC_CONTROL1 |= C1_CLK_EN;
 	_delay_msec(10);
-	cnt=10000; 
+	cnt=10000;
 	while(!(*EMMC_CONTROL1 & C1_CLK_STABLE) && cnt--)
 		_delay_msec(10);
 	if(cnt<=0) {
@@ -412,7 +413,7 @@ int32_t emmc2_init(void) {
 		}
 	}
 
-	if(!(r & ACMD41_CMD_COMPLETE) || !cnt ) 
+	if(!(r & ACMD41_CMD_COMPLETE) || !cnt )
 		return SD_TIMEOUT;
 	if(!(r & ACMD41_VOLTAGE))
 		return SD_ERROR;
@@ -425,7 +426,7 @@ int32_t emmc2_init(void) {
 	sd_cmd(CMD_CARD_SELECT, sd_rca);
 	if(sd_err)
 		return sd_err;
-	
+
 	//if((r=sd_clk(12500000)))
 	if((r=sd_clk(25000000)))
 		return r;
@@ -443,14 +444,14 @@ int32_t emmc2_init(void) {
 	if(sd_int(INT_READ_RDY, 1))
 		return SD_TIMEOUT;
 
-	r=0; cnt=100000; 
+	r=0; cnt=100000;
 	while(r<2 && cnt) {
 		if( *EMMC_STATUS & SR_READ_AVAILABLE )
 			sd_scr[r++] = *EMMC_DATA;
 		else
 			_delay_msec(1);
 	}
-	if(r != 2) 
+	if(r != 2)
 		return SD_TIMEOUT;
 
 	if(sd_scr[0] & SCR_SD_BUS_WIDTH_4) {
@@ -522,4 +523,3 @@ int32_t emmc2_write_sector(int32_t sector, const void* buf) {
 		return -1;
 	return 0;
 }
-

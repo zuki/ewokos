@@ -5,14 +5,16 @@ SC16IS750/752 Driver for RaspberryPi
 
 //#define SC16IS750_DEBUG_PRINT
 
-#include <stdio.h>	
+#include <stdio.h>
 #include <stdint.h>
-#include <stdbool.h>	
-#include <stdlib.h>  
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <arch/bcm283x/auxspi.h>
 #include <arch/bcm283x/i2c.h>
 #include <arch/bcm283x/gpio.h>
+#include <ewoksys/klog.h>
+#include <ewoksys/proc.h>
 
 #include "sc16is750.h"
 
@@ -21,7 +23,7 @@ int wiringPiSPISetup(int channel, int clk){
 	bcm283x_auxspi_init(channel);
 	bcm283x_auxspi_set_clock(clk);
 	return 0;
-}	
+}
 
 int wiringPiSPIDataRW(int channel, uint8_t *data, int size){
 	int i;
@@ -126,13 +128,13 @@ uint8_t SC16IS750_ReadRegister(SC16IS750_t * dev, uint8_t channel, uint8_t reg_a
 		//printf("result=0x%x\n",result);
 	} else if (dev->protocol == SC16IS750_PROTOCOL_SPI) {	//register read operation via SPI
 		bcm283x_gpio_write(dev->device_address_sspin, 0);
-		//usleep(10);
+		//proc_usleep(10);
 		unsigned char spi_data[2];
 		spi_data[0] = 0x80|(reg_addr<<3 | channel<<1);
 		spi_data[1] = 0xff;
 		//printf("spi_data[in]=0x%x 0x%x\n",spi_data[0],spi_data[1]);
 		wiringPiSPIDataRW(dev->spi_channel, spi_data, 2);
-		//usleep(10);
+		//proc_usleep(10);
 		bcm283x_gpio_write(dev->device_address_sspin, 1);
 		//printf("spi_data[out]=0x%x 0x%x\n",spi_data[0],spi_data[1]);
 		result = spi_data[1];
@@ -148,12 +150,12 @@ void SC16IS750_WriteRegister(SC16IS750_t * dev, uint8_t channel, uint8_t reg_add
 		wiringPiI2CWriteReg8(dev->i2c_fd, (reg_addr<<3 | channel<<1), val);
 	} else {
 		bcm283x_gpio_write(dev->device_address_sspin, 0);
-		//usleep(10);
+		//proc_usleep(10);
 		unsigned char spi_data[2];
 		spi_data[0] = (reg_addr<<3 | channel<<1);
 		spi_data[1] = val;
 		wiringPiSPIDataRW(dev->spi_channel, spi_data, 2);
-		//usleep(10);
+		//proc_usleep(10);
 		bcm283x_gpio_write(dev->device_address_sspin, 1);
 	}
 	return ;
@@ -606,7 +608,7 @@ int16_t SC16IS750_readwithtimeout(SC16IS750_t * dev, uint8_t * channel)
 			tmp = SC16IS750_read(dev, SC16IS750_CHANNEL_B);
 			if (tmp >= 0) return tmp;
 		}
-		sleep(0);
+		proc_usleep(0);
 	} while(retry_count < dev->timeout);
 	return -1;	 // -1 indicates timeout
 }

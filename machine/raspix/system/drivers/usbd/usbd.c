@@ -8,6 +8,7 @@
 #include <ewoksys/vfs.h>
 #include <ewoksys/mmio.h>
 #include <ewoksys/dma.h>
+#include <ewoksys/klog.h>
 #include <usbd/usbd.h>
 #include <device/hid/keyboard.h>
 #include <device/hid/touch.h>
@@ -53,13 +54,16 @@ static int _last_x = 0;
 static int _last_y = 0;
 
 static int usb_step(void* p) {
-	(void)p;	
+	(void)p;
 	//klog("detecting...\n");
+// TODO: TouchPersent()は未定義
+#if 0
     if(!TouchPersent()){
-       UsbCheckForChange(); 
+       UsbCheckForChange();
        proc_usleep(100000);
        return 0;
     }
+#endif
 
 	struct TouchEvent event;
 	int ret = TouchGetEvent(&event);
@@ -67,7 +71,7 @@ static int usb_step(void* p) {
 		//fprintf(stderr, "e:%d x:%d y:%d\n", event.event, event.x, event.y);
         _buf[0] = event.event;
         _buf[1] = event.x;
-        _buf[2] = event.y; 
+        _buf[2] = event.y;
         _hasData = 1;
         _release_count = 2;
         _last_x = event.x;
@@ -85,13 +89,13 @@ static int usb_step(void* p) {
             proc_wakeup(RW_BLOCK_EVT);
         }
     }
-        
+
     /*
     uint8_t buf[64] = {0};
 
     if( !uConsolePersent()){
         //klog("detecting...\n");
-        UsbCheckForChange(); 
+        UsbCheckForChange();
         proc_usleep(100000);
         return 0;
     }
@@ -99,7 +103,7 @@ static int usb_step(void* p) {
     if(uConsolePersent()){
         int ret = uConsoleGetEvent(buf);
         if(ret == 0){
-            klog("hid: %02x %02x %02x %02x %02x %02x %02x\n", 
+            klog("hid: %02x %02x %02x %02x %02x %02x %02x\n",
             buf[0], buf[1], buf[2],  buf[3], buf[4], buf[5], buf[6]);
             //dispatch_data(buf[0], buf + 1, 7);
             proc_wakeup(RW_BLOCK_EVT);
@@ -127,8 +131,8 @@ static int touch_read(int fd, int from_pid, fsinfo_t* node,
 
 
     memcpy(buf, _buf, 6);
-    _hasData = 0;    
-	return 6;	
+    _hasData = 0;
+	return 6;
 }
 
 int main(int argc, char** argv) {

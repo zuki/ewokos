@@ -6,6 +6,7 @@
 #include <ewoksys/ipc.h>
 #include <ewoksys/vdevice.h>
 #include <ewoksys/mmio.h>
+#include <ewoksys/proc.h>
 #include <fcntl.h>
 
 static int hid;
@@ -26,7 +27,7 @@ static int mouse_read(int fd, int from_pid, fsinfo_t* node,
 
 	if(size < 4)
 		return -1;
-	
+
 	uint8_t* d = (uint8_t*)buf;
 	if(!has_data){
 		d[0] = 0;
@@ -46,7 +47,7 @@ static int mouse_read(int fd, int from_pid, fsinfo_t* node,
 	d[3] = y;
 
 	btn = 0;
-	x = 0; 
+	x = 0;
 	y = 0;
 
 	has_data = 0;
@@ -69,7 +70,7 @@ static int loop(void* p) {
 	}
 
 	ipc_enable();
-	usleep(3000);
+	proc_usleep(3000);
 	return 0;
 }
 

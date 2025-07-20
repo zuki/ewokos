@@ -6,6 +6,7 @@
 #include <ewoksys/dma.h>
 #include <ewoksys/klog.h>
 #include <ewoksys/kernel_tic.h>
+#include <ewoksys/proc.h>
 
 #include <arch/bcm283x/gpio.h>
 #include <arch/bcm283x/mailbox.h>
@@ -772,7 +773,7 @@ int bcm2835_power_on_module(uint32_t module)
 	// 	       module);
 	// 	return -EIO;
 	// }
-    msg.data = ((uint32_t)dma_phy_addr(0, msg_pwr) + 0x40000000) >> 4;	
+    msg.data = ((uint32_t)dma_phy_addr(0, msg_pwr) + 0x40000000) >> 4;
 	msg.channel = PROPERTY_CHANNEL;
     bcm283x_mailbox_call(&msg);
 
@@ -795,7 +796,7 @@ int bcm2835_set_sdhost_clock(uint32_t rate_hz, uint32_t *rate_1, uint32_t *rate_
 	// 	klog("bcm2835: Could not query sdhost clock rate\n");
 	// 	return -EIO;
 	// }
-    msg.data = ((uint32_t)dma_phy_addr(0, msg_sdhost_clk) + 0x40000000) >> 4;	
+    msg.data = ((uint32_t)dma_phy_addr(0, msg_sdhost_clk) + 0x40000000) >> 4;
 	msg.channel = PROPERTY_CHANNEL;
     bcm283x_mailbox_call(&msg);
 
@@ -811,7 +812,7 @@ int bcm2835_get_mmc_clock(uint32_t clock_id)
 	int ret;
 	uint32_t clock_rate = 0;
     mail_message_t msg;
-    struct msg_get_clock_rate *msg_clk = (struct msg_get_clock_rate*)dma_alloc(0, sizeof(struct msg_get_clock_rate)); 
+    struct msg_get_clock_rate *msg_clk = (struct msg_get_clock_rate*)dma_alloc(0, sizeof(struct msg_get_clock_rate));
 
 	ret = bcm2835_power_on_module(BCM2835_MBOX_POWER_DEVID_SDHCI);
 	if (ret)
@@ -826,7 +827,7 @@ int bcm2835_get_mmc_clock(uint32_t clock_id)
 	// 	klog("bcm2835: Could not query eMMC clock rate\n");
 	// 	return -EIO;
 	// }
-    msg.data = ((uint32_t)dma_phy_addr(0, msg_clk) + 0x40000000) >> 4;	
+    msg.data = ((uint32_t)dma_phy_addr(0, msg_clk) + 0x40000000) >> 4;
 	msg.channel = PROPERTY_CHANNEL;
     bcm283x_mailbox_call(&msg);
 
@@ -842,7 +843,7 @@ int bcm2835_get_mmc_clock(uint32_t clock_id)
 		// 	klog("bcm2835: Could not query max eMMC clock rate\n");
 		// 	return -EIO;
 		// }
-        msg.data = ((uint32_t)msg_clk + 0x40000000) >> 4;	
+        msg.data = ((uint32_t)msg_clk + 0x40000000) >> 4;
 		msg.channel = PROPERTY_CHANNEL;
         bcm283x_mailbox_call(&msg);
 

@@ -6,6 +6,7 @@
 #include <ewoksys/vdevice.h>
 #include <ewoksys/ipc.h>
 #include <ewoksys/mmio.h>
+#include <ewoksys/proc.h>
 #include <fcntl.h>
 #include <ewoksys/keydef.h>
 
@@ -55,7 +56,7 @@ static int loop(void* p) {
 	ipc_enable();
 
 	if(res == 7){
-		//klog("joy: %02x %02x %02x %02x %02x %02x %02x %02x\n", 
+		//klog("joy: %02x %02x %02x %02x %02x %02x %02x %02x\n",
 		//buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
 		joystick_t *joy = (joystick_t*)&buf;
 		//klog("%d %d", joy->axis.x, joy->axis.y);
@@ -65,19 +66,19 @@ static int loop(void* p) {
 			i++;
 		}
 		else if(joy->axis.x < 256) {
-			keys[i] =JOYSTICK_LEFT;	
+			keys[i] =JOYSTICK_LEFT;
 			i++;
 		}
-		
+
 		if(joy->axis.y > 768) {
 			keys[i] = JOYSTICK_DOWN;
 			i++;
 		}
 		else if(joy->axis.y < 256) {
-			keys[i] = JOYSTICK_UP;	
+			keys[i] = JOYSTICK_UP;
 			i++;
 		}
-		
+
 		if(joy->button[0] & 0x1)
 			keys[i] = JOYSTICK_X;
 		else if(joy->button[0] & 0x2)
@@ -102,7 +103,7 @@ static int loop(void* p) {
 		_down = false;
 	}
 
-	usleep(10000);
+	proc_usleep(10000);
 	return 0;
 }
 

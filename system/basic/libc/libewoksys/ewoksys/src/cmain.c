@@ -13,6 +13,7 @@
 #include <ewoksys/ipc.h>
 #include <procinfo.h>
 #include <unistd.h>
+#include <setenv.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -102,7 +103,7 @@ static void loadenv(void) {
 		for(int i=0; i<n; i++) {
 			const char* name = proto_read_str(&out);
 			const char* value = proto_read_str(&out);
-			setenv(name, value, 1);
+			setenv(name, value);
 		}
 	}
 	PF->clear(&out);
@@ -187,4 +188,3 @@ void _start(void) {
 #ifdef __cplusplus
 }
 #endif
-

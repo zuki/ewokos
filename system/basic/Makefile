@@ -1,7 +1,7 @@
 BUILD_DIR = ../build/$(HW)
 TARGET_DIR = $(BUILD_DIR)/rootfs
 ROOT_DIR = ..
-ARCH = arm
+#ARCH = arm
 
 all: mkdirs basic_libs builtin_apps basic_drivers
 	@echo "all done."
@@ -22,7 +22,7 @@ mkdirs:
 	@chmod 750 ${TARGET_DIR}/home/root
 	@cp -r etc ${TARGET_DIR}
 
-builtin_apps: 
+builtin_apps:
 	cd sys;make
 	cd sbin;make
 	cd bin;make
