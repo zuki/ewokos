@@ -44,7 +44,11 @@ $ make sd
 $ ls
 basic_err.log  bin    drivers  libs      root_aarch64.ext2
 basic.log      build  etc      Makefile
-// 4. QEMUで実行
+```
+
+## QEMUで実行
+
+```bash
 $ cd machine/raspix/kernel
 $ make run
 qemu-system-aarch64 -M raspi3b -serial null -serial mon:stdio -kernel kernel8.img -sd ../../../machine/raspix/system/root_aarch64.ext2
@@ -213,6 +217,170 @@ framebuffer_base   Phy:0x00000000, V:0xea100000 (64 MB)
 [/dev/tty0]:/# EMU 10.0.2 monitor - type 'help' for more information
 (qemu) quit
 $
+```
+
+## 実機で実行
+
+```bash
+$ cd machine/raspix/system
+$ make -f make_sd.mk sdcard
+dd if=/dev/zero of=sd/boot.img seek=$((0x80000 - 1)) bs=512 count=1
+1+0 records in
+1+0 records out
+512 bytes transferred in 0.000132 secs (3878788 bytes/sec)
+mformat -F -c 1 -i sd/boot.img ::
+mcopy -i sd/boot.img ../boot/kernel8.img ::kernel8.img;  mcopy -i sd/boot.img ../boot/config.txt ::config.txt;  mcopy -i sd/boot.img ../boot/bootcode.bin ::bootcode.bin;  mcopy -i sd/boot.img ../boot/fixup.dat ::fixup.dat;  mcopy -i sd/boot.img ../boot/start.elf ::start.elf;  mcopy -i sd/boot.img ../boot/COPYING.linux ::COPYING.linux;  mcopy -i sd/boot.img ../boot/LICENCE.broadcom ::LICENCE.broadcom;  mcopy -i sd/boot.img ../boot/armstub8.S ::armstub8.S;
+dd if=/dev/zero of=sd/ext2.img bs=1024 count=767*1024
+785408+0 records in
+785408+0 records out
+804257792 bytes transferred in 1.484834 secs (541648287 bytes/sec)
+/opt/homebrew/Cellar/e2fsprogs/1.47.3/sbin/mke2fs -b 1024 -t ext2 -I 128 sd/ext2.img
+mke2fs 1.47.3 (8-Jul-2025)
+128-byte inodes cannot handle dates beyond 2038 and are deprecated
+Creating filesystem with 785408 1k blocks and 49152 inodes
+Filesystem UUID: 0636a4c2-3696-4f47-bd72-87cfb16fc4a1
+Superblock backups stored on blocks:
+	8193, 24577, 40961, 57345, 73729, 204801, 221185, 401409, 663553
+
+Allocating group tables: done
+Writing inode tables: done
+Writing superblocks and filesystem accounting information: done
+
+cd build; \
+sudo chown -R 0:0 . ;\
+sudo find . -type f | sudo e2cp -ap -G 0 -O 0 -d ../sd/ext2.img:/
+dd if=/dev/zero of=ewokos.img seek=$((0x200000 - 1)) bs=512 count=1
+1+0 records in
+1+0 records out
+512 bytes transferred in 0.000038 secs (13473684 bytes/sec)
+printf "                                                                \
+  0x800, $((0x80000*512 / 1024))K, c,\n      \
+  526336, $((1570816*512 / 1024))K, L,\n  \
+" | /opt/homebrew/Cellar/util-linux/2.41.1_1/sbin/sfdisk ewokos.img
+このディスクを使用しているユーザがいないかどうかを調べています ... OK
+
+ディスク ewokos.img: 1 GiB, 1073741824 バイト, 2097152 セクタ
+単位: セクタ (1 * 512 = 512 バイト)
+セクタサイズ (論理 / 物理): 512 バイト / 512 バイト
+I/O サイズ (最小 / 推奨): 512 バイト / 512 バイト
+
+>>> 新しい DOS (MBR) ディスクラベルを作成しました。識別子は 0x90dc8c8a です。
+ewokos.img1: 新しいパーティション 1 をタイプ W95 FAT32 (LBA)、サイズ 256 MiB で作成しました。
+ewokos.img2: 新しいパーティション 2 をタイプ Linux、サイズ 767 MiB で作成しました。
+ewokos.img3: 終了。
+
+新しい状態:
+ディスクラベルのタイプ: dos
+ディスク識別子: 0x90dc8c8a
+
+デバイス    起動 開始位置 終了位置  セクタ サイズ Id タイプ
+ewokos.img1          2048   526335  524288   256M  c W95 FAT32 (LBA)
+ewokos.img2        526336  2097151 1570816   767M 83 Linux
+
+パーティション情報が変更されました。
+dd if=sd/boot.img of=ewokos.img seek=0x800 conv=notrunc
+524288+0 records in
+524288+0 records out
+268435456 bytes transferred in 0.592854 secs (452785097 bytes/sec)
+dd if=sd/ext2.img of=ewokos.img seek=526336 conv=notrunc
+1570816+0 records in
+1570816+0 records out
+804257792 bytes transferred in 1.658817 secs (484838166 bytes/sec)
+
+// カードに書き込み
+// 実行
+```
+
+![エラー](image/raspi_run.png)
+
+### imgファイルを調べる
+
+#### ext2.img (ext2)
+
+```bash
+$ sudo losetup -o 269484032 -f ewokos.img
+$ sudo losetup -l
+NAME        SIZELIMIT    OFFSET AUTOCLEAR RO BACK-FILE                                        DIO LOG-SEC
+/dev/loop1          0         0         1  1 /var/lib/snapd/snaps/core18_2923.snap              0     512
+/dev/loop19         0 269484032         0  0 /home/vagrant/ewokos/ewokos.img                    0     512
+$ sudo mount -t ext2 /dev/loop19 mnt
+$ ls -l mnt
+$ ls -l mnt
+total 16
+drwxr-xr-x 2 root root  1024 Jul 21 15:19 bin
+drwxr-xr-x 3 root root  1024 Jul 21 15:19 drivers
+drwxr-xr-x 3 root root  1024 Jul 21 15:19 etc
+drwx------ 2 root root 12288 Jul 21 15:19 lost+found
+drwxr-xr-x 2 root root  1024 Jul 21 15:19 sbin
+$ cd mnt
+mnt$ ls -l sbin
+total 3704
+-rwxr-xr-x 1 root root 234248 Jul 21 14:46 core
+-rwxr-xr-x 1 root root 608872 Jul 21 14:46 httpd
+-rwxr-xr-x 1 root root 643688 Jul 21 14:46 init
+-rwxr-xr-x 1 root root 648368 Jul 21 14:46 sdfsd
+-rwxr-xr-x 1 root root 543872 Jul 21 14:46 sessiond
+-rwxr-xr-x 1 root root 537192 Jul 21 14:46 telnetd
+-rwxr-xr-x 1 root root 547776 Jul 21 14:46 vfsd
+$ file sbin/init
+sbin/init: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, with debug_info, not stripped
+mnt$ cd ..
+$ sudo umount mnt
+$ sudo losetup -d /dev/loop19
+```
+
+#### boot.img (FAT)
+
+```bash
+$ sudo losetup -o 1048576 -f ewokos.img
+$ cat /proc/filesystems
+nodev	sysfs
+nodev	tmpfs
+nodev	bdev
+nodev	proc
+nodev	cgroup
+nodev	cgroup2
+nodev	cpuset
+nodev	devtmpfs
+nodev	configfs
+nodev	debugfs
+nodev	tracefs
+nodev	securityfs
+nodev	sockfs
+nodev	bpf
+nodev	pipefs
+nodev	ramfs
+nodev	hugetlbfs
+nodev	devpts
+	ext3
+	ext2
+	ext4
+	squashfs
+	vfat
+nodev	ecryptfs
+	fuseblk
+nodev	fuse
+nodev	fusectl
+nodev	mqueue
+nodev	pstore
+	btrfs
+nodev	autofs
+nodev	binfmt_misc
+	iso9660
+nodev	vboxsf
+$ sudo mount -t vfat /dev/loop19 mnt
+$ ls -l mnt
+total 3093
+-rwxr-xr-x 1 root root    5756 Jul 22  2025 armstub8.S
+-rwxr-xr-x 1 root root   52456 Jul 22  2025 bootcode.bin
+-rwxr-xr-x 1 root root      46 Jul 22  2025 config.txt
+-rwxr-xr-x 1 root root   18693 Jul 22  2025 COPYING.linux
+-rwxr-xr-x 1 root root    7311 Jul 22  2025 fixup.dat
+-rwxr-xr-x 1 root root  123144 Jul 22  2025 kernel8.img
+-rwxr-xr-x 1 root root    1594 Jul 22  2025 LICENCE.broadcom
+-rwxr-xr-x 1 root root 2955648 Jul 22  2025 start.elf
+$ sudo umount mnt
+$ sudo losetup -d /dev/loop19
 ```
 
 ### kernel作成のための修正ファイル
