@@ -20,6 +20,8 @@ TARGET_DIR = $(BUILD_DIR)/rootfs
 
 export BSP_LFLAGS= -larch_bcm283x
 
+MKE2FS := /opt/homebrew/Cellar/e2fsprogs/1.47.3/sbin/mke2fs
+
 all: x
 	@echo "all done."
 
@@ -63,18 +65,21 @@ clean:
 	cd $(SYS_ROOT_DIR)/xwin;make clean
 	cd $(SYS_ROOT_DIR)/gui;make clean
 	cd $(SYS_ROOT_DIR)/basic;make clean
-	cd $(EWOKOS_ROOT_DIR)/sw.extra/; make HW=$(HW) clean
+#	cd $(EWOKOS_ROOT_DIR)/sw.extra/; make HW=$(HW) clean
 	rm -fr $(BUILD_DIR)
 	rm -fr $(MACHINE_BUILD_DIR)
 
 SD = root_$(ARCH).ext2
+
+.PHONY: sd
+
 sd:
 	@echo "\n====building ext2 format sdcard image===="
 	mkdir -p build
 #256M ext2 sd
 	dd if=/dev/zero of=${SD} bs=1k count=256k
 #make ext2 fs with: block_size=1024 inode_size=128
-	/opt/homebrew/Cellar/e2fsprogs/1.47.3/sbin/mke2fs -b 1024 -I 128 ${SD}
+	$(MKE2FS) -b 1024 -I 128 ${SD}
 
 	cd $(MACHINE_BUILD_DIR); \
 	find . -type f | e2cp -ap -G0 -O0 -d ../${SD}:/
