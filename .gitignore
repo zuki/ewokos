@@ -26,3 +26,4 @@ doc/book
 machine/versatilepb/kernel/config.mk
 *.lo
 *.dirstamp
+machine/raspix/boot
