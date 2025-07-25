@@ -19,9 +19,10 @@
 #include <stddef.h>
 #include <signals.h>
 
+// static変数
 static proc_t **_task_table;//[_kernel_config.max_task_num];
 
-// VMMプロセスページディレクトリエントリテーブル構造体
+// VMプロセスページディレクトリエントリテーブル構造体
 typedef struct {
 	page_dir_entry_t pde[PAGE_DIR_NUM];
 } proc_vm_t;
@@ -39,7 +40,7 @@ bool _core_proc_ready = false;
 int32_t _core_proc_pid = -1;
 uint32_t _ipc_uid = 0;
 
-/* proc_init はプロセスサブシステムを初期化する */
+/* プロセスサブシステムを初期化する */
 int32_t procs_init(void) {
 	_use_core_id = 0;
 	_ipc_uid = 0;
@@ -1167,6 +1168,7 @@ int32_t get_proc_pid(int32_t pid) {
 	return p->info.pid;
 }
 
+/* core#core のidleプロセスを作成して返す */
 proc_t* kfork_core_halt(uint32_t core) {
     // pid = 0: NULL proc
 	proc_t* cproc = _task_table[0];

@@ -6,7 +6,7 @@
 __entry:
     # Mask exceptions and interrupts
     msr DAIFSet, #0xf
-	
+
 	# Check if we are running in EL2 and switch to EL1
     mrs x0, CurrentEL
     cmp x0, #4
@@ -21,12 +21,12 @@ __entry:
     # Switch to EL1
     mov x0, #0x3c5
     msr SPSR_EL2, x0
-    adr x2, __el1_entry 
+    adr x2, __el1_entry
     msr ELR_EL2, x2
     eret
 	nop
 
-__el1_entry:	
+__el1_entry:
 	/* Disable Alignment check */
 	mrs     x0, sctlr_el1
 	bic     x0, x0, #(3 << 3)
@@ -51,7 +51,7 @@ __el1_entry:
 	msr ACTLR_EL1, x0
 
     # Set the el1 stack
-    msr spsel, #0x1	
+    msr spsel, #0x1
 	adr x0, #_svc_start_stack
     mov sp, x0
 
@@ -75,33 +75,34 @@ __el1_entry:
     mov x1, #0x1004
     orr x0, x0, x1
     msr SCTLR_EL1, x0
-
+    # machine/raspix/kernel/bsp/start.c
 	bl _boot_start
-
+    /* _boot_start(), load_boot_pgt() を経てここに至る */
+    /* cpu0とcpu1-3で処理を分ける */
 #ifdef KERNEL_SMP
 	mrs x0, mpidr_el1
     and x0, x0, #0xFF
     cmp x0, #0
     bne slave_core
 #endif
-
-	msr spsel, #0x1	
+    /* cpu0 */
+	msr spsel, #0x1
 	ldr x0, =_svc_stack
 	mov sp, x0
-
+    /* kernel/kernel/src/kernel.c */
 	ldr x1, =_kernel_entry_c
-	br x1 
+	br x1
 	b _halt
 
 #ifdef KERNEL_SMP
-slave_core:      
+slave_core:
 	mov x1, #0x4000
 	mul x0, x0, x1
     ldr x1, =_svc_stack
 	add x0, x0, x1
-	msr spsel, #0x1	
+	msr spsel, #0x1
 	mov sp, x0
-
+    /* kernel/kernel/src/kernel.c */
 	bl _slave_kernel_entry_c
 	b	halt
 #endif
@@ -135,12 +136,13 @@ slave_core:
                       (1 << 0))   /* set M, enable MMU */
 
 
+/* load_boot_pgt(page_dir_entry_t startup_page_dir) */
 .global load_boot_pgt
 load_boot_pgt:
     ldr x1, =MAIR1VAL
 	msr mair_el1, x1
 
-    msr ttbr0_el1, x0 
+    msr ttbr0_el1, x0
 	isb
 
     ldr x0, =TCREL1VAL

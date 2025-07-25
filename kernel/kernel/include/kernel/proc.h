@@ -27,7 +27,7 @@ typedef struct {
 	void**   stacks;
 } thread_stack_t;
 
-// プロセスのみに存在する構造体
+// プロセス/スレッドで共有する構造体
 typedef struct {
 	uint32_t           pde_index;					// pdeインデックス
 	page_dir_entry_t*  vm;							// このプロセスのページディレクトリエントリ

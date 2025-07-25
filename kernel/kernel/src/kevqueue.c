@@ -4,6 +4,7 @@
 #include <kernel/proc.h>
 #include <stddef.h>
 
+// static変数
 static queue_t  _kev_queue;
 
 void kev_init(void) {

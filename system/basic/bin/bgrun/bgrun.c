@@ -20,6 +20,7 @@ static int run(const char* cmd) {
 	return 0;
 }
 
+// /bin/bgrun /bin/session -r -t /dev/tty0
 int main(int argc, char* argv[]) {
 
 	struct stat buf;
@@ -40,8 +41,7 @@ int main(int argc, char* argv[]) {
 		str_free(cmd);
 		printf("[\033[32m%s\033[0m]\n", "OK"); //green for ok
 	}
-	else 
+	else
 		printf("[\033[31m%s\033[0m]\n", "ERR!"); //red for failed
 	return ret;
 }
-

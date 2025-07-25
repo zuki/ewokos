@@ -17,9 +17,11 @@
 #include <mm/kalloc.h>
 #include <stddef.h>
 
+// global変数
 uint32_t _kernel_sec = 0;
 uint64_t _kernel_usec = 0;
 
+// static変数
 static uint64_t _last_usec = 0;
 static uint32_t _sec_tic = 0;
 
@@ -63,7 +65,7 @@ static inline void irq_do_timer0(context_t* ctx) {
 		renew_kernel_sec();
 	}
 	renew_kernel_tic(usec_gap);
-	
+
 	timer_clear_interrupt(0);
 
 #ifdef KERNEL_SMP
@@ -152,7 +154,7 @@ void prefetch_abort_handler(context_t* ctx, uint32_t status) {
 	/*kprintf("handle prefetch abort: %d, status: 0x%x, addr: 0x%x\n", cproc->info.pid, status, ctx->pc);
 
 	if(((status & 0x1D) == 0xD || //permissions fault only
-		(status & 0x1F) == 0x6) && 
+		(status & 0x1F) == 0x6) &&
 			ctx->pc < cproc->space->heap_size) { //in proc heap only
 		if (kernel_lock_check() > 0)
 			return;
@@ -176,7 +178,7 @@ void data_abort_handler(context_t* ctx, ewokos_addr_t addr_fault, uint32_t statu
 	__irq_disable();
 	proc_t* cproc = get_current_proc();
 	if(cproc == NULL) {
-		printf("_kernel, data abort!! core: %d, at: 0x%X status: 0x%X\n", 
+		printf("_kernel, data abort!! core: %d, at: 0x%X status: 0x%X\n",
 			get_core_id(), addr_fault, status);
 		dump_ctx(ctx);
 		halt();
@@ -195,7 +197,7 @@ void data_abort_handler(context_t* ctx, ewokos_addr_t addr_fault, uint32_t statu
 			kernel_lock();
 			int32_t res = copy_on_write(cproc, addr_fault);
 			kernel_unlock();
-			if(res == 0) 
+			if(res == 0)
 				return;
 			err = 1;
 			errmsg = "copy on write failed";
@@ -210,7 +212,7 @@ void data_abort_handler(context_t* ctx, ewokos_addr_t addr_fault, uint32_t statu
 		errmsg = "access denied";
 	}
 
-	printf("\npid: %d(%s), core: %d, data abort at: 0x%X, status: 0x%X\n", 
+	printf("\npid: %d(%s), core: %d, data abort at: 0x%X, status: 0x%X\n",
 			cproc->info.pid, cproc->info.cmd, cproc->info.core, addr_fault, status);
 	if(err == 2) //illegel address
 		printf("\terror: %s! heap(0x%X->0x%X)\n", errmsg, legel_addr_base, cproc->space->heap_size);

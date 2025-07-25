@@ -23,7 +23,7 @@ static void set_boot_pgt(uint32_t virt, uint32_t phy, uint32_t len, uint8_t is_d
 	len  >>= PDE_SHIFT;
 
 	for (idx = 0; idx < len; idx++) {
-		startup_page_dir[virt] = (phy << PDE_SHIFT) | AP_KO<< 10 | KPDE_TYPE; //section type, system RW 
+		startup_page_dir[virt] = (phy << PDE_SHIFT) | AP_KO<< 10 | KPDE_TYPE; //section type, system RW
 		virt++;
 		phy++;
 	}
@@ -95,7 +95,7 @@ static void set_boot_pgt(uint64_t virt, uint64_t phy, uint32_t len, int is_dev) 
         l2++;
         phy++;
     }
-	
+
 }
 #endif
 
@@ -161,16 +161,19 @@ static inline int32_t cpu_part(void) {
 	return part_num;
 }
 
+// __entry.Sから呼び出され、マッピングテーブルを作成する
 void _boot_start(void) {
 	boot_pgt_init();
-	set_boot_pgt(0, 0, 64*MB, 0);
-	set_boot_pgt(KERNEL_BASE, 0, 64*MB, 0);
+	// ダイレクトマッピング
+	set_boot_pgt(0, 0, 64*MB, 0);				//           0 -> 0
+	set_boot_pgt(KERNEL_BASE, 0, 64*MB, 0);		// 0x8000_0000 -> 0
 
+	// デバイスアドレスのマッピング
     switch(cpu_part()){
 		case ARM_CPU_PART_CORTEX_A76:	//Pi 5
 			set_boot_pgt(MMIO_BASE, PIX5_MMIO_PHY, PIX_MMIO_SIZE, 1);
 			set_boot_pgt(MMIO_BASE +  PIX_MMIO_SIZE, PIX5_RP1_PHY, PIX_MMIO_SIZE, 1);
-			break;						
+			break;
 		case ARM_CPU_PART_CORTEX_A72:	//Pi 4
 			set_boot_pgt(MMIO_BASE, PIX4_MMIO_PHY, PIX_MMIO_SIZE, 1);
 			break;
@@ -179,5 +182,6 @@ void _boot_start(void) {
 			break;
 	}
 
+	// kernel/platform/aarch64/arch/v8/boot.S
 	load_boot_pgt(startup_page_dir);
 }

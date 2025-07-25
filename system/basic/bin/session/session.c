@@ -45,6 +45,7 @@ static int doargs(int argc, char* argv[]) {
 	return optind;
 }
 
+// /bin/session -r -t /dev/tty0
 int main(int argc, char* argv[]) {
 	int argind = doargs(argc, argv);
 	if(argind < 0)
@@ -78,11 +79,12 @@ int main(int argc, char* argv[]) {
 				waitpid(pid);
 			}
 		}
-		
+
 		pid = fork();
 		if(pid == 0) {
 			welcome();
 			fflush(stdout);
+			// system/basic/libc/libewoksys/ewoksys/src/proc.c#proc_exec()
 			if(proc_exec("/bin/login") < 0) {
 				exit(-1);
 			}

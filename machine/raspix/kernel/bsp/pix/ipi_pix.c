@@ -1,6 +1,7 @@
 #include <kernel/smp/ipi.h>
 #include <kernel/hw_info.h>
 
+// Core_m Mailboxes Interrupt control
 void ipi_enable_pix(uint32_t core_id) {
 	uint32_t reg = 0;
 	switch(core_id) {
@@ -28,6 +29,7 @@ void ipi_enable_pix(uint32_t core_id) {
 	put32(reg, 1);
 }
 
+// Core_n Mailbox m write-set (WO)
 void ipi_send_pix(uint32_t core_id) {
 	uint32_t reg = 0;
 	switch(core_id) {
@@ -53,6 +55,7 @@ void ipi_send_pix(uint32_t core_id) {
 	put32(reg, 1);
 }
 
+// Core_n Mailbox n read & write-high-to-clear
 void ipi_clear_pix(uint32_t core_id) {
 	uint32_t reg = 0;
 	switch(core_id) {

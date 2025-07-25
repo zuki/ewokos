@@ -12,7 +12,7 @@
 #include <kernel/core.h>
 #endif
 
-
+// global変数
 uint32_t _allocable_phy_mem_top = 0;
 uint32_t _allocable_phy_mem_base = 0;
 uint32_t _core_base_offset = 0;
@@ -26,10 +26,11 @@ void sys_info_init_arch(void) {
 	memset(&_sys_info, 0, sizeof(sys_info_t));
 	uint32_t pix_revision = bcm283x_board();
 	_sys_info.total_phy_mem_size = 512*MB;
+	// _core_base_offset + _sys_info.mmio.phy_base = local_peripheral = 0x4000_0000
 	_core_base_offset =  0x01000000;
 	_sys_info.mmio.phy_base = 0x3f000000;
 	_pi4 = 0;
-	_uart_type = UART_MINI;
+	_uart_type = UART_MINI;			// デフォルトのuartはmini UART
 
 	if(pix_revision == PI_4B_1G) {
 		strcpy(_sys_info.machine, "raspberry-pi4b-1g");
@@ -108,7 +109,7 @@ void sys_info_init_arch(void) {
 		strcpy(_sys_info.machine, "raspberry-pi3b");
 		_sys_info.total_phy_mem_size = 1u*GB;
 		_sys_info.mmio.phy_base = 0x3f000000;
-        // raspi2bはMini_UARTを使用
+        // raspi3bはMini_UARTを使用
 	}
 	else if(pix_revision == PI_5_2G) {
 		strcpy(_sys_info.machine, "raspberry-pi5");
@@ -165,7 +166,7 @@ void arch_vm(page_dir_entry_t* vm) {
 	//map_page(vm, pbase, pbase, AP_RW_D, PTE_ATTR_DEV);
 }
 
-// 各コアの起動
+// 各コアの起動（wfiでspinしているcoreを起動する）
 #ifdef KERNEL_SMP
 extern char __entry[];
 void start_core(uint32_t core_id) {

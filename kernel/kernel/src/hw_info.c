@@ -1,5 +1,7 @@
 #include <kernel/kernel.h>
 #include <kernel/hw_info.h>
+
+// global変数 _sys_info
 sys_info_t _sys_info;
 
 void sys_info_init(void) {

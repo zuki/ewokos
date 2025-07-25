@@ -40,6 +40,7 @@ static void __attribute__((optimize("O0"))) copy_interrupt_table(void) {
 	}
 }
 
+// カーネルメモリのマッピング
 static void set_kernel_vm(page_dir_entry_t* vm) {
 	memset(vm, 0, PAGE_DIR_SIZE);
 	flush_dcache();
@@ -125,7 +126,7 @@ void __attribute__((optimize("O0"))) _slave_kernel_entry_c(void) {
 	uint32_t cid = get_core_id();
 	cpu_core_ready(cid);
 	_cpu_cores[cid].actived = true;
-
+	// 準備はできたがまだstartはしていない
 	halt();
 }
 #endif
@@ -177,6 +178,8 @@ static void show_config(void) {
 }
 
 int32_t load_init_proc(void);
+
+// kernel/platform/aarch64/arch/v8/boot.Sからcpu0の場合に呼び出される
 void _kernel_entry_c(void) {
 	__irq_disable();
 	//clear bss
@@ -253,9 +256,9 @@ void _kernel_entry_c(void) {
 	printf("kernel: start cores ... 0");
 	for(uint32_t i=1; i<_sys_info.cores; i++) {
 		_cpu_cores[i].actived = false;
-		kfork_core_halt(i);
-		start_core(i);
-		while(!_cpu_cores[i].actived)
+		kfork_core_halt(i);				// core i用のidleプロセスを作成
+		start_core(i);					// ここで0以外のcoreをstartさせる
+		while(!_cpu_cores[i].actived)	// 起動するのを待機
 			_delay_msec(10);
 		printf(" %d", i);
 	}

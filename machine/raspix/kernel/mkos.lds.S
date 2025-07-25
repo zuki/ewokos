@@ -10,7 +10,10 @@ PHDRS
 
 SECTIONS
 {
-	/*bootloader will be compiled with phy address base at 0x8000*/
+	/* bootloader は物理アドレスの基底アドレスを 0x80000 としてコンパイルされる */
+	/* in machine/raspix/kernel/Makefile */
+	/* 	 LOAD_ADDRESS  = 0x80000  */
+	/*   ARCH_LD_FLAGS = --defsym=start_address=$(LOAD_ADDRESS) */
 	.init start_address : AT(start_address) ALIGN(4096)
 	{
     KEEP(*(.init .init.*))
@@ -23,6 +26,7 @@ SECTIONS
 	_svc_start_stack = .;
 	_init_end = ALIGN(4096);
 
+	/* カーネルは仮想アドレスの基底アドレスを2MG(0x8000_0000)としてコンパイルされる */
 	/*kernel will be compiled with virtual address base at 2GB*/
 	PROVIDE(_kernel_start = base_address + _init_end);
 
@@ -39,8 +43,8 @@ SECTIONS
 	. = ALIGN(4096);
 
 	_bss_start = .;
-	.bss : 
-	{ 
+	.bss :
+	{
 		*(.bss*)
 	}
 	. = ALIGN(4096);

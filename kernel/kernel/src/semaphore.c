@@ -25,9 +25,9 @@ int32_t semaphore_alloc(void) {
 	for(int32_t i=0; i<SEMAPHORE_MAX; i++) {
 		if(_semaphores[i].creater_pid == -1) {
 			_semaphores[i].creater_pid = proc->info.pid;
-			_semaphores[i].occupied = SEM_IDLE;
+			_semaphores[i].occupied = SEM_IDLE;		// 予約だけでまだ実行していない
 			_semaphores[i].occupied_pid = -1;
-			return i+1;
+			return i+1;		// 注: +1
 		}
 	}
 	return 0;
@@ -56,12 +56,12 @@ void semaphore_free(uint32_t sem_id) {
 			_semaphores[sem_id].creater_pid == -1 ||
 			cproc == NULL)
 		return;
-		
+	// 開放できるのは作成したプロセスのみ
 	if(_semaphores[sem_id].creater_pid == cproc->info.pid) {
 		_semaphores[sem_id].creater_pid = -1;
 		_semaphores[sem_id].occupied = SEM_IDLE;
 		_semaphores[sem_id].occupied_pid = -1;
-	}	
+	}
 }
 
 // セマフォを取得する
@@ -110,7 +110,7 @@ int32_t semaphore_quit(uint32_t sem_id) {
 	int pid_by = _semaphores[sem_id].occupied_pid;
 	_semaphores[sem_id].occupied = SEM_IDLE;
 	_semaphores[sem_id].occupied_pid = -1;
-    // このセマフォを他意識してるプロセスを起床させる
+    // このセマフォを待機してるプロセスを起床させる
 	proc_wakeup(pid_by, -1, (uint32_t)_semaphores + sem_id);
 	return 0;
 }

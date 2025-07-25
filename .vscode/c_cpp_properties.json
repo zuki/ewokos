@@ -8,18 +8,23 @@
                 "kernel/kernel/include",
                 "kernel/lib/include",
                 "kernel/lib/ext2/include",
-                "kernel/lib/graph/include",
-                "kernel/lib/console/include",
 		        "kernel/lib/sconf/include",
-                "kernel/hardware/arm/arch/common/include",    
+                "kernel/platform/aarch64/arch/common/include",
+                "system/basic/libc/libewoksys/ewoksys/include",
+                "system/basic/libc/libewoksys/include",
+                "system/basic/libc/libgloss",
+                "system/basic/libs/**/include",
+                "machine/raspix/kernel/lib/bcm283x/include",
+                "machine/raspix/system/libs/arch_bcm283x/include",
+                "machine/raspix/system/libs/bsp/include"
             ],
             "defines": [
                 "KERNEL_SMP", "KCONSOLE",
             ],
-            "compilerPath": "//usr/bin/gcc",
+            "compilerPath": "/usr/local/bin/aarch64-none-elf-gcc",
             "cStandard": "c17",
             "cppStandard": "c++11",
-            "intelliSenseMode": "macos-clang-arm"
+            "intelliSenseMode": "gcc-arm64"
         }
     ],
     "version": 4

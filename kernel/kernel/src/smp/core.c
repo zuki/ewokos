@@ -12,6 +12,7 @@ inline uint32_t get_core_id(void) {
 	return __core_id();
 }
 
+// kernel/platform/aarch64/arch/v8/system.S で実装
 extern uint32_t __smp_lock(int32_t* v);
 extern uint32_t __smp_unlock(int32_t* v);
 

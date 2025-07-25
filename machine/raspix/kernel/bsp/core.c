@@ -6,7 +6,7 @@
 
 #ifdef KERNEL_SMP
 
-// raspi4以外は何もしない
+// cpu#core_id を利用可能にする
 void cpu_core_ready(uint32_t core_id) {
 	if(_pi4) {
 		gic_init(MMIO_BASE + 0x1840000);

@@ -2,6 +2,8 @@
 #include <kernel/core.h>
 #include <dev/timer.h>
 
+// __prog は kernel/platform/aarch64/arch/v8/system.S で実装されている
+
 void __attribute__((optimize("O0"))) _delay(uint32_t count) {
 	while(count > 0) {
 		count--;
@@ -41,7 +43,7 @@ inline void flush_tlb(void) {
 
 #else
 
-inline void flush_dcache(void) { 
+inline void flush_dcache(void) {
 	__flush_dcache_all();
 }
 

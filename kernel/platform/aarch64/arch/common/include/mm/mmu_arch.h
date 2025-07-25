@@ -3,7 +3,7 @@
 
 #include "mmudef.h"
 
-#define PAGE_L1_INDEX(x) (((uint64_t)x >> 30) & 0x1FF) 
+#define PAGE_L1_INDEX(x) (((uint64_t)x >> 30) & 0x1FF)
 #define PAGE_L2_INDEX(x) (((uint64_t)x >> 21) & 0x1FF)
 #define PAGE_L3_INDEX(x) (((uint64_t)x >> 12) & 0x1FF)
 
@@ -11,6 +11,7 @@
 #define BASE_TO_PAGE_TABLE(x) ((void *) ((uint32_t)x << 10))
 #define PAGE_TO_BASE(x) ((uint32_t)x >> 12)
 
+/* PTE, PDE: 構造体の上位が下位ビット*/
 typedef struct {
     uint64_t EntryType : 2;             // @0-1     1 for a block table, 3 for a page table
     uint64_t MemAttr : 4;               // @2-5
@@ -23,7 +24,7 @@ typedef struct {
         STAGE2_SH_INNER_SHAREABLE = 3,  //          Inner shareable
     } SH : 2;                           // @8-9
     uint64_t AF : 1;                    // @10      Accessable flag
-    uint64_t PTE_NG : 1;                // @11      no global 
+    uint64_t PTE_NG : 1;                // @11      no global
     uint64_t Address : 36;              // @12-47   36 Bits of address
     uint64_t _reserved48_51 : 4;        // @48-51   Set to 0
     uint64_t Contiguous : 1;            // @52      Contiguous

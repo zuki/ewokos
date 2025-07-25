@@ -11,21 +11,24 @@
 #include <mm/mmu.h>
 #include <mm/kmalloc.h>
 
+// 割り込みハンドラ構造体
 typedef struct interrupt_st {
 	int32_t  uuid;
 	ewokos_addr_t entry;
 	ewokos_addr_t data;
 } interrupt_handler_t;
 
+// 割り込み構造体
 typedef struct {
 	interrupt_handler_t handler;
 	uint32_t irq;
 } interrupt_item_t;
 
+// static変数
 static interrupt_item_t _interrupts[SYS_INT_MAX];
 
 void interrupt_init(void) {
-	memset(&_interrupts, 0, sizeof(interrupt_item_t)*SYS_INT_MAX);	
+	memset(&_interrupts, 0, sizeof(interrupt_item_t)*SYS_INT_MAX);
 }
 
 static inline interrupt_item_t* get_interrupt(uint32_t irq) {
@@ -39,7 +42,7 @@ static inline interrupt_item_t* get_interrupt(uint32_t irq) {
 
 int32_t interrupt_setup(proc_t* cproc, uint32_t interrupt, ewokos_addr_t entry, ewokos_addr_t data) {
 	interrupt_item_t* item = get_interrupt(interrupt);
-	
+
 	if(entry == 0) {//unregister interrupt
 		if(item == NULL)
 			return -1;
@@ -55,7 +58,7 @@ int32_t interrupt_setup(proc_t* cproc, uint32_t interrupt, ewokos_addr_t entry, 
 		item->handler.uuid = cproc->info.uuid;
 		item->handler.entry = entry;
 		item->handler.data = data;
-		irq_enable(interrupt); //TODO
+		irq_enable(interrupt); // TODO
 	}
 	return 0;
 }
@@ -78,7 +81,7 @@ static int32_t interrupt_send_raw(context_t* ctx, uint32_t interrupt,  interrupt
 			printf("inter err re-entre: intr:%d, pid:%d\n", interrupt, proc == NULL ? -1:proc->info.pid);
 		ctx->gpr[0] = -1;
 		return -1;
-	}	
+	}
 
 	/*
 	if(proc->ipc_res.state != IPC_IDLE) {
@@ -87,7 +90,7 @@ static int32_t interrupt_send_raw(context_t* ctx, uint32_t interrupt,  interrupt
 		return -1;
 	}
 
-	ipc_task_t* ipc = proc_ipc_get_task(proc); 
+	ipc_task_t* ipc = proc_ipc_get_task(proc);
 	if(ipc != NULL) { //target proc still busy on ipc service task
 		printf("inter err ipc svr: intr:%d, pid:%d\n", interrupt, proc->info.pid);
 		ctx->gpr[0] = -1;
@@ -149,4 +152,3 @@ void interrupt_end(context_t* ctx) {
 	}
 	schedule(ctx);
 }
-

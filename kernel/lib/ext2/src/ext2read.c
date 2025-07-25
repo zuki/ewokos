@@ -9,6 +9,7 @@
 #define EXT2_BLOCK_SIZE 1024
 #define SECTOR_SIZE     512
 
+// rootfs (ext2) のパーティション
 static partition_t _partition;
 
 static int32_t sd_read_sector(int32_t sector, void* buf) {
@@ -46,8 +47,8 @@ int32_t read_partition(void) {
 	uint8_t sector[512];
 	if(sd_read_sector(0, sector) != 0)
 		return -1;
-	//check magic 
-	if(sector[510] != 0x55 || sector[511] != 0xAA) 
+	//check magic
+	if(sector[510] != 0x55 || sector[511] != 0xAA)
 		return -1;
 	uint8_t* p = sector + 0x1BE;
 	for(int32_t i=0; i<PARTITION_MAX; i++) {
@@ -86,7 +87,7 @@ static int32_t ext2_read(ext2_t* ext2, INODE* node, char *buf, int32_t nbytes, i
 	//(3)
 	/*(4) Compute LOGICAL BLOCK number lbk and start_byte in that block from offset;
 		lbk       = oftp->offset / EXT2_BLOCK_SIZE;
-		start_byte = oftp->offset % EXT2_BLOCK_SIZE;*/	
+		start_byte = oftp->offset % EXT2_BLOCK_SIZE;*/
 	lbk = offset / EXT2_BLOCK_SIZE;
 	start_byte = offset % EXT2_BLOCK_SIZE;
 	if(nbytes > (EXT2_BLOCK_SIZE - start_byte))
@@ -96,7 +97,7 @@ static int32_t ext2_read(ext2_t* ext2, INODE* node, char *buf, int32_t nbytes, i
 	if(lbk < 12) {
 		blk = node->i_block[lbk];
 	}
-	//(5).2 Indirect blocks contains 256 block number 
+	//(5).2 Indirect blocks contains 256 block number
 	else if(lbk>=12 && lbk < 256 +12){
 		int32_t indirect_buf[256];
 		ext2->read_block(node->i_block[12], (char*)indirect_buf);
@@ -137,10 +138,10 @@ static int32_t ext2_read(ext2_t* ext2, INODE* node, char *buf, int32_t nbytes, i
 		remain -= min;
 		if(nbytes == 0 || avil == 0){
 			break;
-		}	
+		}
 	}
 	return count_read;
-}	
+}
 
 static INODE* get_node_by_ino(ext2_t* ext2, uint32_t ino, char* buf) {
 	int32_t bgid = get_gd_index_by_ino(ext2, ino);
@@ -153,7 +154,7 @@ static INODE* get_node_by_ino(ext2_t* ext2, uint32_t ino, char* buf) {
 }
 
 static uint32_t search(ext2_t* ext2, INODE *ip, const char *name) {
-	int32_t i; 
+	int32_t i;
 	char c, *cp;
 	DIR  *dp;
 	char buf[EXT2_BLOCK_SIZE];
@@ -167,7 +168,7 @@ static uint32_t search(ext2_t* ext2, INODE *ip, const char *name) {
 				if(dp->name_len == 0 || dp->rec_len == 0)
 					break;
 				c = dp->name[dp->name_len];  // save last byte
-				dp->name[dp->name_len] = 0;   
+				dp->name[dp->name_len] = 0;
 				if (strcmp(dp->name, name) == 0 ){
 					return dp->inode;
 				}
@@ -309,7 +310,7 @@ static void ext2_quit(ext2_t* ext2) {
 }
 
 static void* ext2_readfile(ext2_t* ext2, const char* fname, int32_t* size) {
-	void* ret = NULL;	
+	void* ret = NULL;
 	if(size != NULL)
 		*size = -1;
 
@@ -347,4 +348,3 @@ void* sd_read_ext2(const char* fname, int32_t* size) {
 	ext2_quit(&ext2);
 	return ret;
 }
-

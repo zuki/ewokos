@@ -48,7 +48,7 @@ uint32_t bcm283x_board(void) {
 	else if(revision == 0xd04170 ||
 			revision == 0xd04171 )
 		return PI_5_8G;
-	else if(revision == 0xe04171) 
+	else if(revision == 0xe04171)
 		return PI_5_16G;
 	else if(revision == 0xa03111 ||
 			revision == 0xa03112 ||
@@ -95,7 +95,7 @@ uint32_t bcm283x_board(void) {
 		return PI_0_2W;
 	else if(revision == 0xa020a0 ||
 			revision == 0xa02082 ||
-			revision == 0xa020d3 ||
+			revision == 0xa020d3 ||		/* 手元の3B+はこれに該当 */
 			revision == 0xa22082 ||
 			revision == 0xa220a0 ||
 			revision == 0xa02100 ||
@@ -107,7 +107,7 @@ uint32_t bcm283x_board(void) {
 			revision == 0x9000c1)
 		return PI_0_W;
 	else if(revision == 0x900092 ||
-			revision == 0x900093 || 
+			revision == 0x900093 ||
 			revision == 0x920093)
 		return PI_0;
 	else if(revision == 0x900021 ||
