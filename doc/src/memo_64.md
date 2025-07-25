@@ -293,6 +293,149 @@ dd if=sd/ext2.img of=ewokos.img seek=526336 conv=notrunc
 
 ![エラー](image/raspi_run.png)
 
+- uartのボーレートが正しくないためだった（正しいボーレートは19200）
+
+```bash
+=== ewokos booting ===
+
+kernel: init kernel malloc     ... [OK]
+kernel: init kernel event      ... [OK]
+kernel: init sd                ... [OK]
+kernel: load kernel config     ... kernel: remapping kernel mem   ... [OK]
+-----------------------------------------------------
+ ______           ______  _    _   ______  ______
+(  ___ \|\     /|(  __  )| \  / \ (  __  )(  ___ \
+| (__   | | _ | || |  | || (_/  / | |  | || (____
+|  __)  | |( )| || |  | ||  _  (  | |  | |(____  )
+| (___  | || || || |__| || ( \  \ | |__| |  ___) |
+(______/(_______)(______)|_/  \_/ (______)\______)
++-----Ewok micro-kernel OS-----------------------+
+| https://github.com/MisaZhu/EwokOS.git          |
++------------------------------------------------+
+[/dev/tty0] login: root
+[/dev/tty0] password: ****
+[/dev/tty0]:/# ls -al
+/bin/ls: invalid option -- `-a'
+
+pid: 22(/bin/ls -al), core: 0, data abort at: 0x28AAAAAA, status: 0x5
+        error: illegel address! heap(0x1CAB8->0x4A0000)
+
+ESR:0000000092000004
+FAR:8a8a2aaa28aaaaaa
+KSP:00000000800b3b10
+CTX:00000000800b3bd0
+pc : 0000000000001144   spsr:0000000020000000   sp : 000000007fffe250   lr : 0000000000001140
+x00: 00000000000320e0   x01: 0000000000000020   x02: 0000000000032120   x03: 0000000000000002
+x04: 0000000000000004   x05: 0000000000000000   x06: 000000000002c350   x07: 000000000002c380
+x08: 0000000000000008   x09: fffffffffffffff0   x10: 0000000000000000   x11: 0000000000000000
+x12: 0000000000000000   x13: 0000000100000000   x14: 0000000000000000   x15: 0000000000000000
+x16: 0000000000000000   x17: 0000000000000000   x18: 0000000000000000   x19: 00000000000320e0
+x20: 8a8a2aaa28aaaaaa   x21: 8a8a2aaa28aaaaaa   x22: 000000007fffe710   x23: 000000007fffeee8
+x24: 000000007fffee68   x25: 0000000000000003   x26: 000000000002d210   x27: 000000007fffeb98
+x28: 000000000003303f   x29: 000000007fffe250
+[/dev/tty0]:/# ls -l
+drwx------ root   root       12k [lost+found]
+drwxr-xr-x root   root        1k [drivers]
+drwxr-xr-x root   root        1k [bin]
+drwxr-xr-x root   root        1k [sbin]
+drwxr-xr-x root   root        1k [etc]
+drwxr-xr-x root   root        1k [dev]
+drwxrwxrwx root   root        1k [tmp]
+[/dev/tty0]:/# ls /etc
+     1k init.rd
+     1k [kernel]
+     1k passwd
+[/dev/tty0]:/# ls /sbin
+   532k sessiond
+   629k init
+   229k core
+   535k vfsd
+   525k telnetd
+   595k httpd
+   634k sdfsd
+[/dev/tty0]:/# /bin/sysinfo
+machine            raspberry-pi3b
+arch               aarch64
+cores              4
+kmalloc free       5/8 MB
+phy mem size       1024 MB
+usable mem size    1024 MB
+free mem           877 MB
+sys_dma_base       phy:0x00cf5000, V:0xea000000 (1024 KB)
+mmio_base          Phy:0x3f000000, V:0xe8000000 (31 MB)
+framebuffer_base   Phy:0x00000000, V:0xea100000 (64 MB)
+[/dev/tty0]:/# /bin/svcinfo
+SVC  TIMES      %  TYPE
+----------------------------------
+0    0         0%  none
+1    7         0%  kprintf
+2    2628      5%  malloc_expand
+3    0         0%  malloc_size
+4    0         0%  free
+5    25        0%  exec_elf
+6    25        0%  fork
+7    0         0%  thread
+8    0         0%  yield
+9    16        0%  wait_pid
+10   13715    30%  usleep
+11   13        0%  exit
+12   12        0%  detach
+13   97        0%  block
+14   139       0%  wakeup
+15   30        0%  signal_setup
+16   0         0%  signal
+17   0         0%  signal_end
+18   55        0%  get_pid
+19   0         0%  get_threadid
+20   50        0%  ipc_ping
+21   8         0%  ipc_ready
+22   30        0%  get_cmd
+23   1         0%  set_cmd
+24   24        0%  get_uid
+25   2         0%  set_uid
+26   1213      2%  shm_alloc
+27   2426      5%  shm_map
+28   2426      5%  shm_unmap
+29   26        0%  get_sys_info
+30   2         0%  get_sys_state
+31   30        0%  get_vsyscall_info
+32   246       0%  get_proc
+33   0         0%  get_procs_num
+34   0         0%  get_procs
+35   9         0%  mem_map
+36   0         0%  sys_v2p
+37   0         0%  sys_p2v
+38   8         0%  ipc_setup
+39   3488      7%  ipc_call
+40   2922      6%  ipc_get_arg
+41   2797      6%  ipc_set_return
+42   4859     10%  ipc_get_return
+43   2922      6%  ipc_end
+44   1184      2%  ipc_disable
+45   1184      2%  ipc_enable
+46   1         0%  core_ready
+47   176       0%  core_pid
+48   2207      4%  get_kevent
+49   0         0%  intr_setup
+50   0         0%  intr_end
+51   0         0%  semaphore_alloc
+52   0         0%  semaphore_free
+53   0         0%  semaphore_enter
+54   0         0%  semaphore_quit
+55   0         0%  soft_int
+56   10        0%  get_gid
+57   2         0%  set_gid
+58   20        0%  unknown
+59   0         0%  unknown
+60   20        0%  unknown
+61   0         0%  unknown
+62   0         0%  unknown
+63   0         0%  unknown
+
+total:  45055
+[/dev/tty0]:/# c
+```
+
 ### imgファイルを調べる
 
 #### ext2.img (ext2)
