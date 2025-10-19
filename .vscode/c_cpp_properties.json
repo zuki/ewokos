@@ -14,14 +14,14 @@
                 "system/basic/libc/libewoksys/include",
                 "system/basic/libc/libgloss",
                 "system/basic/libs/**/include",
-                "machine/raspix/kernel/lib/bcm283x/include",
-                "machine/raspix/system/libs/arch_bcm283x/include",
-                "machine/raspix/system/libs/bsp/include"
+                "machine.3rd/raspix/kernel/lib/bcm283x/include",
+                "machine.3rd/raspix/system/libs/arch_bcm283x/include",
+                "machine.3rd/raspix/system/libs/bsp/include"
             ],
             "defines": [
-                "KERNEL_SMP", "KCONSOLE",
+                "KERNEL_SMP", "KCONSOLE"
             ],
-            "compilerPath": "/usr/local/bin/aarch64-none-elf-gcc",
+            "compilerPath": "/Applications/ArmGNUToolchain/14.3.rel1/aarch64-none-elf/bin/aarch64-none-elf-gcc",
             "cStandard": "c17",
             "cppStandard": "c++11",
             "intelliSenseMode": "gcc-arm64"
