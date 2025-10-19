@@ -28,3 +28,4 @@ machine/versatilepb/kernel/config.mk
 *.dirstamp
 machine/raspix/boot
 *.tree
+doc/src/work
