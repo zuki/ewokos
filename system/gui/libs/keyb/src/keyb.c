@@ -10,8 +10,8 @@ extern "C" {
 #include <unistd.h>
 
 #define KEY_REPEAT_TIMEOUT	50
-#define KEY_HOLD_TIMEOUT	100
-#define KEY_TIMER	        3000 //300 ps
+#define KEY_HOLD_TIMEOUT	150
+#define KEY_TIMER	        10000 //100 fps
 
 #define KEY_MAX_ONE_TIME    6
 
@@ -110,7 +110,7 @@ static int key_state_machine(keyb_evt_t* evts, uint8_t num){
 }
 
 int keyb_read(int keyb_fd, keyb_evt_t* evts, uint8_t num) {
-	if(core_get_active_ux() != core_get_ux())
+	if(core_get_active_ux(0) != core_get_ux_env())
         return 0;
 
 	char v[KEYB_EVT_MAX] = { 0 };

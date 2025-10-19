@@ -45,10 +45,23 @@ static int x_get_event(int xserv_pid, xevent_t* ev, bool block) {
 	return res;
 }
 
-int x_screen_info(xscreen_info_t* scr, uint32_t index) {
+uint32_t x_get_display_id(int32_t index_def) {
+	int32_t disp_index = index_def;
+	if(index_def < 0) {
+		const char* disp = getenv("DISPLAY_ID");
+		if(disp != NULL && disp[0] != '\0')
+			disp_index = atoi(disp);
+	}
+	if(disp_index < 0 || disp_index >= x_get_display_num())
+		disp_index = 0;
+	return disp_index;
+}
+
+int x_screen_info(xscreen_info_t* scr, int32_t disp_index) {
+	disp_index = x_get_display_id(disp_index);
 	proto_t in, out;
 	PF->init(&out);
-	PF->init(&in)->addi(&in, index);
+	PF->init(&in)->addi(&in, disp_index);
 
 	int ret = dev_cntl("/dev/x", X_DCNTL_GET_INFO, &in, &out);
 	if(ret == 0)
@@ -116,12 +129,11 @@ void x_terminate(x_t* x) {
 	proc_wakeup_pid(getpid(), X_EVT_BLOCK_EVT);
 }
 
-const char* x_get_work_dir(void) {
-	return cmain_get_work_dir();
+void x_get_work_dir(char* ret, uint32_t len) {
+	cmain_get_work_dir(ret, len);
 }
 
 static x_theme_t _x_theme;
-static bool _x_theme_loaded = false;
 
 static int x_update_theme(void) {
 	int xserv_pid = dev_get_pid("/dev/x");
@@ -131,6 +143,7 @@ static int x_update_theme(void) {
 	proto_t out;
 	PF->init(&out);
 	if(dev_cntl_by_pid(xserv_pid, X_DCNTL_GET_THEME, NULL, &out) != 0) {
+		slog("update theme error\n");
 		return -1;
 	}	
 
@@ -142,11 +155,8 @@ static int x_update_theme(void) {
 int x_get_theme(x_theme_t* theme) {
 	if(theme == NULL)
 		return -1;
-	if(!_x_theme_loaded) {
-		if(x_update_theme())
-			return -1;
-		_x_theme_loaded = true;
-	}
+	if(x_update_theme())
+		return -1;
 	memcpy(theme, &_x_theme, sizeof(x_theme_t));
 	return 0;
 }
@@ -154,7 +164,6 @@ int x_get_theme(x_theme_t* theme) {
 void  x_init(x_t* x, void* data) {
 	memset(&_x_theme, 0, sizeof(x_theme_t));
 	x_get_theme(&_x_theme);
-	_x_theme_loaded = false;
 
 	memset(_x_screens, 0, sizeof(xscreen_info_t)*SCREEN_MAX);
 	memset(x, 0, sizeof(x_t));
@@ -163,6 +172,7 @@ void  x_init(x_t* x, void* data) {
 }
 
 int x_get_desktop_space(int disp_index, grect_t* r) {
+	disp_index = x_get_display_id(disp_index);
 	int res = -1;
 	proto_t out, in;
 	PF->init(&in)->addi(&in, disp_index);
@@ -206,6 +216,15 @@ int x_set_top_app(const char* fname) {
 	return res;
 }
 
+int  x_show_cursor(bool show) {
+	proto_t in;
+	PF->init(&in)->addi(&in, (int32_t)show);
+
+	int res = dev_cntl("/dev/x", X_DCNTL_SHOW_CURSOR, &in, NULL);
+	PF->clear(&in);
+	return res;
+}
+
 int x_set_app_name(x_t* x, const char* fname) {
 	if(fname == NULL || fname[0] == 0 ||
 			x == NULL || x->main_win == NULL || x->main_win->xinfo == NULL)
@@ -229,8 +248,12 @@ int x_exec(const char* fname) {
 	return 0;
 }
 
-const char* x_get_theme_fname(const char* prefix, const char* app_name, const char* fname) {
-	static char ret[256] = {0};
+const char* x_get_theme_fname(const char* prefix,
+		const char* app_name,
+		const char* fname, 
+		char* ret,
+		uint32_t len) {
+	memset(ret, 0, len);
 	if(fname[0] == '/') {
 		strncpy(ret, fname, 255);
 		return ret;
@@ -246,13 +269,22 @@ const char* x_get_theme_fname(const char* prefix, const char* app_name, const ch
 	return ret;
 }
 
-const char* x_get_res_name(const char* name) {
-	static char ret[FS_FULL_NAME_MAX];
-	const char* wkdir = x_get_work_dir();
+const char* x_get_res_name(const char* name, char* ret, uint32_t len) {
+	memset(ret, 0, len);
+	if(name == NULL || name[0] == 0)
+		return ret;
+	
+	if(name[0] == '/') {
+		strncpy(ret, name, len);
+		return ret;
+	}
+
+	char wkdir[FS_FULL_NAME_MAX+1] = {0};
+	x_get_work_dir(wkdir, FS_FULL_NAME_MAX);
 	if(wkdir[1] == 0 && wkdir[0] == '/')
-		snprintf(ret, FS_FULL_NAME_MAX-1, "/res/%s", name);
+		snprintf(ret, len, "/res/%s", name);
 	else
-		snprintf(ret, FS_FULL_NAME_MAX-1, "%s/res/%s", wkdir, name);
+		snprintf(ret, len, "%s/res/%s", wkdir, name);
 	return ret;
 }
 

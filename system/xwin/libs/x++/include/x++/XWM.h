@@ -4,11 +4,12 @@
 #include <x/xwm.h>
 #include <graph/graph_ex.h>
 #include <font/font.h>
+#include <UniObject/UniObject.h>
 
 namespace Ewok {
 
 
-class XWM {
+class XWM : public UniObject {
 protected:
 	xwm_t xwm;
 	font_t* font;
@@ -38,7 +39,7 @@ protected:
 	virtual void onLoadTheme(void) { }
 	virtual void drawBGEffect(graph_t* desktop_g, graph_t* frame_g, graph_t* ws_g, xinfo_t* info, bool top) { };
 
-	void updateTheme(void);
+	void updateTheme(bool loadFromX);
 public:
 	inline void __getWinSpace(int style, grect_t* xr, grect_t* wsr) {getWinSpace(style, xr, wsr);}
 	inline void __getClose(xinfo_t* info, grect_t* r) { getClose(info, r); }
@@ -49,6 +50,7 @@ public:
 	inline void __getResize(xinfo_t* info, grect_t* r) { getResize(info, r); }
 	inline void __getFrame(xinfo_t* info, grect_t* r) { getFrame(info, r); }
 	inline void __drawDesktop(graph_t* g) { drawDesktop(g); }
+	inline void __updateTheme(bool loadFromX) { updateTheme(loadFromX); }
 
 	inline void __drawTitle(graph_t* desktop_g, graph_t* g, xinfo_t* info, grect_t* r, bool top) {drawTitle(desktop_g, g, info, r, top);}
 	inline void __drawMax(graph_t* g, xinfo_t* info, grect_t* r, bool top) {drawMax(g, info, r, top);}

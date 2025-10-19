@@ -48,7 +48,6 @@ static charbuf_t *_buffer;
 class TermWidget : public ConsoleWidget {
 	pthread_mutex_t term_lock;
 	bool showXIM;
-
 public:
 	TermWidget() {
 		pthread_mutex_init(&term_lock, NULL);
@@ -65,24 +64,6 @@ public:
 
 	void unlock() {
 		pthread_mutex_unlock(&term_lock);
-	}
-
-	bool readConfig(const char* fname) {
-		json_var_t *conf_var = json_parse_file(fname);	
-
-		uint32_t font_size = json_get_int_def(conf_var, "font_size", 12);
-		int32_t char_space = json_get_int_def(conf_var, "char_space", -1);
-		int32_t line_space = json_get_int_def(conf_var, "line_space", 0);
-		uint32_t fg_color = json_get_int_def(conf_var, "fg_color", 0xffdddddd);
-		uint32_t bg_color = json_get_int_def(conf_var, "bg_color", 0xff000000);
-		uint32_t transparent = json_get_int_def(conf_var, "transparent", 255);
-		const char* font_name = json_get_str(conf_var, "font");
-
-		config(font_name, font_size, char_space, line_space, fg_color, bg_color, transparent);
-
-		if(conf_var != NULL)
-			json_var_unref(conf_var);
-		return true;
 	}
 
 	void fontZoom(bool zoomIn) {
@@ -139,13 +120,45 @@ protected:
 	}
 
 	bool onMouse(xevent_t* ev) {
+		static bool zooming = false;
 		if(ev->state == MOUSE_STATE_CLICK) {
 			showXIM = !showXIM;
 			getWin()->callXIM(showXIM);
 			return true;
 		}
+		else if(ev->state == MOUSE_STATE_DRAG) {
+			if(abs(ev->value.mouse.rx) > abs(ev->value.mouse.ry)) {
+				if(!zooming) {
+					if(ev->value.mouse.rx > 0)
+						fontZoom(true);
+					else
+						fontZoom(false);
+				}
+				zooming = true;
+				return true;
+			}
+		}
+		else if(ev->state == MOUSE_STATE_UP) {
+			zooming = false;
+		}
+
 		return ConsoleWidget::onMouse(ev);
 	}
+
+	bool onIM(xevent_t* ev) {
+		if(!showXIM) {
+			showXIM = true;
+			if(getWin()->callXIM(true))
+				return true;
+		}
+		return ConsoleWidget::onIM(ev);
+	}
+
+	/*void onFocus() {
+		getWin()->callXIM(true);
+		ConsoleWidget::onFocus();
+	}
+		*/
 
 	void onResize() {
 		lock();
@@ -166,7 +179,7 @@ class TermWin: public WidgetWin{
 	ColorDialog bgColorDialog;
 
 protected:
-	void onDialoged(XWin* from, int res) {
+	void onDialoged(XWin* from, int res, void* arg) {
 		if(res == Dialog::RES_OK) {
 			if(from == &fontDialog) {
 				string fontName = fontDialog.getResult();
@@ -218,22 +231,6 @@ static void onQuitFunc(MenuItem* it, void* p) {
 	win->close();
 }
 
-static void onFontZoomInFunc(MenuItem* it, void* p) {
-	_consoleWidget->fontZoom(true);
-}
-
-static void onFontZoomOutFunc(MenuItem* it, void* p) {
-	_consoleWidget->fontZoom(false);
-}
-
-static void onFontCharSpaceIncrFunc(MenuItem* it, void* p) {
-	_consoleWidget->charSpaceChange(true);
-}
-
-static void onFontCharSpaceDecrFunc(MenuItem* it, void* p) {
-	_consoleWidget->charSpaceChange(false);
-}
-
 static void onTextColor(MenuItem* it, void* p) {
 	TermWin* win = (TermWin*)p;
 	win->color();
@@ -242,6 +239,31 @@ static void onTextColor(MenuItem* it, void* p) {
 static void onBGColor(MenuItem* it, void* p) {
 	TermWin* win = (TermWin*)p;
 	win->bgColor();
+}
+
+static Menubar* _menubar = NULL;
+static bool readConfig(const char* fname) {
+	json_var_t *conf_var = json_parse_file(fname);	
+
+	uint32_t font_size = json_get_int_def(conf_var, "font_size", 12);
+	int32_t char_space = json_get_int_def(conf_var, "char_space", -1);
+	int32_t line_space = json_get_int_def(conf_var, "line_space", 0);
+	uint32_t fg_color = json_get_int_def(conf_var, "fg_color", 0xffdddddd);
+	uint32_t bg_color = json_get_int_def(conf_var, "bg_color", 0xff000000);
+	uint32_t transparent = json_get_int_def(conf_var, "transparent", 255);
+	const char* font_name = json_get_str(conf_var, "font");
+
+	_consoleWidget->config(font_name, font_size, char_space, line_space, fg_color, bg_color, transparent);
+	bool show_menubar = (bool)json_get_int_def(conf_var, "menubar", 1);
+	if(!show_menubar)
+		_menubar->hide();
+
+	uint32_t max_rows = json_get_int_def(conf_var, "max_rows", 1024);
+	_consoleWidget->setMaxRows(max_rows);
+	
+	if(conf_var != NULL)
+		json_var_unref(conf_var);
+	return true;
 }
 
 static bool _win_opened = false;
@@ -254,32 +276,30 @@ static void* thread_loop(void* p) {
 	root->setType(Container::VERTICLE);
 
 	Menu* menu = new Menu();
-	menu->add("txtcolor", NULL, NULL, onTextColor, &win);
-	menu->add("bgcolor", NULL, NULL, onBGColor, &win);
+	menu->add(0, "txtcolor", NULL, NULL, onTextColor, &win);
+	menu->add(1, "bgcolor", NULL, NULL, onBGColor, &win);
 
 	Menubar* menubar = new Menubar();
-	menubar->add("font", NULL, NULL, onFontFunc, &win);
-	menubar->add("F+", NULL, NULL, onFontZoomInFunc, NULL);
-	menubar->add("F-", NULL, NULL, onFontZoomOutFunc, NULL);
-	menubar->add("]+[", NULL, NULL, onFontCharSpaceIncrFunc, NULL);
-	menubar->add("]-[", NULL, NULL, onFontCharSpaceDecrFunc, NULL);
-	menubar->add("color", NULL, menu, NULL, NULL);
+	menubar->setItemSize(42);
+	menubar->add(2, "font", NULL, NULL, onFontFunc, &win);
+	menubar->add(7, "color", NULL, menu, NULL, NULL);
 	menubar->fix(0, 20);
 	root->add(menubar);
+	_menubar = menubar;
 
 	TermWidget *consoleWidget = new TermWidget();
 	root->add(consoleWidget);
 	win.consoleWidget = consoleWidget;
 	root->focus(consoleWidget);
-	consoleWidget->readConfig(X::getResName("theme.json"));
 	_consoleWidget = consoleWidget;
+	readConfig(X::getResName("config.json").c_str());
 
 	x.getDesktopSpace(desk, 0);
-	win.open(&x, 0, -1, -1, desk.w*2/3, desk.h*2/3, "xconsole", 0);
+	win.open(&x, -1, -1, -1, 0, 0, "xconsole", 0);
 	_win_opened = true;
 
 	win.setAlpha(true);
-	win.setTimer(10);
+	win.setTimer(30);
 
 	widgetXRun(&x, &win);
 	device_stop(_dev);
@@ -322,9 +342,15 @@ static int console_read(int fd, int from_pid, fsinfo_t* node,
 	}
 
 	((char*)buf)[0] = c;
+	return 1;
+}
+
+static int console_loop(void* p) {
+	proc_usleep(20000);
+
 	if(_consoleWidget)
 		_consoleWidget->update();
-	return 1;
+	return 0;
 }
 
 static void do_signal(int sig, void* p) {
@@ -348,6 +374,7 @@ int run(const char* mnt_point) {
 	strcpy(dev.name, "xconsole");
 	dev.write = console_write;
 	dev.read = console_read;
+	dev.loop_step = console_loop;
 	_dev = &dev;
 
 	pthread_t tid;

@@ -108,31 +108,31 @@ int main(int argc, char** argv) {
 	root->setType(Container::HORIZONTAL);
 
 	Menu* submenu = new Menu();
-	submenu->add("submenu1", NULL, NULL, NULL, NULL);
-	submenu->add("submenu2", NULL, NULL, NULL, NULL);
-	submenu->add("submenu3", NULL, NULL, NULL, NULL);
+	submenu->add(0, "submenu1", NULL, NULL, NULL, NULL);
+	submenu->add(1, "submenu2", NULL, NULL, NULL, NULL);
+	submenu->add(2, "submenu3", NULL, NULL, NULL, NULL);
 
 
 	Menu* submenu1 = new Menu();
-	submenu1->add("submenu1", NULL, NULL, NULL, NULL);
-	submenu1->add("submenu2", NULL, submenu, NULL, NULL);
-	submenu1->add("submenu3", NULL, NULL, NULL, NULL);
+	submenu1->add(3, "submenu1", NULL, NULL, NULL, NULL);
+	submenu1->add(4, "submenu2", NULL, submenu, NULL, NULL);
+	submenu1->add(5, "submenu3", NULL, NULL, NULL, NULL);
 
 	Menu* menu = new Menu();
-	menu->add("submenu1", NULL, NULL, NULL, NULL);
-	menu->add("submenu2", NULL, NULL, NULL, NULL);
-	menu->add("submenu3", NULL, submenu1, NULL, NULL);
+	menu->add(6, "submenu1", NULL, NULL, NULL, NULL);
+	menu->add(7, "submenu2", NULL, NULL, NULL, NULL);
+	menu->add(8, "submenu3", NULL, submenu1, NULL, NULL);
 
 
 	Menubar* menubar = new Menubar();
-	menubar->add("menu1", NULL, menu, NULL, NULL);
+	menubar->add(9, "menu1", NULL, menu, NULL, NULL);
 	root->add(menubar);
 
 	PowerInfo* powerInfo = new PowerInfo();
 	powerInfo->fix(48, 0);
 	root->add(powerInfo);
 
-	win.open(&x, 0, 0, 0, scr.size.w, 20, "manubar", XWIN_STYLE_NO_FOCUS | XWIN_STYLE_SYSBOTTOM | XWIN_STYLE_NO_FRAME | XWIN_STYLE_NO_BG_EFFECT);
+	win.open(&x, -1, 0, 0, scr.size.w, 20, "manubar", XWIN_STYLE_NO_FOCUS | XWIN_STYLE_SYSBOTTOM | XWIN_STYLE_NO_FRAME | XWIN_STYLE_NO_BG_EFFECT);
 	win.setTimer(2);
 	widgetXRun(&x, &win);
 	return 0;

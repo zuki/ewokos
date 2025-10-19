@@ -8,6 +8,7 @@
 #include <graph/graph_png.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <ewoksys/hashmap.h>
 
 #include <x++/X.h>
 
@@ -32,6 +33,16 @@ static void freeIcon(void*p) {
 	graph_free(g);
 }
 
+static int free_cache(map_t map, const char* key, any_t data, any_t arg) {
+	graph_t* g = (graph_t*)data;
+	if(g == NULL)
+		return MAP_OK;
+
+	hashmap_remove(map, key);
+	graph_free(g);
+	return MAP_OK;
+}
+
 class FileGrid: public Grid {
 	FileWidget* fileWidget;
 	struct dirent files[MAX_FILES];
@@ -40,8 +51,18 @@ class FileGrid: public Grid {
 	graph_t* dirIcon;
 	graph_t* fileIcon;
 	graph_t* devIcon;
+	map_t iconCache;
 
 	CWDLabel *cwdLabel;
+
+	const char* getFullname(const char* dname) {
+		static char fname[FS_FULL_NAME_MAX+1] = {0};
+		if(strcmp(cwd, "/") == 0)
+			snprintf(fname, FS_FULL_NAME_MAX, "/%s", dname);
+		else
+			snprintf(fname, FS_FULL_NAME_MAX, "%s/%s", cwd, dname);
+		return fname;
+	}
  
 	void drawIcon(graph_t* g, int at, XTheme* theme, int x, int y, int w, int h) {
 		graph_t* img = NULL;
@@ -55,9 +76,9 @@ class FileGrid: public Grid {
 				img = fileIcon;
 		}
 
-		uint32_t sz = h - theme->basic.fontSize;
+		int32_t sz = h - theme->basic.fontSize;
 		int dx = (w - img->w)/2;
-		int dy = (sz-img->h) / 2;
+		int dy = (sz - img->h) / 2;
 		graph_blt_alpha(img, 0, 0, img->w, img->h,
 				g, x+dx, y+dy, img->w, img->h, 0xff);
 	}
@@ -159,17 +180,21 @@ class FileGrid: public Grid {
 	}
 
 	void loadIcons() {
-		fileIcon = png_image_new(x_get_theme_fname(X_THEME_ROOT, "xfinder", "icons/file.png"));
+		char fname[FS_FULL_NAME_MAX+1] = {0};
+		x_get_theme_fname(X_THEME_ROOT, "xfinder", "icons/file.png", fname, FS_FULL_NAME_MAX);
+		fileIcon = png_image_new(fname);
 		if(fileIcon == NULL)
-			fileIcon = png_image_new(X::getResName("icons/file.png"));
+			fileIcon = png_image_new(X::getResName("icons/file.png").c_str());
 
-		dirIcon = png_image_new(x_get_theme_fname(X_THEME_ROOT, "xfinder", "icons/folder.png"));
+		x_get_theme_fname(X_THEME_ROOT, "xfinder", "icons/folder.png", fname, FS_FULL_NAME_MAX);
+		dirIcon = png_image_new(fname);
 		if(dirIcon == NULL)
-			dirIcon = png_image_new(X::getResName("icons/folder.png"));
+			dirIcon = png_image_new(X::getResName("icons/folder.png").c_str());
 
-		devIcon = png_image_new(x_get_theme_fname(X_THEME_ROOT, "xfinder", "icons/device.png"));
+		x_get_theme_fname(X_THEME_ROOT, "xfinder", "icons/device.png", fname, FS_FULL_NAME_MAX);
+		devIcon = png_image_new(fname);
 		if(devIcon == NULL)
-			devIcon = png_image_new(X::getResName("icons/device.png"));
+			devIcon = png_image_new(X::getResName("icons/device.png").c_str());
 	}
 
 	json_var_t* loadFileTypes(const char* confFile) {
@@ -183,7 +208,39 @@ class FileGrid: public Grid {
 		return ret;
 	}
 
-	graph_t*  getIcon(const char* fname) {
+	graph_t*  getImgIconAndCache(const char* fname) {
+		graph_t* icon =  NULL;
+		hashmap_get(iconCache, fname, (void**)&icon);
+		if(icon != NULL)
+			return icon;
+
+		graph_t* img = png_image_new(fname);
+		if(img == NULL)
+			return NULL;
+		
+		float scale = 1.0;
+		
+		if(img->w > img->h)
+			scale = (float)(itemW*2/3) / (float)img->w;
+		else
+			scale = (float)(itemH*2/3) / (float)img->h;
+		icon = graph_scalef(img, scale);
+		graph_free(img);
+		if(icon == NULL)
+			return NULL;
+		hashmap_put(iconCache, fname, icon);
+		return icon;
+	}
+
+	graph_t*  getIcon(const char* dname) {
+		const char* fname = getFullname(dname);
+		graph_t* img = NULL;
+		if(check(fname, ".png")) {
+			img = getImgIconAndCache(fname);
+			if(img != NULL)
+				return img;
+		}
+
 		if(fileTypes == NULL)
 			return NULL;
 		int num = json_var_array_size(fileTypes);
@@ -198,11 +255,13 @@ class FileGrid: public Grid {
 				continue;
 
 			if(check(fname, ext)) {
-				graph_t* img = (graph_t*)json_get_raw(it, "icon_image");
+				img = (graph_t*)json_get_raw(it, "icon_image");
 				if(img != NULL)
 					return img;
 
-				img = png_image_new(x_get_theme_fname(X_THEME_ROOT, "xfinder", icon));
+				char fname[FS_FULL_NAME_MAX+1] = {0};
+				x_get_theme_fname(X_THEME_ROOT, "xfinder", icon, fname, FS_FULL_NAME_MAX);
+				img = png_image_new(fname);
 				if(img == NULL)
 					return NULL;
 				json_var_add(it, "icon_image", json_var_new_obj(img, freeIcon));
@@ -230,16 +289,11 @@ protected:
 
 	void onEnter(int i) {
 		struct dirent* it = &files[i];
-		char fname[FS_FULL_NAME_MAX+1];
 		if(strcmp(it->d_name, "..") == 0) {
 			upBack();
 			return;
 		}
-		else if(strcmp(cwd, "/") == 0)
-			snprintf(fname, FS_FULL_NAME_MAX, "/%s", it->d_name);
-		else
-			snprintf(fname, FS_FULL_NAME_MAX, "%s/%s", cwd, it->d_name);
-
+		const char *fname = getFullname(it->d_name);
 		if(it->d_type == DT_DIR) {
 			fileWidget->enter(fname);
 			readDir(fname);
@@ -254,11 +308,7 @@ protected:
 
 	void onSelect(int i) {
 		struct dirent* it = &files[i];
-		char fname[FS_FULL_NAME_MAX+1];
-		if(strcmp(cwd, "/") == 0)
-			snprintf(fname, FS_FULL_NAME_MAX, "/%s", it->d_name);
-		else
-			snprintf(fname, FS_FULL_NAME_MAX, "%s/%s", cwd, it->d_name);
+		const char *fname = getFullname(it->d_name);
 		fileWidget->select(fname);
 	}
 
@@ -270,6 +320,14 @@ public:
 		scrollerV = NULL;
 		loadIcons();
 		fileTypes = loadFileTypes("/usr/system/filetypes.json");
+		iconCache = hashmap_new();
+	}
+
+	~FileGrid() {
+		if(iconCache != NULL) {
+			hashmap_iterate(iconCache, free_cache, NULL);	
+			hashmap_free(iconCache);
+		}
 	}
 
 	void setCWDLabel(CWDLabel* l) {

@@ -4,7 +4,7 @@
 #include <Widget/Label.h>
 #include <Widget/LabelButton.h>
 #include <Widget/List.h>
-#include <Widget/Split.h>
+#include <Widget/Splitter.h>
 #include <Widget/Columns.h>
 #include <x++/X.h>
 #include <unistd.h>
@@ -119,6 +119,8 @@ protected:
 			str = s;
 		}
 		else if(col == 5) {
+			//char s[128] = { 0 };
+			//str = vfs_file_name(proc->cmd, s, 127);
 			str = proc->cmd;
 			if(proc->type != TASK_TYPE_PROC)
 				str += "[t]";
@@ -314,7 +316,7 @@ protected:
 		if(sysInfo.cores == 0)
 			return;
 
-		graph_fill_3d(g, r.x, r.y, r.w, r.h, theme->basic.widgetBGColor, true);
+		graph_fill_3d(g, r.x, r.y, r.w, r.h, theme->basic.bgColor, true);
 
 		float xstep = (r.w - x_off*2)/ (float)HEART_BIT_NUM;
 		float yzoom = (r.h - y_off*2)/ 100.0;
@@ -430,6 +432,10 @@ int main(int argc, char** argv) {
 	cores->fix(0, 72);
 	c->add(cores);
 
+	Splitter *splitter = new Splitter();
+	splitter->attach(c);
+	root->add(splitter);
+
 	Procs* procs = new Procs();
 	root->add(procs);
 	list->setprocs(procs);
@@ -439,7 +445,7 @@ int main(int argc, char** argv) {
 	root->add(scrollerV);
 	procs->setScrollerV(scrollerV);
 
-	win.open(&x, 0, -1, -1, 600, 400, "xprocs", XWIN_STYLE_NORMAL);
+	win.open(&x, -1, -1, -1, 0, 0, "xprocs", XWIN_STYLE_NORMAL);
 	win.setTimer(2);
 
 	widgetXRun(&x, &win);

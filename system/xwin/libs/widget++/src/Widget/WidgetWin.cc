@@ -10,6 +10,10 @@ WidgetWin::WidgetWin() {
 	timerFPS = 1;
 	timerStep = 0;
 	widgetRegWin(this);
+
+	RootWidget* r = new RootWidget();
+	r->setType(Container::VERTICLE);
+	setRoot(r);
 }
 
 WidgetWin::~WidgetWin() {
@@ -23,7 +27,8 @@ WidgetWin::~WidgetWin() {
 void WidgetWin::onRepaint(graph_t* g) {
 	if(root == NULL)
 		return;
-
+	if(xwin->xinfo != NULL && xwin->xinfo->update_theme)
+		root->dirty = true;
 	root->repaint(g, &theme);
 }
 

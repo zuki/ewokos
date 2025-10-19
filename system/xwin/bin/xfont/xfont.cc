@@ -39,6 +39,24 @@ private:
 			ft, 12, theme->basic.docFGColor);
 	}
 
+	const char*  font_name_by_fname(const char* fname) {
+		static char ret[128];
+		memset(ret, 0, 128);
+
+		char sname[FS_FULL_NAME_MAX];
+		vfs_file_name(fname, sname, FS_FULL_NAME_MAX);
+		strncpy(ret, sname, 127);
+		int i = strlen(sname)-1;
+		while(i >= 0) {
+			if(ret[i] == '.') {
+				ret[i] = 0;
+				break;
+			}
+			--i;
+		}
+		return ret;
+	}
+
 protected:
 
 	void onRepaint(graph_t* g, XTheme* theme, const grect_t& r) {
@@ -105,7 +123,7 @@ int main(int argc, char** argv) {
 	FontWidget* fontW = new FontWidget(argv[1]);
 	root->add(fontW);
 
-	win.open(&x, 0, -1, -1, 400, 460, "xfont", XWIN_STYLE_NORMAL);
+	win.open(&x, -1, -1, -1, 0, 0, "xfont", XWIN_STYLE_NORMAL);
 	win.setTimer(8);
 
 	widgetXRun(&x, &win);

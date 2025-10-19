@@ -12,8 +12,9 @@
 extern "C" {
 #endif
 
-#define BUF_SIZE 128
+#define BUF_SIZE 256
 static char _buf[BUF_SIZE+1];
+static int32_t _slog_fd = -1;
 static int32_t _klog_fd = -1;
 
 void kout(const char *str) {
@@ -26,18 +27,34 @@ void klog(const char *format, ...) {
 	vsnprintf(_buf, sizeof(_buf), format, ap);
 	va_end(ap);
 
-	const char* klog_dev = getenv("KLOG_DEV");
-	if(klog_dev == NULL || klog_dev[0] == 0)
-		klog_dev = getenv("STDERR_DEV");
-
-	if(_klog_fd <= 0 && klog_dev != NULL) {
-		_klog_fd = open(klog_dev, O_WRONLY);
+	const char* log_dev = "/dev/klog";
+	if(_klog_fd <= 0 && log_dev != NULL) {
+		_klog_fd = open(log_dev, O_WRONLY);
 	}
 
+	syscall2(SYS_KPRINT, (ewokos_addr_t)_buf, (ewokos_addr_t)strlen(_buf));
 	if(_klog_fd > 0) {
 		write(_klog_fd, _buf, strlen(_buf));
 	}
-	syscall2(SYS_KPRINT, (ewokos_addr_t)_buf, (ewokos_addr_t)strlen(_buf));
+}
+
+void slog(const char *format, ...) {
+	va_list ap;
+	va_start(ap, format);
+	vsnprintf(_buf, sizeof(_buf), format, ap);
+	va_end(ap);
+
+	const char* log_dev = "/dev/log";
+	if(_slog_fd <= 0 && log_dev != NULL) {
+		_slog_fd = open(log_dev, O_WRONLY);
+	}
+
+	if(_slog_fd > 0) {
+		write(_slog_fd, _buf, strlen(_buf));
+	}
+	else {
+		syscall2(SYS_KPRINT, (ewokos_addr_t)_buf, (ewokos_addr_t)strlen(_buf));
+	}
 }
 
 #ifdef __cplusplus

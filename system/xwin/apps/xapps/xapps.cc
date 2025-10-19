@@ -8,6 +8,7 @@
 #include <x++/X.h>
 #include <unistd.h>
 #include <ewoksys/basic_math.h>
+#include <ewoksys/keydef.h>
 #include <ewoksys/kernel_tic.h>
 #include <ewoksys/proc.h>
 #include <graph/graph_png.h>
@@ -31,6 +32,7 @@ typedef struct {
 } item_t;
 
 #define ITEM_MAX 128
+static bool _launcher = false;
 
 class AppGrid: public Grid {
 	item_t items[ITEM_MAX];	
@@ -39,7 +41,9 @@ class AppGrid: public Grid {
 
 	string getIconFname(const char* appName) {
 		//try theme icon first
-		string ret = x_get_theme_fname(X_THEME_ROOT, appName, "icon.png");
+		char fname[FS_FULL_NAME_MAX+1] = {0};
+		x_get_theme_fname(X_THEME_ROOT, appName, "icon.png", fname, FS_FULL_NAME_MAX);
+		string ret = fname;
 		if(access(ret.c_str(), R_OK) == 0)
 			return ret;
 
@@ -107,8 +111,22 @@ protected:
 		drawTitle(g, index, theme, r.x , r.y, r.w, r.h);
 	}
 
+	void onUnselect(int index) {
+		getWin()->close();
+	}
+
 	void onEnter(int index) {
 		x_exec(items[index].fname.c_str());
+		if(!_launcher)
+			getWin()->close();
+	}
+
+	bool onIM(xevent_t* ev) {
+		if(ev->value.im.value == KEY_ESC) {
+			getWin()->close();
+			return true;
+		}
+		return Grid::onIM(ev);
 	}
 public:
 	AppGrid() {
@@ -150,8 +168,7 @@ public:
 	}
 };
 
-static bool _launcher = false;
-static uint32_t _itemSize = 72;
+static uint32_t _itemSize = 96;
 static uint32_t _fontSize = 0;
 
 static int doargs(int argc, char* argv[]) {
@@ -193,8 +210,13 @@ int main(int argc, char** argv) {
 
 	X x;
 	WidgetWin win;
+	XTheme* theme = win.getTheme();
 	if(_fontSize > 0)
-		win.getTheme()->setFont("system", _fontSize);
+		theme->setFont("system", _fontSize);
+	theme->basic.bgColor = 0x88000000;
+	theme->basic.fgColor = 0xffffffff;
+	theme->basic.selectBGColor = 0xdd888888;
+	win.setAlpha(true);
 
 	RootWidget* root = new RootWidget();
 	win.setRoot(root);
@@ -202,24 +224,26 @@ int main(int argc, char** argv) {
 	
 
 	AppGrid* apps = new AppGrid();
+	apps->setAlpha(true);
 	apps->setItemSize(_itemSize, _itemSize);
-	apps->setIconSize(_itemSize/2);
+	apps->setIconSize(_itemSize*2/3);
 	root->add(apps);
 	root->focus(apps);
 
 	Scroller* scrollerV = new Scroller();
+	scrollerV->setAlpha(true);
 	scrollerV->fix(8, 0);
 	root->add(scrollerV);
 	apps->setScrollerV(scrollerV);
 
 	if(_launcher) {
-		win.open(&x, 0, 0, 0, 320, 240, "xapps", 
-			XWIN_STYLE_NO_TITLE | XWIN_STYLE_LAUNCHER | XWIN_STYLE_NO_BG_EFFECT);
-			//XWIN_STYLE_NO_TITLE | XWIN_STYLE_LAUNCHER | XWIN_STYLE_SYSBOTTOM | XWIN_STYLE_NO_BG_EFFECT);
-		win.max();
+		win.open(&x, -1, 0, 0, 0, 0, "xapps", 
+			XWIN_STYLE_NO_TITLE | XWIN_STYLE_LAUNCHER | XWIN_STYLE_NO_BG_EFFECT | XWIN_STYLE_MAX);
 	}
-	else
-		win.open(&x, 0, -1, -1, 320, 240, "xapps", XWIN_STYLE_NORMAL);
+	else {
+		win.open(&x, -1, 0, 0, 0, 0, "xapps", 
+			XWIN_STYLE_NO_TITLE | XWIN_STYLE_NO_BG_EFFECT | XWIN_STYLE_MAX);
+	}
 
 	win.busy(true);
 	apps->loadApps();

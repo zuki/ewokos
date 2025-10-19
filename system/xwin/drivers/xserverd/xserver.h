@@ -29,12 +29,14 @@ typedef struct st_xwin {
 
 	void*    ws_g_shm;
 	graph_t* ws_g; //workspace graph
+	graph_t* ws_g_buffer; //workspace graph buffer
 
 	void*    frame_g_shm;
 	graph_t* frame_g; //frame graph
 
 	xinfo_t* xinfo;
 	bool dirty;
+	bool ready;
 	bool frame_dirty;
 	bool dirty_mark;
 	bool busy;
@@ -58,9 +60,7 @@ typedef struct {
 
 typedef struct {
 	uint32_t fps;
-	bool bg_run;
 	bool force_fullscreen;
-	bool gray_mode;
 	uint32_t bg_proc_priority;
 
 	graph_t* logo;

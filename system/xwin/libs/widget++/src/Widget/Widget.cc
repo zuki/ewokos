@@ -15,12 +15,14 @@ Widget::Widget(void)  {
 	marginH = 0;
 	marginV = 0;
 	id = 0;
-	isContainer = false;
+	beContainer = false;
+	beRoot = false;
 	disabled = false;
 	themePrivate = NULL;
 	visible = true;
 
-	onClickFunc = NULL;
+	onEventFunc = NULL;
+	onEventFuncArg = NULL;
 }
 
 Widget::~Widget(void)  { 
@@ -28,23 +30,63 @@ Widget::~Widget(void)  {
 		delete themePrivate;
 }
 
-void Widget::setTheme(XTheme* theme)  {
+void Widget::setAttr(const string& attr, json_var_t*value) {
+	if(attr == "id") {
+		setID(json_var_get_int(value));
+	}
+	else if(attr == "name") {
+		setName(json_var_get_str(value));
+	}
+	else if(attr == "marginH") {
+		setMarginH(json_var_get_int(value));
+	}
+	else if(attr == "marginV") {
+		setMarginV(json_var_get_int(value));
+	}
+	else if(attr == "w") {
+		fix(json_var_get_int(value), area.h);
+	}
+	else if(attr == "h") {
+		fix(area.w, json_var_get_int(value));
+	}
+	else if(attr == "alpha") {
+		setAlpha(json_var_get_int(value));
+	}
+}
+
+json_var_t* Widget::getAttr(const string& attr) {
+	if(attr == "id") {
+		return json_var_new_int(id);
+	}
+	else if(attr == "name") {
+		return json_var_new_str(name.c_str());
+	}
+	else if(attr == "marginH") {
+		return json_var_new_int(marginH);
+	}
+	else if(attr == "marginV") {
+		return json_var_new_int(marginV);
+	}
+	else if(attr == "w") {
+		return json_var_new_int(area.w);
+	}
+	else if(attr == "h") {
+		return json_var_new_int(area.h);
+	}
+	else if(attr == "alpha") {
+		return json_var_new_bool(alpha);
+	}
+	return NULL;
+}
+
+void Widget::dupTheme(XTheme* theme)  {
 	if(themePrivate != NULL)
 		delete themePrivate;
-	themePrivate = theme;
+	themePrivate = XTheme::dup(theme); 
 	update();
 }
 
-void Widget::onClick(xevent_t* ev) {
-	if(onClickFunc != NULL)
-		onClickFunc(this);
-}
-
 bool Widget::onMouse(xevent_t* ev) {
-	if(ev->state == MOUSE_STATE_CLICK) {
-		onClick(ev);
-		return true;
-	}
 	return false;
 }
 
@@ -81,22 +123,30 @@ bool Widget::onEvent(xevent_t* ev) {
 			}
 			if(!disabled && 
 					ev->state != MOUSE_STATE_UP &&
-					ev->state != MOUSE_STATE_DRAG)
+					ev->state != MOUSE_STATE_DRAG) {
+				if(onEventFunc != NULL)
+					onEventFunc(this, ev, onEventFuncArg);
 				return onMouse(ev);
+			}
 		}
 		if(!disabled && 
 				(ev->state == MOUSE_STATE_UP || ev->state == MOUSE_STATE_DRAG) &&
-				getRoot()->getDraged() == this)
+				getRoot()->getDraged() == this) {
+			if(onEventFunc != NULL)
+				onEventFunc(this, ev, onEventFuncArg);
 			return onMouse(ev);
+		}
 	}
 	else if(!disabled &&
 			ev->type == XEVT_IM && getRoot()->getFocused() == this) {
+		if(onEventFunc != NULL)
+			onEventFunc(this, ev, onEventFuncArg);
 		return onIM(ev);
 	}
 	return ret; 
 }
 
-RootWidget* Widget::getRoot(void) {
+Container* Widget::getRootContainer(void) {
 	if(father == NULL) {
 		return NULL;
 	}
@@ -104,6 +154,16 @@ RootWidget* Widget::getRoot(void) {
 	Container* wd = father;
 	while(wd != NULL && wd->father != NULL)
 		wd = wd->father;
+	if(wd == NULL)
+		return NULL;
+	return wd;
+}
+
+RootWidget* Widget::getRoot(void) {
+	Container* wd = getRootContainer();
+	if(wd == NULL || wd->isRoot() == false) {
+		return NULL;
+	}
 	return (RootWidget*)wd;
 }
 

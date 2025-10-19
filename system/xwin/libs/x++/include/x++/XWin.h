@@ -5,13 +5,17 @@
 #include <x++/XTheme.h>
 #include <graph/graph_ex.h>
 #include <string>
+#include <UniObject/UniObject.h>
 
 using namespace std;
 namespace Ewok {
 
 class X;
+class XWin;
 
-class XWin {
+typedef void (*DialogedFuncT)(XWin* xwin, XWin* from, int res, void* arg);
+
+class XWin : public UniObject {
 protected:
 	X* x;
 	uint32_t displayIndex;
@@ -30,16 +34,15 @@ protected:
 	inline virtual void onUnfocus(void) { }
 	inline virtual void onReorg(void)   { }
 	inline virtual void onEvent(xevent_t* ev)  { (void)ev; }
-	inline virtual void onDialoged(XWin* from, int res)  { (void)from; (void) res; }
+	inline virtual void onDialoged(XWin* from, int res, void* arg)  { (void)from; (void) res; (void)arg; }
 
-	inline bool covered(void)  {
-		return xwin->xinfo->covered;
-	}
+	DialogedFuncT onDialogedFunc;
 public:
 	XWin(void);
+	virtual ~XWin(void);
 
-	inline virtual ~XWin(void) {
-		close();
+	inline void setOnDialogedFunc(DialogedFuncT func) {
+		onDialogedFunc = func;
 	}
 
 	inline X* getX(void) {return x;}
@@ -56,18 +59,21 @@ public:
 	inline void __doResize(void) { onResize(); }
 	inline void __doMove(void) { onMove(); }
 	inline void __doFocus(void) { onFocus(); }
+	inline void __doShow(void) { onShow(); }
+	inline void __doHide(void) { onHide(); }
 	inline void __doUnfocus(void) { onUnfocus(); }
 	inline void __doReorg(void) { onReorg(); }
 	inline void __doEvent(xevent_t* ev) { onEvent(ev); }
 
-	inline void dialoged(XWin* from, int res) { onDialoged(from, res); }
+	void dialoged(XWin* from, int res, void* arg);
 
 	void close(void);
-	bool open(X* xp, uint32_t dispIndex, int x, int y, uint32_t w, uint32_t h,
+	bool open(X* xp, int32_t dispIndex, int x, int y, uint32_t w, uint32_t h,
 			const char* title, uint32_t style, bool visible = true);
-	bool open(X* xp, uint32_t dispIndex, const grect_t& r, const char* title, uint32_t style, bool visible = true);
+	bool open(X* xp, int32_t dispIndex, const grect_t& r, const char* title, uint32_t style, bool visible = true);
 	bool setVisible(bool visible);
 	void setAlpha(bool alpha);
+	bool isAlpha(void);
 	bool callXIM(bool show = true);
 
 	bool getInfo(xinfo_t& xinfo);

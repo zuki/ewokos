@@ -1,4 +1,5 @@
 all:
+	cd xlog; make
 	cd xterm; make
 	cd xread; make
 	cd xcores; make
@@ -9,9 +10,13 @@ all:
 	cd xprocs; make
 	cd xDemo; make
 	cd wDemo; make
+	cd wlayout; make
+	cd xwm_theme; make
+	cd xtheme; make
 	cd clock; make
 
 clean:
+	cd xlog; make clean
 	cd xterm; make clean
 	cd xread; make clean
 	cd xcores; make clean
@@ -22,4 +27,7 @@ clean:
 	cd xprocs; make clean
 	cd xDemo; make clean
 	cd wDemo; make clean
+	cd wlayout; make clean
+	cd xwm_theme; make clean
+	cd xtheme; make clean
 	cd clock; make clean

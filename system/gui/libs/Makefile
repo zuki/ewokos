@@ -3,7 +3,6 @@ all: basic_libs
 
 basic_libs:
 	cd openlibm;make
-	cd display;make
 	cd minimp3;make
 	cd keyb;make
 	cd mouse;make
@@ -12,11 +11,13 @@ basic_libs:
 	cd graph;make
 	cd font;make
 	cd fb;make
+	cd display;make
 	cd fbd;make
 	cd textgrid;make
 	cd gterminal;make
 	cd c++/stl;make
 	cd c++/c++;make
+	cd c++/object++;make
 
 clean:
 	cd openlibm;make clean

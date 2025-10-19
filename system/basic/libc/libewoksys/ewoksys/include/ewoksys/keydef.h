@@ -6,11 +6,12 @@ extern "C" {
 #endif
 
 #define CONSOLE_LEFT        8
-
-#define KEY_ESC             27
-#define KEY_BACKSPACE       127
+#define KEY_TAB             9
 #define KEY_ENTER           13
+#define KEY_ESC             27
 #define KEY_SPACE           32
+
+#define KEY_BACKSPACE       127
 
 #define KEY_RIGHT           4
 #define KEY_UP              5
@@ -20,6 +21,10 @@ extern "C" {
 #define KEY_POWER           26
 #define KEY_HOME            0xF0 
 #define KEY_END             0xF1
+
+#define KEY_CTRL            0xF2
+#define KEY_LSHIFT          0xA2
+#define KEY_RSHIFT          0xA3
 
 #define JOYSTICK_A        97
 #define JOYSTICK_B        98

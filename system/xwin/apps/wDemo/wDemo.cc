@@ -7,7 +7,7 @@
 #include <Widget/EditLine.h>
 #include <Widget/Grid.h>
 #include <Widget/Scroller.h>
-#include <Widget/Split.h>
+#include <Widget/Splitter.h>
 #include <WidgetEx/FileDialog.h>
 #include <WidgetEx/ConfirmDialog.h>
 
@@ -34,7 +34,7 @@ protected:
 	}
 
 	void onSelect(int index) {
-		klog("index: %d\n", index);
+		slog("index: %d\n", index);
 	}
 
 public:
@@ -74,7 +74,7 @@ public:
 	Anim(EditLine* editLine) {
 		this->editLine = editLine;
 		step = 0;
-		img = png_image_new(X::getResName("data/walk.png"));
+		img = png_image_new(X::getResName("data/walk.png").c_str());
 		steps = 8;
 		pos = 0;
 	}
@@ -102,7 +102,7 @@ protected:
 
     void onRepaint(graph_t* g, XTheme* theme, const grect_t& r) {
         // 移除原有的背景填充代码
-        // graph_fill(g, r.x, r.y, r.w, r.h, theme->basic.widgetBGColor);
+        // graph_fill(g, r.x, r.y, r.w, r.h, theme->basic.bgColor);
         
         float rad = angle * 3.1415926f / 180.0f; // 转换为弧度
         float cosAngle = cos(rad);
@@ -146,7 +146,7 @@ protected:
         font_t* font = theme->getFont();
         uint32_t w;
         font_text_size(txt, font, 10, &w, NULL);
-        graph_draw_text_font(g, r.x + r.w - w, r.y, txt, theme->getFont(), 10, theme->basic.widgetFGColor);
+        graph_draw_text_font(g, r.x + r.w - w, r.y, txt, theme->getFont(), 10, theme->basic.fgColor);
     }
 
     void onTimer(uint32_t timerFPS, uint32_t timerStep) {
@@ -161,8 +161,8 @@ protected:
 
 class MyWidgetWin: public WidgetWin{
 protected:
-	void onDialoged(XWin* from, int res) {
-		Widget* w = root->get("button");
+	void onDialoged(XWin* from, int res, void* arg) {
+		Widget* w = root->getChild("button");
 		LabelButton* button = (LabelButton*)w;
 		if(res == Dialog::RES_OK)
 			button->setLabel("Confirmed");
@@ -172,7 +172,9 @@ protected:
 
 	ConfirmDialog dialog;
 public:
-	static void onClickFunc(Widget* wd) {
+	static void onEventFunc(Widget* wd, xevent_t* evt, void* arg) {
+		if(evt->type != XEVT_MOUSE || evt->state != MOUSE_STATE_CLICK)
+			return;
 		MyWidgetWin* win = (MyWidgetWin*)wd->getWin();
 		win->dialog.setMessage("Dialog Test");
 		win->dialog.popup(win, 200, 100, "dialog", XWIN_STYLE_NO_TITLE);
@@ -207,12 +209,12 @@ int main(int argc, char** argv) {
 
 	LabelButton* button = new LabelButton("Dialog Test");
 	button->setName("button");
-	button->onClickFunc = win.onClickFunc;
+	button->setEventFunc(win.onEventFunc);
 	c->add(button);
 
-	Split* split = new Split();
-	split->attach(button);
-	c->add(split);
+	Splitter* splitter = new Splitter();
+	splitter->attach(button);
+	c->add(splitter);
 
 	wd = new PaintWidget();
 	c->add(wd);
@@ -227,9 +229,9 @@ int main(int argc, char** argv) {
 	list->setScrollerV(sr);
 	c->add(sr);
 
-	split = new Split();
-	split->attach(c);
-	root->add(split);
+	splitter = new Splitter();
+	splitter->attach(c);
+	root->add(splitter);
 
 	list = new MyList();
 	root->add(list);
@@ -242,7 +244,7 @@ int main(int argc, char** argv) {
 	list->setScrollerH(sr);
 	root->add(sr);
 
-	win.open(&x, 0, -1, -1, 400, 300, "widgetTest", XWIN_STYLE_NORMAL);
+	win.open(&x, -1, -1, -1, 0, 0, "widgetTest", XWIN_STYLE_NORMAL);
 	win.setTimer(16);
 
 	widgetXRun(&x, &win);	

@@ -2,6 +2,7 @@
 #include <Widget/WidgetX.h>
 #include <Widget/Text.h>
 #include <Widget/Label.h>
+#include <Widget/Split.h>
 #include <WidgetEx/Menubar.h>
 #include <WidgetEx/Menu.h>
 #include <Widget/LabelButton.h>
@@ -95,7 +96,7 @@ class TextWin: public WidgetWin{
 		busy(false);
 	}
 protected:
-	void onDialoged(XWin* from, int res) {
+	void onDialoged(XWin* from, int res, void* arg) {
 		if(res == Dialog::RES_OK) {
 			if(from == &fdialog) {
 				string fname = fdialog.getResult();
@@ -112,47 +113,51 @@ public:
 	MyText* text;
 
 	void loadConfig(void) {
-		const char* fname = X::getResName("config.json");
-		json_var_t *conf_var = json_parse_file(fname);
+		string fname = X::getResName("config.json");
+		json_var_t *conf_var = json_parse_file(fname.c_str());
 		text->setFont(json_get_str_def(conf_var, "font", DEFAULT_SYSTEM_FONT));
 		json_var_unref(conf_var);
 	}
 
 	void load(const string& fname) {
 		if(fname.length() == 0)
-			fdialog.popup(this, 400, 300, "files", XWIN_STYLE_NORMAL);
+			fdialog.popup(this, 0, 0, "files", XWIN_STYLE_NORMAL);
 		else 
 			loadFile(fname);
 	}
 
 	void font(const string& fontName) {
 		if(fontName.length() == 0)
-			fontdialog.popup(this, 400, 300, "fonts", XWIN_STYLE_NORMAL);
+			fontdialog.popup(this, 0, 0, "fonts", XWIN_STYLE_NORMAL);
 	}
 };
 
-static void onLoadFunc(MenuItem* it, void* p) {
-	TextWin* win = (TextWin*)p;
-	win->load("");
+static void onMemuFunc(MenuItem* it, void* p) {
+	if(it->id == 0) {
+		TextWin* win = (TextWin*)p;
+		win->load("");
+	}
+	else if(it->id == 1) {
+		TextWin* win = (TextWin*)p;
+		win->font("");
+	}
+	else if(it->id == 2) {
+		TextWin* win = (TextWin*)p;
+		win->close();
+	}
 }
 
-static void onFontFunc(MenuItem* it, void* p) {
-	TextWin* win = (TextWin*)p;
-	win->font("");
-}
-
-static void onQuitFunc(MenuItem* it, void* p) {
-	TextWin* win = (TextWin*)p;
-	win->close();
-}
-
-static void onZoomInClickFunc(Widget* wd) {
+static void onZoomInClickFunc(Widget* wd, xevent_t* evt, void* arg) {
+	if(evt->type != XEVT_MOUSE || evt->state != MOUSE_STATE_CLICK)
+		return;
 	TextWin* win = (TextWin*)wd->getWin();
 	uint32_t size = win->text->getFontSize();
 	win->text->setFontSize(size+4);
 }
 
-static void onZoomOutClickFunc(Widget* wd) {
+static void onZoomOutClickFunc(Widget* wd, xevent_t* evt, void* arg) {
+	if(evt->type != XEVT_MOUSE || evt->state != MOUSE_STATE_CLICK)
+		return;
 	TextWin* win = (TextWin*)wd->getWin();
 	uint32_t size = win->text->getFontSize();
 	win->text->setFontSize(size-4);
@@ -172,20 +177,21 @@ int main(int argc, char** argv) {
 	root->add(c);
 
 	Menu* menu = new Menu();
-	menu->add("open", NULL, NULL, onLoadFunc, &win);
-	menu->add("font", NULL, NULL, onFontFunc, &win);
-	menu->add("quit", NULL, NULL, onQuitFunc, &win);
+	menu->setMenuItemFunc(onMemuFunc);
+	menu->add(0, "open", NULL, NULL, NULL, &win);
+	menu->add(1, "font", NULL, NULL, NULL, &win);
+	menu->add(2, "quit", NULL, NULL, NULL, &win);
 	Menubar* menubar = new Menubar();
-	menubar->add("file", NULL, menu, NULL, NULL);
+	menubar->add(3, "file", NULL, menu, NULL, NULL);
 	c->add(menubar);
 
 	LabelButton* zoomInButton = new LabelButton("+");
-	zoomInButton->onClickFunc = onZoomInClickFunc;
+	zoomInButton->setEventFunc(onZoomInClickFunc);
 	zoomInButton->fix(48, 0);
 	c->add(zoomInButton);
 
 	LabelButton* zoomOutButton = new LabelButton("-");
-	zoomOutButton->onClickFunc = onZoomOutClickFunc;
+	zoomOutButton->setEventFunc(onZoomOutClickFunc);
 	zoomOutButton->fix(48, 0);
 	c->add(zoomOutButton);
 
@@ -209,7 +215,7 @@ int main(int argc, char** argv) {
 	text->statusLabel = statusLabel;
 
 	win.loadConfig();
-	win.open(&x, 0, -1, -1, 460, 460, "xread", XWIN_STYLE_NORMAL);
+	win.open(&x, -1, -1, -1, 0, 0, "xread", XWIN_STYLE_NORMAL);
 
 	if(argc >= 2) {
 		win.load(argv[1]);

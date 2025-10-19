@@ -3,7 +3,9 @@
 
 #include <x++/XWin.h>
 #include <string.h>
+#include <tinyjson/tinyjson.h>
 #include <ewoksys/klog.h>
+#include <UniObject/UniObject.h>
 
 namespace Ewok {
 
@@ -17,11 +19,15 @@ class Container;
 class RootWidget;
 class Stage;
 class WidgetWin;
-class Widget {
+class Widget;
+
+typedef void (*WidgetEventFuncT)(Widget* wd, xevent_t* evt, void* arg);
+class Widget :public UniObject {
 	Widget* next;
 	Widget* prev;
 
-	bool isContainer;
+	bool beContainer;
+	bool beRoot;
 protected:
 	XTheme* themePrivate;
 	uint32_t id;
@@ -44,7 +50,6 @@ protected:
 	virtual void onMove() { }
 	virtual bool onMouse(xevent_t* ev);
 	virtual bool onIM(xevent_t* ev);
-	virtual void onClick(xevent_t* ev);
 
 	virtual void repaint(graph_t* g, XTheme* theme);
 	virtual void onRepaint(graph_t* g, XTheme* theme, const grect_t& r) = 0;
@@ -55,17 +60,28 @@ protected:
 	virtual void onUnfocus() { }
 	virtual void onAdd() { }
 	virtual bool onEvent(xevent_t* ev);
+	virtual void setAttr(const string& attr, json_var_t*value);
+	virtual json_var_t* getAttr(const string& attr);
+
+	WidgetEventFuncT onEventFunc;
+	void* onEventFuncArg;
 public:
 	friend Container;
 	friend RootWidget;
 	friend Stage;
 
-	void (*onClickFunc)(Widget* wd);
+	inline void setEventFunc(WidgetEventFuncT func, void* arg = NULL) {
+		onEventFunc = func;
+		onEventFuncArg = arg;
+	}
 
 	Widget(void);
 	virtual ~Widget(void);
 
 	void setAlpha(bool alpha);
+
+	inline bool isContainer() { return beContainer; }
+	inline bool isRoot() { return beRoot; }
 
 	inline void setMarginH(int32_t v) { marginH = v; }
 	inline void setMarginV(int32_t v) { marginV = v; }
@@ -77,7 +93,7 @@ public:
 	inline void setName(const string& name) { this->name = name; }
 	inline XTheme* getTheme() { return themePrivate; }
 
-	void setTheme(XTheme* theme);
+	void dupTheme(XTheme* theme);
 	void disable();
 	void enable();
 	void fix(const gsize_t& size);
@@ -95,6 +111,7 @@ public:
 	bool isVisible() { return visible; }
 	Widget* getNext() { return next; }
 	Widget* getPrev() { return prev; }
+	Container* getRootContainer(void);
 	virtual RootWidget* getRoot(void);
 	WidgetWin*  getWin(void);
 	gpos_t getRootPos(int32_t x = 0, int32_t y = 0);

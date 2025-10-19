@@ -16,12 +16,16 @@ public:
 	}
 };
 
-static void okFunc(Widget* wd) {
+static void okFunc(Widget* wd, xevent_t* evt, void* arg) {
+	if(evt->type != XEVT_MOUSE || evt->state != MOUSE_STATE_CLICK)
+		return;
 	FileDialog* dialog = (FileDialog*)wd->getWin();
 	dialog->submit(Dialog::RES_OK);
 }
 
-static void cancelFunc(Widget* wd) {
+static void cancelFunc(Widget* wd, xevent_t* evt, void* arg) {
+	if(evt->type != XEVT_MOUSE || evt->state != MOUSE_STATE_CLICK)
+		return;
 	FileDialog* dialog = (FileDialog*)wd->getWin();
 	dialog->submit(Dialog::RES_CANCEL);
 }
@@ -41,18 +45,19 @@ void FileDialog::onBuild() {
 	root->add(c);
 
 	LabelButton* okButton = new LabelButton("OK");
-	okButton->onClickFunc = okFunc;
+	okButton->setEventFunc(okFunc);
 	c->add(okButton);
 
 	LabelButton* cancelButton = new LabelButton("Cancel");
-	cancelButton->onClickFunc = cancelFunc;
+	cancelButton->setEventFunc(cancelFunc);
 	c->add(cancelButton);
 
-	fileWidget->loadDir("/");
+	fileWidget->loadDir(initPath);
 }
 
 FileDialog::FileDialog(bool path) {
 	pathMode = path;
+	initPath = "/";
 }
 
 string FileDialog::getResult() {

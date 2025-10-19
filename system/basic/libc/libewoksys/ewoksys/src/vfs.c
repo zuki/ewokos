@@ -204,24 +204,22 @@ int vfs_new_node(fsinfo_t* info, uint32_t node_to, bool vfs_node_only) {
 	return res;	
 }
 
-const char* vfs_fullname(const char* fname) {
-	str_t* fullname = str_new("");
+void vfs_fullname(const char* fname, char* ret, uint32_t len) {
 	if(fname[0] == '/') {
-		str_cpy(fullname, fname);
-	}
-	else {
-		char pwd[FS_FULL_NAME_MAX];
-		getcwd(pwd, FS_FULL_NAME_MAX-1);
-		str_cpy(fullname, pwd);
-		if(pwd[1] != 0)
-			str_addc(fullname, '/');
-		str_add(fullname, fname);
+		strncpy(ret, fname, len);
+		return;
 	}
 
-	static char ret[FS_FULL_NAME_MAX] = {0};
-	strncpy(ret, fullname->cstr, FS_FULL_NAME_MAX-1);
+	str_t* fullname = str_new("");
+	char pwd[FS_FULL_NAME_MAX+1] = {0};
+	getcwd(pwd, FS_FULL_NAME_MAX);
+	str_cpy(fullname, pwd);
+	if(pwd[1] != 0)
+		str_addc(fullname, '/');
+	str_add(fullname, fname);
+
+	strncpy(ret, fullname->cstr, FS_FULL_NAME_MAX);
 	str_free(fullname);
-	return ret;
 }
 
 int vfs_open(fsinfo_t* info, int oflag) {
@@ -387,17 +385,21 @@ int vfs_open_pipe(int fd[2]) {
 }
 
 int vfs_get_by_name(const char* fname, fsinfo_t* info) {
-	fname = vfs_fullname(fname);
+	char fullname[FS_FULL_NAME_MAX+1] = {0};
+	vfs_fullname(fname, fullname, FS_FULL_NAME_MAX);
 	proto_t in, out;
-	PF->init(&in)->adds(&in, fname);
+	PF->init(&in)->adds(&in, fullname);
 	PF->init(&out);
 	int res = ipc_call(get_vfsd_pid(), VFS_GET_BY_NAME, &in, &out);
 	PF->clear(&in);
 	if(res == 0) {
 		res = proto_read_int(&out); //res = node
 		if(res != 0) {
-			if(info != NULL)
+			if(info != NULL){
 				proto_read_to(&out, info, sizeof(fsinfo_t));
+				//fix me: update stat form device
+				dev_stat(info->mount_pid, info, &info->stat);
+			}
 			res = 0;
 		}
 		else
@@ -532,21 +534,22 @@ int vfs_seek(int fd, int offset) {
 }
 
 void* vfs_readfile(const char* fname, int* rsz) {
-	fname = vfs_fullname(fname);
+	char fullname[FS_FULL_NAME_MAX+1] = {0};
+	vfs_fullname(fname, fullname, FS_FULL_NAME_MAX);
 	fsinfo_t info;
-	if(vfs_get_by_name(fname, &info) != 0 || info.stat.size <= 0)
+	if(vfs_get_by_name(fullname, &info) != 0 || info.stat.size <= 0)
 		return NULL;
 	void* buf = malloc(info.stat.size+1); //one more char for string end.
 	if(buf == NULL)
 		return NULL;
 
 	char* p = (char*)buf;
-	int fd = open(fname, O_RDONLY);
+	int fd = open(fullname, O_RDONLY);
 	int fsize = info.stat.size;
 	if(fd >= 0) {
 		while(fsize > 0) {
 			int sz = read(fd, p, VFS_BUF_SIZE < fsize ? VFS_BUF_SIZE:fsize);
-			if(sz < 0 && errno != EAGAIN)
+			if(sz <= 0 && errno != EAGAIN)
 				break;
 			if(sz > 0) {
 				fsize -= sz;

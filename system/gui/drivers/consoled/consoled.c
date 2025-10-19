@@ -17,6 +17,7 @@
 #include <ewoksys/charbuf.h>
 #include <sysinfo.h>
 #include <font/font.h>
+#include <keyb/keyb.h>
 
 typedef struct {
 	const char* id;
@@ -65,8 +66,7 @@ static int init_console(fb_console_t* console, const char* display_dev, const ui
 
 	console->display_dev = display_dev;
 	console->display_index = display_index;
-	const char* fb_dev = get_display_fb_dev(display_dev, console->display_index);
-	if(fb_open(fb_dev, &console->fb) != 0)
+	if(display_fb_open(display_dev, console->display_index, &console->fb) != 0)
 		return -1;
 	init_graph(console);
 	gterminal_init(&console->terminal);
@@ -82,6 +82,7 @@ static void close_console(fb_console_t* console) {
 	if(console->icon != NULL)
 		graph_free(console->icon);
 	gterminal_close(&console->terminal);
+	font_quit();
 }
 
 static int reset_console(fb_console_t* console) {
@@ -122,6 +123,7 @@ static void flush(fb_console_t* console) {
 
 static bool _flush = true;
 static int _ux_index = 0;
+static int _disp_index = 0;
 static int console_write(int fd, 
 		int from_pid,
 		fsinfo_t* node,
@@ -141,7 +143,7 @@ static int console_write(int fd,
 
 	const char* pb = (const char*)buf;
 	gterminal_put(&console->terminal, pb, size);
-	//if(_ux_index == core_get_active_ux())
+	//if(_ux_index == core_get_active_ux(console->display_index))
 		//flush(console);
 	return size;
 }
@@ -169,7 +171,7 @@ static int console_read(int fd,
 
 static int console_loop(void* p) {
 	fb_console_t* console = (fb_console_t*)p;
-	if(_ux_index != core_get_active_ux()) {
+	if(_ux_index != core_get_active_ux(console->display_index)) {
 		usleep(200000);
 		_flush = true;
 		return 0;
@@ -187,8 +189,13 @@ static int console_loop(void* p) {
 	}
 
 	if(_keyb_fd > 0) {
-		char c = 0;
-		if(read(_keyb_fd, &c, 1) == 1 && c != 0) {
+		keyb_evt_t evts[KEYB_EVT_MAX];
+		int n = keyb_read(_keyb_fd, evts, KEYB_EVT_MAX);
+		for(int i=0; i<n; i++) {
+			uint8_t c = evts[i].key;
+			if(evts[i].state != KEYB_STATE_PRESS || c >= 128)
+				continue;
+
 			if(c == KEY_UP) {
 				gterminal_scroll(&console->terminal, -1);
 				_flush = true;	
@@ -212,18 +219,18 @@ static int console_loop(void* p) {
 			else {
 				gterminal_scroll(&console->terminal, 0);
 				charbuf_push(_buffer, c, true);
-				proc_wakeup(RW_BLOCK_EVT);
 			}
 		}
+		if(n > 0)
+			proc_wakeup(RW_BLOCK_EVT);
 	}
 
 	ipc_enable();
-	usleep(20000);
+	usleep(30000);
 	return 0;
 }
 
 static const char* _mnt_point = "";
-static int _disp_index = 0;
 static int doargs(int argc, char* argv[]) {
 	int c = 0;
 	while (c != -1) {
@@ -250,12 +257,11 @@ static int doargs(int argc, char* argv[]) {
 }
 
 int main(int argc, char** argv) {
+	_disp_index = 0;
 	_buffer = charbuf_new(0);
-	_ux_index = core_get_ux();
+	_ux_index = core_get_ux_env();
 	int argind = doargs(argc, argv);
-	core_set_ux(_ux_index);
-	if(_ux_index == 0)
-		core_set_active_ux(0);
+	core_enable_ux(_disp_index, _ux_index);
 
 	char mnt_point[128] = {0};
 	if(argind < argc)

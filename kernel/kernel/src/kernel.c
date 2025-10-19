@@ -195,10 +195,6 @@ void _kernel_entry_c(void) {
 	kmalloc_init(); //init kmalloc with min size for just early stage kernel load
 	kout  ("[OK]\n");
 
-	kout  ("kernel: init kernel event      ... ");
-	kev_init();
-	kout  ("[OK]\n");
-
 	kout  ("kernel: init sd                ... ");
 	sd_init();
 	kout  ("[OK]\n");
@@ -221,6 +217,10 @@ void _kernel_entry_c(void) {
 
 	logo();
 	show_config();
+
+	kout  ("kernel: init kernel event      ... ");
+	kev_init();
+	kout  ("[OK]\n");
 
 	//printf("kernel: init DMA               ... ");
 	dma_init();

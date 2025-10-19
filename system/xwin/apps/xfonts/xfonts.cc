@@ -4,7 +4,7 @@
 #include <Widget/Label.h>
 #include <Widget/LabelButton.h>
 #include <Widget/List.h>
-#include <Widget/Split.h>
+#include <Widget/Splitter.h>
 #include <x++/X.h>
 #include <unistd.h>
 #include <font/font.h>
@@ -149,7 +149,7 @@ protected:
 		graph_draw_text_font(g, r.x+2, r.y+2, fonts[index].name.c_str(), theme->getFont(), theme->basic.fontSize, color);
 	}
 
-	void onSelect(int index) {
+	void onEnter(int index) {
 		if(demo == NULL)
 			return;
 		demo->setFont(fonts[index].font);
@@ -215,9 +215,9 @@ int main(int argc, char** argv) {
 	root->add(scrollerV);
 	list->setScrollerV(scrollerV);
 
-	Split* split = new Split();
-	split->attach(list);
-	root->add(split);
+	Splitter* splitter = new Splitter();
+	splitter->attach(list);
+	root->add(splitter);
 
 	FontDemo* demo = new FontDemo();
 	root->add(demo);
@@ -228,7 +228,7 @@ int main(int argc, char** argv) {
 	root->add(scrollerV);
 	demo->setScrollerV(scrollerV);
 
-	win.open(&x, 0, -1, -1, 460, 460, "xfont", XWIN_STYLE_NORMAL);
+	win.open(&x, -1, -1, -1, 0, 0, "xfont", XWIN_STYLE_NORMAL);
 	list->select(0);
 	win.repaint();
 

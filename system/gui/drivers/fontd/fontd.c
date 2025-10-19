@@ -19,7 +19,7 @@ typedef struct {
 	char name[NAME_LEN];
 	char fname[FNAME_LEN];
 	FT_Face face;
-	uint32_t current_size;
+	//uint32_t current_size;
 } ttf_item_t;
 
 #define TTF_MAX  128
@@ -165,6 +165,8 @@ static void font_cache(int32_t findex, uint32_t size, uint32_t c, FT_GlyphSlot s
 #endif
 }
 
+static FT_Int _load_mode = FT_LOAD_TARGET_LIGHT;
+static FT_Int _hinting = 0;
 static int font_dev_get_glyph(proto_t* in, proto_t* ret) {
 	int findex = proto_read_int(in);
 	uint32_t size = (uint32_t)proto_read_int(in);
@@ -174,20 +176,22 @@ static int font_dev_get_glyph(proto_t* in, proto_t* ret) {
 	}
 
 	FT_Face face = _ttfs[findex].face; 
-	if(_ttfs[findex].current_size != size) {
+	//if(_ttfs[findex].current_size != size) {
 		if(FT_Set_Pixel_Sizes(face, 0, size) != 0) {
 			PF->init(ret)->addi(ret, -1);
 			return -1;
 		}
-		_ttfs[findex].current_size = size;
-	}
+		//_ttfs[findex].current_size = size;
+	//}
 
 	uint32_t c = (uint32_t)proto_read_int(in);
 	FT_GlyphSlotRec slot;
 
 	if(font_fetch_cache(findex, size, c, &slot) != 0) {
 		FT_UInt glyph_index = FT_Get_Char_Index(face, c);
-		if(FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER) != 0) {
+		FT_Int flags = FT_LOAD_RENDER | _hinting | _load_mode;
+
+		if(FT_Load_Glyph(face, glyph_index, flags) != 0) {
 			PF->init(ret)->addi(ret, -1);
 			return -1;
 		}
@@ -267,7 +271,39 @@ static int font_dev_cntl(int from_pid, int cmd, proto_t* in, proto_t* ret, void*
 	return -1;
 }
 
+static int doargs(int argc, char* argv[]) {
+	int c = 0;
+	while (c != -1) {
+		c = getopt (argc, argv, "lmncvho");
+		if(c == -1)
+			break;
+
+		switch (c) {
+		case 'l':
+			_load_mode = FT_LOAD_TARGET_LIGHT;
+			break;
+		case 'n':
+			_load_mode = FT_LOAD_TARGET_NORMAL;
+			break;
+		case 'h':
+			_hinting = FT_LOAD_FORCE_AUTOHINT;
+			break;
+		case 'o':
+			_hinting = FT_LOAD_NO_AUTOHINT;
+			break;
+		default:
+			c = -1;
+			break;
+		}
+	}
+	return optind;
+}
+
 int main(int argc, char** argv) {
+	_load_mode = FT_LOAD_TARGET_NORMAL;
+	_hinting = 0;
+	doargs(argc, argv);
+
 	const char* mnt_point = "/dev/font";
 	font_dev_init();
 

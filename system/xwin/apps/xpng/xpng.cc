@@ -231,7 +231,7 @@ class PngWin: public WidgetWin{
 	ColorDialog cdialog;
 	ImageView* imgView;
 protected:
-	void onDialoged(XWin* from, int res) {
+	void onDialoged(XWin* from, int res, void* arg) {
 		if(res == Dialog::RES_OK) {
 			if(from == &fdialog) {
 				load(imgView, fdialog.getResult().c_str());
@@ -251,7 +251,7 @@ public:
 	void load(ImageView* imgView, const string& fname) {
 		this->imgView = imgView;
 		if(fname.length() == 0)
-			fdialog.popup(this, 400, 300, "files", XWIN_STYLE_NORMAL);
+			fdialog.popup(this, 0, 0, "files", XWIN_STYLE_NORMAL);
 		else
 			imgView->loadImage(fname.c_str());
 		repaint();
@@ -268,8 +268,11 @@ class LoadButton: public LabelButton {
 	PngWin* pngWin;
 	ImageView* imgView;
 protected:
-	void onClick(xevent_t* ev) {
-		pngWin->load(imgView, "");
+	bool onMouse(xevent_t* ev) {
+		if(ev->state == MOUSE_STATE_DOWN) {
+			pngWin->load(imgView, "");
+			return true;
+		}
 	}
 public:
 	LoadButton(PngWin* pwin, ImageView* imgView) : LabelButton("load") {
@@ -311,7 +314,7 @@ int main(int argc, char** argv) {
 	Menubar* menubar = new Menubar();
 	root->add(menubar);
 	menubar->fix(0, 20);
-	menubar->setItemSize(72);
+	menubar->setItemSize(48);
 
 	Container* c = new Container();
 	c->setType(Container::HORIZONTAL);
@@ -335,12 +338,12 @@ int main(int argc, char** argv) {
 	statusLabel->fix(0, 20);
 	root->add(statusLabel);
 
-	menubar->add("load", NULL, NULL, onLoadFunc, imgView);
-	menubar->add("zoom_in", NULL, NULL, onZoomInFunc, imgView);
-	menubar->add("zoom_out", NULL, NULL, onZoomOutFunc, imgView);
-	menubar->add("BGColor", NULL, NULL, onBGColorFunc, imgView);
+	menubar->add(0, "load", NULL, NULL, onLoadFunc, imgView);
+	menubar->add(1, "+", NULL, NULL, onZoomInFunc, imgView);
+	menubar->add(2, "-", NULL, NULL, onZoomOutFunc, imgView);
+	menubar->add(3, "BG", NULL, NULL, onBGColorFunc, imgView);
 
-	win.open(&x, 0, -1, -1, 400, 300, "xpng", XWIN_STYLE_NORMAL);
+	win.open(&x, -1, -1, -1, 0, 0, "xpng", XWIN_STYLE_NORMAL);
 	win.setAlpha(true);
 	if(argc >= 2)
 		win.load(imgView, argv[1]);

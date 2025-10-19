@@ -518,7 +518,7 @@ static json_var_t* json_parse_factor(json_lex_t *l) {
 		return json_var_new_int(i);
 	}
 	else if (l->tk==JSON_LEX_FLOAT) {
-		float f = 0.0;//TODO atof(l->tk_str->cstr);
+		float f = atof(l->tk_str->cstr);
 		json_lex_js_chkread(l, JSON_LEX_FLOAT);
 		return json_var_new_float(f);
 	}
@@ -589,13 +589,13 @@ json_var_t* json_parse_file(const char* fname) {
 static json_var_t* json_var_clone(json_var_t* v) {
 	switch(v->type) { //basic types
 		case JSON_V_INT:
-			return json_var_new_int(json_var_json_get_int(v));
+			return json_var_new_int(json_var_get_int(v));
 		case JSON_V_FLOAT:
-			return json_var_new_float(json_var_json_get_int(v));
+			return json_var_new_float(json_var_get_int(v));
 		case JSON_V_STRING:
-			return json_var_new_str(json_var_json_get_str(v));
+			return json_var_new_str(json_var_get_str(v));
 		/*case JSON_V_BOOL:
-			return json_var_new_bool(json_var_json_get_bool(v));
+			return json_var_new_bool(json_var_get_bool(v));
 		case JSON_V_NULL:
 			return json_var_new_null(v->vm);
 		case JSON_V_UNDEF:
@@ -955,7 +955,7 @@ inline json_var_t* json_var_new_str2(const char* s, uint32_t len) {
 	return var;
 }
 
-inline const char* json_var_json_get_str(json_var_t* var) {
+inline const char* json_var_get_str(json_var_t* var) {
 	if(var == NULL || var->value == NULL)
 		return "";
 	
@@ -975,14 +975,14 @@ inline json_var_t* json_var_set_str(json_var_t* var, const char* v) {
 	return var;
 }
 
-inline bool json_var_json_get_bool(json_var_t* var) {
+inline bool json_var_get_bool(json_var_t* var) {
 	if(var == NULL || var->value == NULL)
 		return false;
 	int i = (int)(*(int*)var->value);
 	return i==0 ? false:true;
 }
 
-inline int json_var_json_get_int(json_var_t* var) {
+inline int json_var_get_int(json_var_t* var) {
 	if(var == NULL || var->value == NULL)
 		return 0;
 
@@ -1010,7 +1010,7 @@ inline json_var_t* json_var_set_int(json_var_t* var, int v) {
 	return var;
 }
 
-inline float json_var_json_get_float(json_var_t* var) {
+inline float json_var_get_float(json_var_t* var) {
 	if(var == NULL || var->value == NULL)
 		return 0.0;
 	
@@ -1057,19 +1057,19 @@ void json_var_to_str(json_var_t* var, str_t* ret) {
 
 	switch(var->type) {
 	case JSON_V_INT:
-		str_cpy(ret, str_from_int(json_var_json_get_int(var), 10));
+		str_cpy(ret, str_from_int(json_var_get_int(var), 10));
 		break;
 	case JSON_V_FLOAT:
-		str_cpy(ret, str_from_float(json_var_json_get_float(var)));
+		str_cpy(ret, str_from_float(json_var_get_float(var)));
 		break;
 	case JSON_V_STRING:
-		str_cpy(ret, json_var_json_get_str(var));
+		str_cpy(ret, json_var_get_str(var));
 		break;
 	case JSON_V_OBJECT:
 		json_var_to_json_str(var, ret, 0);
 		break;
 	case JSON_V_BOOL:
-		str_cpy(ret, json_var_json_get_int(var) == 1 ? "true":"false");
+		str_cpy(ret, json_var_get_int(var) == 1 ? "true":"false");
 		break;
 	case JSON_V_NULL:
 		str_cpy(ret, "null");
@@ -1078,6 +1078,18 @@ void json_var_to_str(json_var_t* var, str_t* ret) {
 		str_cpy(ret, "undefined");
 		break;
 	}
+}
+
+inline str_t* json_var_to_new_str(json_var_t* var) {
+	str_t* ret = str_new("");
+	json_var_to_str(var, ret);
+	return ret;
+}
+
+inline char* json_var_to_cstr(json_var_t* var) {
+	str_t* ret = str_new("");
+	json_var_to_str(var, ret);
+	return str_detach(ret);
 }
 
 static void get_parsable_str(json_var_t* var, str_t* ret) {
@@ -1200,7 +1212,7 @@ const char* json_get_str_def(json_var_t* var, const char* name, const char* def)
 		return def;
 
 	json_var_t* v = json_get_obj(var, name);
-	return v == NULL ? def : json_var_json_get_str(v);
+	return v == NULL ? def : json_var_get_str(v);
 }
 
 int json_get_int_def(json_var_t* var, const char* name, int def) {
@@ -1208,7 +1220,7 @@ int json_get_int_def(json_var_t* var, const char* name, int def) {
 		return def;
 
 	json_var_t* v = json_get_obj(var, name);
-	return v == NULL ? def : json_var_json_get_int(v);
+	return v == NULL ? def : json_var_get_int(v);
 }
 
 bool json_get_bool_def(json_var_t* var, const char* name, bool def) {
@@ -1216,7 +1228,7 @@ bool json_get_bool_def(json_var_t* var, const char* name, bool def) {
 		return def;
 
 	json_var_t* v = json_get_obj(var, name);
-	return v == NULL ? def : json_var_json_get_bool(v);
+	return v == NULL ? def : json_var_get_bool(v);
 }
 
 float json_get_float_def(json_var_t* var, const char* name, float def) {
@@ -1224,7 +1236,7 @@ float json_get_float_def(json_var_t* var, const char* name, float def) {
 		return def;
 
 	json_var_t* v = json_get_obj(var, name);
-	return v == NULL ? def : json_var_json_get_float(v);
+	return v == NULL ? def : json_var_get_float(v);
 }
 
 inline const char* json_get_str(json_var_t* var, const char* name) {

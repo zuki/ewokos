@@ -178,14 +178,14 @@ void  Container::repaint(graph_t* g, XTheme* theme) {
 	dirty = false;
 }
 
-Widget* Container::get(uint32_t id) {
+Widget* Container::getChild(uint32_t id) {
 	Widget* wd = children;
 	while(wd != NULL) {
 		if(wd->id != 0 && wd->id == id)
 			return wd;
 
-		if(wd->isContainer) {
-			Widget* w = ((Container*)wd)->get(id);
+		if(wd->isContainer()) {
+			Widget* w = ((Container*)wd)->getChild(id);
 			if(w != NULL)
 				return w;
 		}
@@ -194,14 +194,14 @@ Widget* Container::get(uint32_t id) {
 	return NULL;
 }
 
-Widget* Container::get(const string& name) {
+Widget* Container::getChild(const string& name) {
 	Widget* wd = children;
 	while(wd != NULL) {
 		if(wd->name == name)
 			return wd;
 
-		if(wd->isContainer) {
-			Widget* w = ((Container*)wd)->get(name);
+		if(wd->isContainer()) {
+			Widget* w = ((Container*)wd)->getChild(name);
 			if(w != NULL)
 				return w;
 		}
@@ -211,10 +211,10 @@ Widget* Container::get(const string& name) {
 }
 
 Container::Container() {
-	isContainer = true;
+	beContainer = true;
 	children = NULL;
 	childrenEnd = NULL;
-	type = FIXED;
+	type = HORIZONTAL;
 	alpha = true;
 	num = 0;
 }
@@ -222,6 +222,21 @@ Container::Container() {
 void  Container::setType(uint8_t type) {
 	this->type = type;
 	layout();
+}
+
+void Container::setAttr(const string& attr, json_var_t*value) {
+	Widget::setAttr(attr, value);
+	if(attr == "layout") {
+		string str = json_var_get_str(value);
+		if(str == "horizontal")
+			setType(HORIZONTAL);
+		else if(str == "verticle")
+			setType(VERTICLE);
+		else if(str == "fixed")
+			setType(FIXED);
+		else if(str == "overlap")
+			setType(OVERLAP);
+	}
 }
 
 void  Container::clear() {

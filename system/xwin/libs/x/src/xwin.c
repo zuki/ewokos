@@ -35,16 +35,19 @@ static int xwin_update_info(xwin_t* xwin, uint8_t type) {
 void xwin_busy(xwin_t* xwin, bool busy) {
 	proto_t in;
 	PF->init(&in)->addi(&in, busy);
-	int ret = vfs_fcntl_wait(xwin->fd, XWIN_CNTL_SET_BUSY, &in);
+	vfs_fcntl_wait(xwin->fd, XWIN_CNTL_SET_BUSY, &in);
 	PF->clear(&in);
-	return ret;
 }
 
 int xwin_call_xim(xwin_t* xwin, bool show) {
-	proto_t in;
+	proto_t in, out;
 	PF->format(&in, "i", show);
-	int ret = vfs_fcntl(xwin->fd, XWIN_CNTL_CALL_XIM, &in, NULL);
+	PF->init(&out);
+	int ret = vfs_fcntl(xwin->fd, XWIN_CNTL_CALL_XIM, &in, &out);
+	if(ret == 0)
+		ret = proto_read_int(&out);
 	PF->clear(&in);
+	PF->clear(&out);
 	return ret;
 }
 
@@ -53,6 +56,7 @@ int xwin_top(xwin_t* xwin) {
 	return ret;
 }
 
+/*
 static int  x_get_win_rect(int xfd, int style, grect_t* wsr, grect_t* win_space) {
 	proto_t in, out;
 	PF->init(&out);
@@ -64,13 +68,12 @@ static int  x_get_win_rect(int xfd, int style, grect_t* wsr, grect_t* win_space)
 	PF->clear(&out);
 	return ret;
 }
+*/
 
-xwin_t* xwin_open(x_t* xp, uint32_t disp_index, int x, int y, int w, int h, const char* title, int style) {
+xwin_t* xwin_open(x_t* xp, int32_t disp_index, int x, int y, int w, int h, const char* title, int style) {
 	if(w <= 0 || h <= 0)
 		return NULL;
-
-	if(disp_index >= x_get_display_num())
-		disp_index = 0;
+	disp_index = x_get_display_id(disp_index);
 
 	int fd = open("/dev/x", O_RDWR);
 	if(fd < 0)
@@ -119,22 +122,25 @@ xwin_t* xwin_open(x_t* xp, uint32_t disp_index, int x, int y, int w, int h, cons
 	memcpy(&ret->xinfo->wsr, &r, sizeof(grect_t));
 	strncpy(ret->xinfo->title, title, XWIN_TITLE_MAX-1);
 
-	const char* auto_max = getenv("X_AUTO_MAX");
+	const char* auto_max = getenv("X_AUTO_FULL_SCREEN");
 	if(auto_max != NULL &&
 			(style & XWIN_STYLE_NO_TITLE) == 0 &&
 			(style & XWIN_STYLE_NO_RESIZE) == 0 &&
 			(style & XWIN_STYLE_NO_FRAME) == 0) {
-		xwin_fullscreen(ret);
+		ret->xinfo->style |= XWIN_STYLE_NO_RESIZE | XWIN_STYLE_NO_TITLE;
+		ret->xinfo->state = XWIN_STATE_MAX;
 	}
-	else
-		xwin_update_info(ret, X_UPDATE_REBUILD | X_UPDATE_REFRESH);
+
+	if((style & XWIN_STYLE_MAX) != 0)
+		ret->xinfo->state = XWIN_STATE_MAX;
+
+	xwin_update_info(ret, X_UPDATE_REBUILD | X_UPDATE_REFRESH);
 	pthread_mutex_init(&ret->painting_lock, NULL);
 	return ret;
 }
 
 int xwin_fullscreen(xwin_t* xwin) {
 	xwin->xinfo->style |= XWIN_STYLE_NO_RESIZE | XWIN_STYLE_NO_TITLE;
-	xwin_update_info(xwin, X_UPDATE_REBUILD | X_UPDATE_REFRESH);
 	return xwin_max(xwin);
 }
 
@@ -195,15 +201,20 @@ graph_t* xwin_fetch_graph(xwin_t* xwin, graph_t* g) {
 
 void xwin_repaint(xwin_t* xwin) {
 	pthread_mutex_lock(&xwin->painting_lock);
-	if(!xwin->xinfo->covered) {
-		graph_t g;
-		if(xwin_fetch_graph(xwin, &g) != NULL) {
-			if(xwin->on_repaint != NULL) {
-				xwin->on_repaint(xwin, &g);
-			}
+	if(xwin->xinfo != NULL &&
+			xwin->xinfo->update_theme &&
+			xwin->on_update_theme != NULL) {
+		xwin->on_update_theme(xwin);
+	}
+
+	graph_t g;
+	if(xwin_fetch_graph(xwin, &g) != NULL) {
+		if(xwin->on_repaint != NULL) {
+			xwin->on_repaint(xwin, &g);
 		}
-		vfs_fcntl_wait(xwin->fd, XWIN_CNTL_UPDATE, NULL);
-	}	
+	}
+	vfs_fcntl_wait(xwin->fd, XWIN_CNTL_UPDATE, NULL);
+	xwin->xinfo->update_theme = false;	
 	pthread_mutex_unlock(&xwin->painting_lock);
 }
 
@@ -222,7 +233,7 @@ void xwin_repaint_req(xwin_t* xwin) {
 */
 
 int xwin_set_display(xwin_t* xwin, uint32_t display_index) {
-	if(display_index >= x_get_display_num())
+	if((int32_t)display_index >= x_get_display_num())
 		display_index = 0;
 
 	xwin->xinfo->display_index = display_index;
@@ -334,6 +345,15 @@ void xwin_set_alpha(xwin_t* xwin, bool alpha) {
 int xwin_set_visible(xwin_t* xwin, bool visible) {
 	if(xwin->xinfo == NULL || xwin->xinfo->visible == visible)
 		return 0;
+
+	if(visible) {
+		if(xwin->on_show != NULL)
+			xwin->on_show(xwin);
+	}
+	else {
+		if(xwin->on_hide != NULL)
+			xwin->on_hide(xwin);
+	}
 
 	xwin->xinfo->visible = visible;
 	int res = xwin_update_info(xwin, X_UPDATE_REFRESH);

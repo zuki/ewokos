@@ -36,6 +36,19 @@ static void _on_resize(xwin_t* xw) {
 	xwin->__doResize();
 }
 
+static void _on_update_theme(xwin_t* xw) {
+	if(xw == NULL)
+		return;
+	XWin* xwin = (XWin*)xw->data;
+	if(xwin == NULL)
+		return;
+
+	XTheme* theme = xwin->getTheme();
+	if(theme == NULL)
+		return;
+	theme->loadSystem();
+}
+
 static void _on_move(xwin_t* xw) {
 	if(xw == NULL)
 		return;
@@ -61,6 +74,24 @@ static void _on_focus(xwin_t* xw) {
 	if(xwin == NULL)
 		return;
 	xwin->__doFocus();
+}
+
+static void _on_show(xwin_t* xw) {
+	if(xw == NULL)
+		return;
+	XWin* xwin = (XWin*)xw->data;
+	if(xwin == NULL)
+		return;
+	xwin->__doShow();
+}
+
+static void _on_hide(xwin_t* xw) {
+	if(xw == NULL)
+		return;
+	XWin* xwin = (XWin*)xw->data;
+	if(xwin == NULL)
+		return;
+	xwin->__doHide();
 }
 
 static void _on_unfocus(xwin_t* xw) {
@@ -101,6 +132,12 @@ XWin::XWin(void) {
 	theme.loadSystem();
 	displayIndex = 0;
 	xwin = NULL;
+	onDialogedFunc = NULL;
+}
+
+XWin::~XWin(void) {
+	close();
+	font_quit();
 }
 
 void XWin::close() {
@@ -111,37 +148,39 @@ void XWin::close() {
 	xwin = NULL;
 }
 
-bool XWin::open(X* xp, uint32_t dispIndex, int x, int y, uint32_t w, uint32_t h,
+bool XWin::open(X* xp, int32_t dispIndex, int x, int y, uint32_t w, uint32_t h,
 		const char* title, uint32_t style, bool visible) {
 	if(xp == NULL)
 		return false;
-	displayIndex = dispIndex;
-
 	xscreen_info_t scr;
 	X::getScreenInfo(scr, dispIndex);
 
-	uint32_t minW = scr.size.w/3;
-	uint32_t minH = scr.size.h/3;
+
+	uint32_t minW = scr.size.w*2/3;
+	uint32_t minH = scr.size.h*2/3;
 	if(w == 0)
 		w = minW + random_to(scr.size.w - minW);
 	if(h == 0)
-		h = minH + random_to(scr.size.h - minH - 20);
+		h = minH + random_to(scr.size.h - minH - 32);
 
 	if(x < 0) {
 		x = 0;
-		if(scr.size.w > w)
+		if(scr.size.w > w) {
 			x = random_to(scr.size.w - w);
+		}
 	}
 
 	if(y < 0) {
-		y = 20;
-		if(scr.size.h > h)
-			y += (int32_t)random_to(scr.size.h - h);
+		y = 32;
+		if(scr.size.h > (h+32))
+			y += (int32_t)random_to(scr.size.h - (h + 32));
 	}	
 
 	xwin_t* xw = xwin_open(xp->c_x(), dispIndex, x, y, w, h, title, style);
-	if(xw == NULL)
+	if(xw == NULL) {
+		slog("xwin open failed\n");
 		return false;
+	}
 	this->x = xp;
 	setCWin(xw);
 	onOpen();
@@ -149,18 +188,20 @@ bool XWin::open(X* xp, uint32_t dispIndex, int x, int y, uint32_t w, uint32_t h,
 	return true;
 }
 
-bool XWin::open(X* xp, uint32_t dispIndex, const grect_t& r, const char* title, uint32_t style, bool visible) {
+void XWin::dialoged(XWin* from, int res, void* arg) {
+	if(onDialogedFunc != NULL)
+		onDialogedFunc(this, from, res, arg);
+	else
+		onDialoged(from, res, arg);
+}
+
+bool XWin::open(X* xp, int32_t dispIndex, const grect_t& r, const char* title, uint32_t style, bool visible) {
 	return open(xp, dispIndex, r.x, r.y, r.w, r.h, title, style, visible);
 }
 
 bool XWin::setVisible(bool visible) {
 	if(xwin == NULL)
 		return false;
-
-	if(visible) 
-		onShow();
-	else
-		onHide();
 
 	xwin_set_visible(xwin, visible);
 	if(visible) 
@@ -172,6 +213,12 @@ void XWin::setAlpha(bool alpha) {
 	if(xwin == NULL)
 		return;
 	xwin_set_alpha(xwin, alpha);
+}
+
+bool XWin::isAlpha(void) {
+	if(xwin == NULL || xwin->xinfo == NULL)
+		return false;
+	return xwin->xinfo->alpha;
 }
 
 void XWin::top() {
@@ -190,8 +237,9 @@ void XWin::pop() {
 bool XWin::callXIM(bool show) {
 	if(xwin == NULL)
 		return false;
-	xwin_call_xim(xwin, show);
-	return true;
+	if(xwin_call_xim(xwin, show) == 0)
+		return true;
+	return false;
 }
 
 bool XWin::getInfo(xinfo_t& xinfo) {
@@ -272,7 +320,10 @@ void XWin::setCWin(xwin_t* xw) {
 	xwin->on_resize = _on_resize;
 	xwin->on_move = _on_move;
 	xwin->on_focus = _on_focus;
+	xwin->on_show = _on_show;
+	xwin->on_hide = _on_hide;
 	xwin->on_unfocus = _on_unfocus;
 	xwin->on_reorg = _on_reorg;
 	xwin->on_event = _on_event;
+	xwin->on_update_theme = _on_update_theme;
 }

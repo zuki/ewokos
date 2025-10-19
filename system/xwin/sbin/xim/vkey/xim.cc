@@ -29,18 +29,26 @@ class XIMX : public XWin {
 	char inputS[INPUT_MAX];
 
 	int col, row, keyw, keyh, keySelect;
+	bool hideMode, capMode;
 protected:
 	int get_at(int x, int y) {
 		int input_h = FONT_SIZE + 8;
 		y -= input_h;
 
-		if(x > col * keyw) 
+		/*if(x > col * keyw) 
 			return -1;
 		if(y > row * keyh) 
 			return -1;
+			*/
 
 		int i = (x / keyw);
+		if(i >= col)
+			i = col - 1;
+
 		int j = (y / keyh);
+		if(j >= row)
+			j = row - 1;
+
 		int at = i+j*col;
 		if(at >= (int)strlen(keytable[keytableType]))
 			return -1;
@@ -56,6 +64,19 @@ protected:
 	}
 
 	void changeMode(bool hide) {
+		hideMode = hide;
+		if(hide) {
+			int kw = 24;
+			if(col > 0) {
+				xinfo_t info;
+				getInfo(info);
+				kw = info.wsr.w / col;
+			}
+			resizeTo(kw, kw);
+			moveTo(scrSize.w - kw, scrSize.h - kw);
+			return;
+		}
+
 		int w = scrSize.w;
 		int h = scrSize.h / 2;
 
@@ -68,23 +89,41 @@ protected:
 		moveTo(scrSize.w-w, scrSize.h-h);
 	}
 
+	void changeCapMode(void) {
+		capMode = !capMode;
+		repaint();
+	}
+
 	void doKeyIn(char c) {
-		if(c == '\1') {
-			changeMode(true);
-			return;
-		}
+		if(c == '\3')
+			c = keytable[keytableType][keySelect-1];
+		
+		if(c == '\4')
+			c = KEY_BACKSPACE;
 		else if(c == '\2') {
 			changeKeyTable();
 			return;
 		}
-		else if(c == '\3')
-			c = keytable[keytableType][keySelect-1];
-		else if(c == '\b')
-			c = KEY_BACKSPACE;
+		else if(c == '\5') {
+			changeCapMode();
+			return;
+		}
+
+		if(c >= 'a' && c <= 'z') {
+			if(capMode)
+				c += ('A' - 'a');
+		}
 		input(c);
 	}
 
 	void doMouseEvent(xevent_t* ev) {
+		if(hideMode) {
+			if(ev->state == MOUSE_STATE_CLICK) {
+				changeMode(false);
+			}
+			return;
+		}
+
 		gpos_t pos = getInsidePos(ev->value.mouse.x, ev->value.mouse.y);
 		int x = pos.x;
 		int y = pos.y;
@@ -110,11 +149,29 @@ protected:
 		}
 	}
 
+	bool doHideKey(char c) {
+		if(c == JOYSTICK_START)
+			c = KEY_ENTER;
+
+		if(c == KEY_UP ||
+				c == KEY_DOWN ||
+				c == KEY_LEFT ||
+				c == KEY_RIGHT ||
+				c == KEY_ENTER) {
+			inputX(c);
+			return true;
+		}
+		return false;
+	}
+
 	void doIMEvent(xevent_t* ev) {
 		uint8_t c = ev->value.im.value;
 		int32_t keyNum = strlen(keytable[keytableType]);
 
 		if(ev->state == XIM_STATE_PRESS) {
+			if(hideMode)
+				return;
+
 			if(c == KEY_LEFT) {
 				keySelect--;
 			}
@@ -133,14 +190,24 @@ protected:
 				return;
 		}
 		else { //RELEASE
+			if(hideMode) {
+				if(doHideKey(c))
+					return;
+				changeMode(false);
+				return;
+			}
+
 			if(c == JOYSTICK_Y) {
-				doKeyIn('\b');
+				doKeyIn('\4');
 				repaint();
+				return;
+			}
+			else if(c == JOYSTICK_L1) {
+				changeMode(true);
 				return;
 			}
 			else if(c == JOYSTICK_START) {
 				doKeyIn('\r');
-				changeMode(true);
 				return;
 			}
 			else if(c == JOYSTICK_X) {
@@ -197,10 +264,12 @@ protected:
 			strcpy(s, "SPC");
 		else if(c == '\r')
 			strcpy(s, "ENT");
-		else if(c == '\b')
+		else if(c == '\4')
 			strcpy(s, "BK");
 		else if(c == '\2')
 			strcpy(s, "C/#");
+		else if(c == '\5')
+			strcpy(s, "Cap");
 		else if(c == '\1')
 			strcpy(s, "|||");
 
@@ -211,6 +280,10 @@ protected:
 		uint32_t font_h = FONT_SIZE;
 
 		graph_fill(g, 0, 0, g->w, g->w, 0xffcccccc);
+		if(hideMode) {
+			graph_box(g, 0, 0, g->w, g->w, 0xff000000);
+			return;
+		}
 
 		int input_h = font_h + 8;
 		keyh = (g->h - input_h) / row;
@@ -231,19 +304,29 @@ protected:
 				kh = keyh;
 
 				if(c >= 'a' && c <= 'z') {
-					c += ('A' - 'a');
+					if(capMode)
+						c += ('A' - 'a');
 					graph_fill(g, kx, ky, kw, keyh, 0xffeeeeee);
+				}
+				else if((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z')) {
+					graph_fill(g, kx, ky, kw, keyh, 0xffeeeeee);
+				}
+				else if(capMode && c == '\5') {
+					graph_fill(g, kx, ky, kw, kh, 0xbb000000);
 				}
 				
 				if(c == '\3') //two key size
 					kx -= keyw;
-				if(c == ' ' || c == '\r' || c == '\3') //two key size
+				if(c == ' ' || c == '\r' || c <  '\5') //two key size
 					kw = keyw * 2;
 
-				if((i+1) == col)
+				if((i+1) == col ||
+						((i+2) == col && (c == '\r' || c < '\5')))
 					kw = g->w - kx;
+				if((j+1) == row)
+					kh = g->h - ky;
 
-				if(keySelect == at) { //hot key
+				if(keySelect == at) {
 					ky -= (j == 0 ? input_h : keyh/2);
 					kh = keyh + (j == 0 ? input_h : keyh/2);
 					graph_fill(g, kx, ky, kw, kh, 0xbb000000);
@@ -260,21 +343,32 @@ protected:
 					graph_draw_text_font(g, kx + (kw-tw)/2, 
 							ky + 2,
 							t, font, FONT_SIZE, 0xffffffff);
-				else
+				else {
+					uint32_t clr = 0xff000000;
+					if(capMode && c == '\5') 
+						clr = 0xffffffff;
 					graph_draw_text_font(g, kx + (kw-tw)/2, 
 							ky + (kh - font_h)/2,
-							t, font, FONT_SIZE, 0xff000000);
+							t, font, FONT_SIZE, clr);
+				}
 				graph_box(g, kx, ky, kw, kh, 0xffaaaaaa);
 			}
 		}
 	}
 
-	void input(char c) {
+	void inputX(char c) {
 		xevent_t ev;
 		ev.type = XEVT_IM;
 		ev.value.im.value = c;
 		ev.state = XIM_STATE_PRESS;
 
+		proto_t in;
+		PF->init(&in)->add(&in, &ev, sizeof(xevent_t));
+		dev_cntl_by_pid(xPid, X_DCNTL_INPUT, &in, NULL);
+		PF->clear(&in);
+	}
+
+	void input(char c) {
 		int len = strlen(inputS);
 		if(c == KEY_BACKSPACE) {
 			if(len > 0)
@@ -287,14 +381,10 @@ protected:
 			inputS[len] = c;
 			inputS[len+1] = 0;
 		}
-
-		proto_t in;
-		PF->init(&in)->add(&in, &ev, sizeof(xevent_t));
-		dev_cntl_by_pid(xPid, X_DCNTL_INPUT, &in, NULL);
-		PF->clear(&in);
+		inputX(c);
 	}
 
-	void onFocus(void) {
+	void onShow(void) {
 		changeMode(false);
 	}
 
@@ -306,22 +396,26 @@ public:
 		panelSize.h = ph;
 		font = font_new(DEFAULT_SYSTEM_FONT, true);
 		keytable[1] = ""
-			"1234567890%-+\b"
-			"\\#$&*(){}[]!\r\3"
-			"\2:;\"'<>. \3`?^/";
+			"1234567890\4\3"
+			"~ABCDEFx+-._"
+			"\\#@*(){}[]\r\3"
+			"\2\3:;.,<> \3?|";
 		keytable[0] = ""
-			"qwertyuiop-+|\b"
-			"~asdfghjkl@_\r\3"
-			"\2zxcvbnm \3&,./";
+			"&1234567890\4"
+			".qwertyuiop-"
+			"\5asdfghjkl\r\3"
+			"\2\3zxcvbnm \3/";
 		keytableType = 0;
 
-		col = 14;
-		row = 3;
+		col = 12;
+		row = 4;
 		keyh = FONT_SIZE + 12;
 		keyw = FONT_SIZE*2 + 12;
 		xPid = dev_get_pid("/dev/x");
 		keySelect = -1;
 		inputS[0] = 0;
+		hideMode = false;
+		capMode = false;
 	}
 
 	inline ~XIMX() {
@@ -347,6 +441,29 @@ static void waitX() {
 	}
 }
 
+static int32_t _panelW = 0;
+static int32_t _panelH = 0;
+static int doargs(int argc, char* argv[]) {
+	int c = 0;
+	while (c != -1) {
+		c = getopt (argc, argv, "w:h:");
+		if(c == -1)
+			break;
+
+		switch (c) {
+		case 'w':
+			_panelW = atoi(optarg);
+			break;
+		case 'h':
+			_panelH = atoi(optarg);
+		default:
+			c = -1;
+			break;
+		}
+	}
+	return optind;
+}
+
 int main(int argc, char* argv[]) {
 	waitX();
 
@@ -354,18 +471,14 @@ int main(int argc, char* argv[]) {
 	xscreen_info_t scr;
 	x.getScreenInfo(scr, 0);
 
-	int pw = scr.size.w;
-	int ph = scr.size.h/2;
-	if(argc > 1)
-		pw = atoi(argv[1]);
-	if(argc > 2)
-		ph = atoi(argv[2]);
+	doargs(argc, argv);
+	if(_panelW == 0)
+		_panelW = scr.size.w;
+	if(_panelH == 0)
+		_panelH = scr.size.h/2;
 
-	pw = (pw / XIMX::getCols()) * XIMX::getCols();
-	ph = (ph / XIMX::getRows()) * XIMX::getRows();
-
-	XIMX xwin(scr.size.w, scr.size.h, pw, ph);
-	xwin.open(&x, 0, scr.size.w - pw, scr.size.h - ph, pw, ph, "xim",
+	XIMX xwin(scr.size.w, scr.size.h, _panelW, _panelH);
+	xwin.open(&x, -1, scr.size.w - _panelW, scr.size.h - _panelH, _panelW, _panelH, "xim",
 			XWIN_STYLE_NO_FRAME | XWIN_STYLE_NO_FOCUS | XWIN_STYLE_SYSTOP | XWIN_STYLE_XIM | XWIN_STYLE_NO_BG_EFFECT, false);
 	x.run(NULL, &xwin);
 	return 0;

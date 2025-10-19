@@ -35,4 +35,11 @@ void LabelButton::setLabel(const string& label) {
 	update();
 }
 
+void LabelButton::setAttr(const string& attr, json_var_t*value) {
+	Widget::setAttr(attr, value);
+	if(attr == "label") {
+		setLabel(json_var_get_str(value));
+	}
+}
+
 }

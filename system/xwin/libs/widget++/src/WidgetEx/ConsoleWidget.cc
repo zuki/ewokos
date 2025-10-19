@@ -70,6 +70,11 @@ void ConsoleWidget::flash() {
 	update();
 }
 
+void ConsoleWidget::setMaxRows(uint32_t maxRows) {
+	gterminal_set_max_rows(&terminal, maxRows);
+	update();
+}
+
 void ConsoleWidget::setFont(const string& fontName) {
 	if(terminal.font != NULL)
 		font_free(terminal.font);
@@ -141,7 +146,7 @@ bool ConsoleWidget::onMouse(xevent_t* ev) {
 bool ConsoleWidget::onIM(xevent_t* ev) {
 	if(ev->state == XIM_STATE_PRESS) {
 		int c = ev->value.im.value;
-		if(c != 0) {
+		if(c > 0 && c < 128) {
 			if(c == KEY_UP) {
 				gterminal_scroll(&terminal, -1);
 				update();

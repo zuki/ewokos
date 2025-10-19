@@ -16,7 +16,6 @@ void Label::onRepaint(graph_t* g, XTheme* theme, const grect_t& r) {
 
 Label::Label(const string& str) {
 	label = str;
-	alpha = true;
 }
 
 Label::~Label(void) {
@@ -25,6 +24,13 @@ Label::~Label(void) {
 void Label::setLabel(const string& str) {
 	label = str;
 	update();
+}
+
+void Label::setAttr(const string& attr, json_var_t*value) {
+	Widget::setAttr(attr, value);
+	if(attr == "label") {
+		setLabel(json_var_get_str(value));
+	}
 }
 
 }

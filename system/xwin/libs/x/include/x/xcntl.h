@@ -37,7 +37,11 @@ enum {
 	X_DCNTL_SET_THEME,
 	X_DCNTL_LOAD_XWM_THEME,
 	X_DCNTL_GET_XWM_THEME,
-	X_DCNTL_SET_XWM_THEME
+	X_DCNTL_SET_XWM_THEME,
+	X_DCNTL_SHOW_CURSOR,
+	X_DCNTL_NEXT_FOCUS,
+	X_DCNTL_CLOSE_FOCUS,
+	X_DCNTL_LAUNCHER
 };
 
 enum {
@@ -62,6 +66,7 @@ enum {
 #define XWIN_STYLE_LAUNCHER       0x100
 #define XWIN_STYLE_PROMPT         0x200 //prompt win
 #define XWIN_STYLE_NO_BG_EFFECT   0x400
+#define XWIN_STYLE_MAX            0x800
 
 #define XWIN_TITLE_MAX 32
 #define X_APP_NAME_MAX 128
@@ -72,9 +77,10 @@ typedef struct {
 	uint32_t display_index;
 	uint32_t style;
 	uint32_t state;
+
+	bool update_theme;
 	bool visible;
 	bool is_main;
-	bool covered;
 	bool alpha;
 	bool focused;
 	grect_t wsr; //workspace rect
